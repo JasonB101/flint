@@ -1,0 +1,29 @@
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 30px 0 30px 0;
+
+    a {
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        font-size: 24px;
+        font-weight: normal;
+        padding: 10px 30px;
+        text-align: left;
+        font-family: Raleway;
+        width: 100%;
+        vertical-align: center;
+    }
+
+    p:hover, a:hover {
+        background-color: #40464e;
+    }
+    i {
+        font-size: 24px;
+        font-weight: normal;
+        color: white;
+    }
+}

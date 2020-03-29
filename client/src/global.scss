@@ -1,0 +1,25 @@
+// #282c34 background that I like
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.appWrapper {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  grid-template-rows: 90px calc(100vh - 90px);
+  grid-template-areas:
+  "sb hh"
+  "sb vv";
+  
+  width: 100%;
+  height: 100vh;
+}
+.spacer {
+  flex: 1;
+}
+
+body {
+  height: 100%;
+  
+}

@@ -1,0 +1,29 @@
+{
+  "name": "the-brain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "pricelist.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+  },
+  "engines": {
+    "node": "10.13.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.1",
+    "bcrypt": "^3.0.6",
+    "cheerio": "^1.0.0-rc.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.11",
+    "morgan": "^1.9.1",
+    "request": "^2.88.0"
+  }
+}

@@ -1,0 +1,17 @@
+.wrapper {
+    grid-area: hh;
+    display: flex;
+    align-items: center;
+    height: 90px;
+    background: #26303f;
+    padding-right: 30px;
+    i {
+        cursor: pointer;
+        font-size: 40px;
+        color: rgb(248, 246, 246);
+    }
+
+    i:hover {
+        color:  rgb(231, 231, 231);
+    }
+}
