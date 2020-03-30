@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname, "client", "build")))
 app.use("/api", expressJWT({ secret: process.env.SECRET }));
 
 app.use("/api/inventoryItems", require("./routes/inventoryItems"))
+app.use("/api/syncebay", require("./routes/syncEbay"))
 app.use("/auth", require("./routes/auth"))
 
 // Connect to colection

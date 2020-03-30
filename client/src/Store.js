@@ -50,12 +50,18 @@ const Store = (props) => {
         .then(result => changeItems(result.data))
     }
 
+    function syncEbay() {
+        userAxios.get("/api/syncebay")
+        .then(result => console.log(result.data));
+    }
+
     return (
 
         <storeContext.Provider value={{
             user,
             items,
-            submitNewItem
+            submitNewItem,
+            syncEbay
         }} >
             {props.children}
         </storeContext.Provider >

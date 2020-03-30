@@ -2,6 +2,8 @@ const express = require("express")
 const inventoryRouter = express.Router()
 const InventoryItem = require("../models/inventoryItem")
 
+
+
 inventoryRouter.post("/", (req, res, next) => {
     let inventoryItem  = new InventoryItem(req.body);
     inventoryItem.userId = req.user._id;
@@ -9,7 +11,7 @@ inventoryRouter.post("/", (req, res, next) => {
         if (err) console.log(err.message)
         else res.send({ success: true })
     });
-    // researchNewCars();
+
 })
 
 inventoryRouter.get("/", (req, res, next) => {

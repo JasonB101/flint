@@ -1,11 +1,19 @@
 .wrapper {
     grid-area: sb;
     background-color: #27292c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 40px;
     p {
         margin-bottom: 0 !important;
     }
     a {
         text-decoration: none !important;
         color: white !important;
+    }
+
+    button {
+        width: 80%;
     }
 }

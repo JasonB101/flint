@@ -7,9 +7,9 @@ const InventoryTable = (props) => {
     const items = props.items.map(x => populateRow(x));
 
     function populateRow(itemObject) {
-        const { item, partNo, sku, location, datePurchased, listedPrice, purchasePrice, id, expectedProfit } = itemObject;
+        const { item, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit } = itemObject;
         return (
-            <tr key={id}>
+            <tr key={_id}>
                 <td style={{ textAlign: "left" }}>{item}</td>
                 <td>{partNo}</td>
                 <td>{sku}</td>
