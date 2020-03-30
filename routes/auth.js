@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken")
 
 
 authRouter.post("/signup", (req, res, next) => {
+    console.log("Made It here");
     //Check to see if email is already in the collection
     User.findOne({ email: `${req.body.email}` }, (err, existingUser) => {
         if (err) {
@@ -29,12 +30,18 @@ authRouter.post("/signup", (req, res, next) => {
 
 authRouter.post("/login", (req, res, next) => {
     User.findOne({ email: `${req.body.email}` }, (err, user) => {
-        if (err) return res.status(500).send(err)
+        if (err) {
+            console.log(err)
+            return res.status(500).send(err)
+        }
         if (!user) return res.status(403).send({
             success: false, message: "The email/password combination provided is incorrect"
         })
         user.checkPassword(req.body.password, (err, match) => {
-            if (err) return res.status(500).send(err)
+            if (err) {
+                console.log(err)
+                return res.status(500).send(err)
+            }
             if (!match) return res.status(403).send({
                 success: false, message: "The email/password combination provided is incorrect"
             })
@@ -47,6 +54,7 @@ authRouter.post("/login", (req, res, next) => {
 })
 
 const loginUserInfo = (user) => {
+    console.log(user)
 return {
     user: {...user, 
     token: jwt.sign(user, process.env.SECRET)

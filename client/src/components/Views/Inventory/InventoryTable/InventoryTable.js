@@ -1,6 +1,7 @@
 import React from "react";
 import Styles from "./InventoryTable.module.scss";
 import { Table } from "react-bootstrap";
+import getDays from "../../../../lib/getDays"
 
 const InventoryTable = (props) => {
     const items = props.items.map(x => populateRow(x));
@@ -13,7 +14,7 @@ const InventoryTable = (props) => {
                 <td>{partNo}</td>
                 <td>{sku}</td>
                 <td>{location}</td>
-                <td>{datePurchased}</td>
+                <td>{getDays(datePurchased)}</td>
                 <td>${purchasePrice}</td>
                 <td>${listedPrice}</td>
                 <td>${expectedProfit}</td>

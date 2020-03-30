@@ -28,9 +28,12 @@ const inventoryItemSchema = new Schema({
     expectedProfit: {
         type: Number,
         default: 0
+    },
+    userId: {
+        type: Schema.Types.ObjectId, 
+        ref: 'User',
+        required: true
     }
-
-
     
 })
 

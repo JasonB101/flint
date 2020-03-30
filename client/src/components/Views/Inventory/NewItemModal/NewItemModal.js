@@ -4,7 +4,7 @@ import ItemForm from "./ItemForm/ItemForm"
 import Styles from "./NewItemModal.module.scss";
 
 const NewItemModal = (props) => {
-    const {toggleModal} = props;
+    const {toggleModal, submitNewItem} = props;
     return (
         <div className={Styles.modalWrapper}>
             <Modal.Dialog>
@@ -13,7 +13,7 @@ const NewItemModal = (props) => {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <ItemForm toggleModal={toggleModal}/>
+                    <ItemForm submitNewItem={submitNewItem} toggleModal={toggleModal}/>
                 </Modal.Body>
 
             </Modal.Dialog>

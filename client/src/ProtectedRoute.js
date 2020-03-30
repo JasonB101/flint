@@ -2,7 +2,7 @@ import React from "react"
 import { Route, Redirect } from "react-router-dom";
 
 function ProtectedRoute(props) {
-    const {user} = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user')) || {};
 
     const { component: Component, ...rest } = props;
     return (

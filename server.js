@@ -14,9 +14,10 @@ app.use(morgan('dev'))
 app.use(express.static(path.join(__dirname, "client", "build")))
 
 //Logged in routes, attatches user to req
-// app.use("/api", expressJWT({ secret: process.env.SECRET }));
+app.use("/api", expressJWT({ secret: process.env.SECRET }));
 
 app.use("/api/inventoryItems", require("./routes/inventoryItems"))
+app.use("/auth", require("./routes/auth"))
 
 // Connect to colection
 mongoose.set('useCreateIndex', true)

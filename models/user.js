@@ -27,12 +27,6 @@ const userSchema = new Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    },
-    seen: {
-        type: Array
-    },
-    pullTickets: {
-        type: Array
     }
 })
 
@@ -59,8 +53,6 @@ userSchema.methods.checkPassword = function (passwordAttempt, callback) {
         if (err) return callback(err)
         callback(null, isMatch)
     })
-
 }
 
 module.exports = mongoose.model("User", userSchema)
-

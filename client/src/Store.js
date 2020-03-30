@@ -15,43 +15,16 @@ userAxios.interceptors.request.use((config) => {
 const Store = (props) => {
     //change initial value of user to empty object
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {})
-    const [items, changeItems] = useState([
-        {
-            item: "2007 Ford Focus Radio",
-            partNo: "1234",
-            sku: "1234",
-            location: "Shelf A",
-            datePurchased: new Date().toDateString(),
-            purchasePrice: 9.99,
-            listed: false,
-            listedPrice: 0,
-            expectedProfit: 0,
-            id: 1234
-        },
-        {
-            item: "2007 Ford Focus Radio",
-            partNo: "1234",
-            sku: "1234",
-            location: "Shelf A",
-            datePurchased: new Date().toDateString(),
-            purchasePrice: 9.99,
-            listed: false,
-            listedPrice: 0,
-            expectedProfit: 0,
-            id: 1234
-        },
-
-
-    ])
+    const [items, changeItems] = useState([])
 
 
 
     useEffect(() => {
-        localStorage.setItem('user', JSON.stringify({ user: { token: "Here" } }))
+        getInventoryItems();
     }, [user])
 
 
-    const login = (credentials) => {
+    const login = async (credentials) => {
         return authAxios.post("/auth/login", credentials)
             .then(response => {
                 const { user, user: { token } } = response.data;
@@ -61,11 +34,20 @@ const Store = (props) => {
                 return response;
             })
     }
-
+    
     const logout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         setUser({});
+    }
+    
+    function submitNewItem(form) {
+        userAxios.post("/api/inventoryItems", form)
+    }
+
+    function getInventoryItems(){
+        userAxios.get("/api/inventoryItems")
+        .then(result => changeItems(result.data))
     }
 
     return (
@@ -73,6 +55,7 @@ const Store = (props) => {
         <storeContext.Provider value={{
             user,
             items,
+            submitNewItem
         }} >
             {props.children}
         </storeContext.Provider >

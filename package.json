@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.1",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^3.0.8",
     "cheerio": "^1.0.0-rc.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
