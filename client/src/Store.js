@@ -14,13 +14,16 @@ userAxios.interceptors.request.use((config) => {
 
 const Store = (props) => {
     //change initial value of user to empty object
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {})
-    const [items, changeItems] = useState([])
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
+    const [items, changeItems] = useState([]);
+    
+    const [newListings, setNewListings] = useState([])
 
 
 
     useEffect(() => {
         getInventoryItems();
+        syncEbay();
     }, [user])
 
 
@@ -50,9 +53,17 @@ const Store = (props) => {
         .then(result => changeItems(result.data))
     }
 
+    function linkItem(inventoryId, ebayId) {
+        
+    }
+
     function syncEbay() {
-        userAxios.get("/api/syncebay")
-        .then(result => console.log(result.data));
+        userAxios.get("/api/syncebay/getNewListings")
+        .then(result => {
+            setNewListings(result.data)
+            // console.log(result.data)
+        })
+        .catch(err => console.log(err));
     }
 
     return (
@@ -61,7 +72,9 @@ const Store = (props) => {
             user,
             items,
             submitNewItem,
-            syncEbay
+            syncEbay,
+            newListings,
+            linkItem
         }} >
             {props.children}
         </storeContext.Provider >

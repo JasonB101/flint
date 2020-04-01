@@ -12,6 +12,10 @@ const inventoryItemSchema = new Schema({
         type: Boolean,
         default: false
     },
+    ebayId: {
+        type: String,
+        default: ""
+    },
     location: String,
     datePurchased: {
         type: String,
