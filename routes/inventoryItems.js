@@ -9,7 +9,7 @@ inventoryRouter.post("/", (req, res, next) => {
     inventoryItem.userId = req.user._id;
     inventoryItem.save((err, item) => {
         if (err) console.log(err.message)
-        else res.send({ success: true })
+        else res.send({ success: true, item })
     });
 
 })

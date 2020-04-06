@@ -9,12 +9,12 @@ import { storeContext } from "./Store"
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncEbay } = storeData;
+  const { syncWithEbay, user } = storeData;
 
   return (
     <div className="appWrapper">
       <Header />
-      <SideBar syncEbay={syncEbay}/>
+      <SideBar syncWithEbay={syncWithEbay} user={user}/>
       <Switch>
         {/* <Route path="/auth/signin" component={SignIn} /> */}
         {/* <Route exact path="/" component={() => <Redirect to="/auth/signin" />} /> */}

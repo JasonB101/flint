@@ -41,19 +41,19 @@ const ItemForm = (props) => {
 
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
-          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} required placeholder="" />
+          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" />
         </Form.Group>
       </Form.Row>
 
       <Form.Row>
         <Form.Group as={Col} controlId="formGridSku">
           <Form.Label>SKU</Form.Label>
-          <Form.Control value={inputForm.sku} name="sku" onChange={handleChange} required placeholder="Stock number" />
+          <Form.Control value={inputForm.sku} name="sku" onChange={handleChange} placeholder="Stock number" />
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridLocation">
           <Form.Label>Location</Form.Label>
-          <Form.Control value={inputForm.location} name="location" onChange={handleChange} required placeholder="Section A, Shelf 1" />
+          <Form.Control value={inputForm.location} name="location" onChange={handleChange} placeholder="Section A, Shelf 1" />
         </Form.Group>
       </Form.Row>
 

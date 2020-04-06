@@ -16,4 +16,20 @@
     button {
         width: 80%;
     }
+
+    .syncWrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        p {
+            color: white;
+            font-size: 12px;
+            font-family: sans-serif;
+        }
+        button {
+            margin-bottom: 10px;
+        }
+    }
 }

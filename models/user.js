@@ -27,7 +27,16 @@ const userSchema = new Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    }
+    },
+    averageShippingCost: {
+        type: Number,
+        default: 10
+    },
+    syncedWithEbay: {
+        type: Boolean,
+        default: false
+    },
+    ebayToken: String
 })
 
 userSchema.pre("save", function (next) {
@@ -45,6 +54,7 @@ userSchema.methods.withoutSensitiveInfo = function () {
     delete user.password
     delete user.email
     delete user.lname
+    delete user.ebayToken
     return user
 }
 

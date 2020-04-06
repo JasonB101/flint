@@ -40,9 +40,10 @@ const Inventory = (props) => {
                 searchTerm={inventorySearchTerm}
                 toggleModal={toggleNewItemModal} />
             <InventoryTable openLinkModal={openLinkModal} items={itemsToShow} />
-            {true && <LinkItemModal inventoryId={inventoryId}
+            {inventoryId && <LinkItemModal inventoryId={inventoryId}
                 linkItem={linkItem}
-                newListings={newListings} />}
+                newListings={newListings}
+                setInventoryId={setInventoryId} />}
             {showNewItemModal && <NewItemModal submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} />}
         </div>
     );
