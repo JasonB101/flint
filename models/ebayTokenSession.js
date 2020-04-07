@@ -9,8 +9,10 @@ const ebayTokenSessionSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId, 
         ref: 'User',
-        required: true
-    }
+        required: true,
+        unique: true
+    },
+    date: String
 })
 
 module.exports = mongoose.model("EbayTokenSession", ebayTokenSessionSchema)

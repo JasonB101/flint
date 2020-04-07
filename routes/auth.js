@@ -53,26 +53,7 @@ authRouter.post("/login", (req, res, next) => {
 
 })
 
-authRouter.get("/setebaytoken", async (req, res, next) => {
-    console.log(req)
-    try {
-        const sessionId = ""
-        const ebayToken = ""
-        const session = ebayTokenSession.find({ session: sessionId })
-        const userId = session.toObject().userId;
-        User.findByIdAndUpdate(userId, {ebayToken: ebayToken}, (err, result) => {
-            if (err) console.log(err);
-            res.redirect("https://localhost:3000/inventory")
-        })
 
-    } catch (e) {
-        console.log(e)
-        res.redirect("https://localhost:3000/inventory")
-    }
-    
-    console.log(req.body)
-
-})
 
 const loginUserInfo = (user) => {
     console.log(user)

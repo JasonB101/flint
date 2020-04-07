@@ -8,9 +8,11 @@ const EbayTokenSession = require("../models/ebayTokenSession");
 require("dotenv").config()
 
 syncRouter.get("/gettokenlink", async (req, res, next) => {
-    if (req.user) {
-
-    }
+    //Check to see if there is already a session open and remove it for this user.
+    await EbayTokenSession.findOneAndRemove({ userId: req.user._id }, (err, result) => {
+        if (err) console.log(err)
+        console.log(result)
+    })
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetSessionIDRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RuName>${process.env.RU_NAME}</RuName>
@@ -35,17 +37,16 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
         parseString(data, { explicitArray: false, ignoreAttrs: true }, async function (err, result) {
             if (err) res.status(500).send(err);
             const sessionId = result.GetSessionIDResponse.SessionID;
-            const signInLink = `https://www.ebay.com/ws/eBayISAPI.dll?SignIn&runame=${process.env.RU_NAME}&SessID=${sessionId}`;
-
+            const signInLink = `https://signin.ebay.com/ws/eBayISAPI.dll?SignIn&runame=${process.env.RU_NAME}&SessID=${sessionId}`;
             const newSession = new EbayTokenSession({
                 sessionId: sessionId,
-                userId: req.user._id
+                userId: req.user._id,
+                date: new Date().toLocaleDateString()
             })
             newSession.save((err, session) => {
                 if (err) return res.status(500).send({ success: false, err })
                 return res.status(200).send(signInLink)
             })
-
         })
     } catch (e) {
 
@@ -57,8 +58,8 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
 })
 
 syncRouter.get("/getNewListings", async (req, res, next) => {
-    //Need to get this token
-    const ebayAuthToken = "AgAAAA**AQAAAA**aAAAAA**m3qBXg**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6AGl4OgDJaBpw6dj6x9nY+seQ**aa8FAA**AAMAAA**Lwzxzmaa/bfkcjTMolhW3z34n7PDdh2lgSMzJj5UUFjvCGLxa6wjn4vPYOUXO8HSEGjPOl0ZiB72Kr0YD4ndz8BbTqzXptlrFHmM9tNUq/uSzjB1rbzzeaYV5XcqLw0BBBxadmhozzBeICOypB2ghmusPH76N22WDEoQMMJuhATBoIuUuOBam2gyavzQMyFHwiZISGVGTmS28qr/sqK/MUTt4Ris4MhXDinTZvfzdBOOV92qP62y2nPi87T1BU/oYE9DywHVF99MRqJAL9FLunZMaRbOkY1Dj81zCbegyQUeYjZWnRzcp/+nxwhwgDIZPpFJtC/0Yy8VAwRO4vWO+3CR/0CbYAku6d+dNAWGCZPITpO737XiH458dzopD2VVgn9YC0catxFG8AcQoQl7JrpMAsirsTwTbuy68DWi3ulquxUZ5quf4ivtIhkJm0aFXR3hOT1IvzSmcAHkZ12HND5Dxs6K9rP26dacNxKFaP2ucjbplpNnLoSnZEJSKq8lZlAzYv/QDgBCWQ9NL6r9oQ3FZrcmeIkk2EL+4+YgkYSzpOEWl33sRKiiXQqSIlRqDIalUe5PPtoAIa5/pKZrCrFa8sorF4YgIby1zX+DxsJp/p7Yhg+Lvel6AfA7ZWth0DdvnSPX0nFa02RRFOwhpW1dm/cx2Z3DLmpd+wNZXvAOJSX3EQw9Oj8QvH4T6jTvvdDCP+mo6tqVHnHlq1UnWduCfgK33VAUZdTnwqJSs4wGxN2pjBVT0QeZM2fbk0bf"
+    //Need to get this token req.user.ebayToken
+    const ebayAuthToken = req.user.ebayToken || ""
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetMyeBaySellingRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RequesterCredentials>
@@ -74,7 +75,7 @@ syncRouter.get("/getNewListings", async (req, res, next) => {
         </Pagination>
       </ActiveList>
     </GetMyeBaySellingRequest>`
-
+    // NEED TO REMEMBER, this will only send 200 active listings in one request. Need to setup a system for paganation.
     const config = {
         headers: {
             'Content-Type': 'text/xml',
@@ -90,6 +91,7 @@ syncRouter.get("/getNewListings", async (req, res, next) => {
     try {
         parseString(data, { explicitArray: false, ignoreAttrs: true }, async function (err, result) {
             if (err) res.status(500).send(err);
+
             const ebayItems = result.GetMyeBaySellingResponse.ActiveList.ItemArray.Item;
             const inventoryItems = await InventoryItem.find({ userId: req.user._id });
             const ebayIds = inventoryItems.map(x => x.ebayId);
@@ -97,11 +99,11 @@ syncRouter.get("/getNewListings", async (req, res, next) => {
                 return ebayIds.indexOf(x.ItemID) === -1
             });
 
-            res.status(200).send(newEbayListings)
+            return res.status(200).send(newEbayListings)
 
         })
     } catch (e) {
-        res.status(500).send(e)
+        return res.status(500).send(e)
     }
 })
 
@@ -139,6 +141,83 @@ syncRouter.put("/linkItem/:id", async (req, res, next) => {
         return listedPrice - payPalFee - ebayFee - averageShippingCost - purchasePrice;
     }
 })
+
+syncRouter.post("/setebaytoken", async (req, res, next) => {
+    //This does a post request with no data, uses the req.user._id to get the sessionId for current user. Then does the request
+    //to ebay to get the ebayToken, and then saves that ebay token in the user's collection. Need to design all this ish better. 
+    const userId = req.user._id
+
+    try {
+        const session = await EbayTokenSession.find({ userId: userId })
+        const sessionId = session[0].sessionId;
+        const ebaySessionsId = session[0]._id;
+        const tokenData = await requestEbayToken(sessionId);
+        if (tokenData) {
+
+            parseString(tokenData, { explicitArray: false, ignoreAttrs: true }, async function (err, result) {
+                if (err) {
+                    console.log(err)
+                    return res.status(500).send(err)
+                }
+
+                const ebayToken = result.FetchTokenResponse.eBayAuthToken;
+                User.findByIdAndUpdate(userId, { ebayToken: ebayToken, syncedWithEbay: true }, { new: true }, (err, result) => {
+                    if (err) console.log(err);
+                    EbayTokenSession.findByIdAndRemove(ebaySessionsId, (err, result) => {
+                        if (err) console.log(err)
+                    })
+                    return res.send({ success: true, user: result })
+                })
+            })
+        } else {
+            return res.status(500).send({ success: false, message: "tokenData is null, sessionId may be expired" })
+        }
+
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({ success: false, message: "Failed in the try catch block" })
+    }
+
+})
+
+async function requestEbayToken(sessionId) {
+    const queryString = `<?xml version="1.0" encoding="utf-8"?>
+<FetchTokenRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+  <SessionID>${sessionId}</SessionID>
+</FetchTokenRequest>`
+    const callName = "FetchToken";
+    const tokenRequest = await ebayApplicationRequest(callName, queryString);
+    return tokenRequest;
+}
+
+
+async function ebayApplicationRequest(callName, query) {
+    try {
+        const config = {
+            headers: {
+                'X-EBAY-API-APP-NAME': process.env.EBAY_API_APP_NAME,
+                'X-EBAY-API-DEV-NAME': process.env.EBAY_API_DEV_NAME,
+                'X-EBAY-API-CERT-NAME': process.env.EBAY_API_CERT_NAME,
+                'Content-Type': 'text/xml',
+                'X-EBAY-API-COMPATIBILITY-LEVEL': 967,
+                'X-EBAY-API-CALL-NAME': callName,
+                'X-EBAY-API-SITEID': 0
+            }
+        }
+
+        const ebayRequest = await axios.post(process.env.EBAY_API_URL, query, config);
+        const data = ebayRequest.data;
+        return data;
+    } catch (e) {
+        console.log(e)
+        return null;
+    }
+
+}
+
+
+
+
 
 
 module.exports = syncRouter

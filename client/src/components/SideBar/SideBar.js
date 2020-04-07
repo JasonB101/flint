@@ -23,7 +23,7 @@ const SideBar = (props) => {
                 !user.syncedWithEbay &&
                 <div className={Styles.syncWrapper}>
                     <Button onClick={handleClick}>Sync with eBay</Button>
-                    <p>Sync your eBay account with your Inventory items.</p>
+                    <p>Sync your Flint account with your eBay account.</p>
                 </div>
             }
 
