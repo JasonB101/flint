@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react'
 import axios from "axios"
 const authAxios = axios.create()
-const userAxios = axios.create()
+const userAxios = axios.create();
 export const storeContext = createContext({});
 
 userAxios.interceptors.request.use((config) => {
@@ -26,7 +26,7 @@ const Store = (props) => {
             //need to rename this and handle all ebay data not just listings.
             getNewListings();
         }
-        // login({ email: "test@test.com", password: "test" })
+       
 
     }, [user])
 
@@ -84,7 +84,7 @@ const Store = (props) => {
                 console.log(updatedItem)
                 //Need to learn how to useReducer
                 changeItems(items.map(x => x._id === updatedItem._id ? updatedItem : x));
-                setNewListings(newListings.filter(x => x.ebayId != listingInfo.ItemID));
+                setNewListings(newListings.filter(x => x.ebayId !== listingInfo.ItemID));
             } else {
                 alert("Something went wrong! Item not linked.")
             }
@@ -92,6 +92,16 @@ const Store = (props) => {
         }
 
         )
+
+    }
+    function setEbayToken() {
+        userAxios.post("/api/syncebay/setebaytoken")
+        .then(results => {
+            const data = results.data
+            if (data.success) {
+                setUser(data.user)
+            }
+        })
 
     }
 
@@ -113,7 +123,9 @@ const Store = (props) => {
             getNewListings,
             newListings,
             linkItem,
-            syncWithEbay
+            syncWithEbay,
+            setEbayToken,
+            login
         }} >
             {props.children}
         </storeContext.Provider >

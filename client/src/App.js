@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import { Switch } from "react-router-dom"
 import ProtectedRoute from "./ProtectedRoute"
 import Inventory from "./components/Views/Inventory/Inventory"
+import VerifyUserToken from "./VerifyUserToken"
 import './global.scss';
 import Header from "./components/Header/Header"
 import SideBar from './components/SideBar/SideBar';
@@ -9,16 +10,17 @@ import { storeContext } from "./Store"
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, user } = storeData;
+  const { syncWithEbay, user, setEbayToken, login } = storeData;
 
   return (
     <div className="appWrapper">
       <Header />
-      <SideBar syncWithEbay={syncWithEbay} user={user}/>
+      <SideBar login={login} syncWithEbay={syncWithEbay} user={user}/>
       <Switch>
         {/* <Route path="/auth/signin" component={SignIn} /> */}
         {/* <Route exact path="/" component={() => <Redirect to="/auth/signin" />} /> */}
         <ProtectedRoute path="/inventory" component={() => <Inventory />} />
+        <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
 
       </Switch>
     </div>

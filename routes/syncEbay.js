@@ -59,7 +59,10 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
 
 syncRouter.get("/getNewListings", async (req, res, next) => {
     //Need to get this token req.user.ebayToken
-    const ebayAuthToken = req.user.ebayToken || ""
+    const userInfo = await User.findById(req.user._id);
+    const user = userInfo.toObject();
+    const ebayAuthToken = user.ebayToken
+
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetMyeBaySellingRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RequesterCredentials>
@@ -91,7 +94,7 @@ syncRouter.get("/getNewListings", async (req, res, next) => {
     try {
         parseString(data, { explicitArray: false, ignoreAttrs: true }, async function (err, result) {
             if (err) res.status(500).send(err);
-
+            // console.log(result);
             const ebayItems = result.GetMyeBaySellingResponse.ActiveList.ItemArray.Item;
             const inventoryItems = await InventoryItem.find({ userId: req.user._id });
             const ebayIds = inventoryItems.map(x => x.ebayId);

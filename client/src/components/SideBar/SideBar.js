@@ -8,7 +8,7 @@ import NavBar from "./NavBar/NavBar";
 
 const SideBar = (props) => {
 
-    const { syncWithEbay, user } = props;
+    const { syncWithEbay, user, login } = props;
 
     function handleClick(e) {
         syncWithEbay();
@@ -16,7 +16,7 @@ const SideBar = (props) => {
 
     return (
         <div className={Styles.wrapper}>
-            <SideBarHeader />
+            <SideBarHeader login={login} />
             <NavBar />
             <div className="spacer"></div>
             {
