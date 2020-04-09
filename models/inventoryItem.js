@@ -21,6 +21,10 @@ const inventoryItemSchema = new Schema({
         type: String,
         required: true
     },
+    purchaseLocation: {
+        type: String,
+        required: true
+    },
     purchasePrice: {
         type: Number,
         required: true
@@ -33,12 +37,32 @@ const inventoryItemSchema = new Schema({
         type: Number,
         default: 0
     },
+    priceSold: {
+        type: String,
+        default: 0
+    },
+    dateSold: String,
+    shippingCost: Number,
+    ebayFees: Number,
+    payPalFees: Number,
+    profit: Number,
+    status:{
+        type: String,
+        default: "active"
+        //sold
+        //active
+        //waste
+    },
+    imgUrl: String,
+    trackingNumber: {
+        type: String
+    },
     userId: {
-        type: Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     }
-    
+
 })
 
 module.exports = mongoose.model("InventoryItem", inventoryItemSchema)

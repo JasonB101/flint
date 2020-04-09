@@ -13,7 +13,8 @@ const ItemForm = (props) => {
     sku: "",
     location: "",
     datePurchased: "",
-    purchasePrice: ""
+    purchasePrice: "",
+    purchaseLocation: ""
   })
 
   const handleChange = (e) => {
@@ -37,22 +38,28 @@ const ItemForm = (props) => {
           <Form.Label>Item Name</Form.Label>
           <Form.Control value={inputForm.item} name="item" onChange={(e) => handleChange(e)} required placeholder="" />
         </Form.Group>
+      </Form.Row>
 
+      <Form.Row>
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
           <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" />
         </Form.Group>
-      </Form.Row>
 
-      <Form.Row>
         <Form.Group as={Col} controlId="formGridSku">
           <Form.Label>SKU</Form.Label>
           <Form.Control value={inputForm.sku} name="sku" onChange={handleChange} placeholder="Stock number" />
         </Form.Group>
+      </Form.Row>
 
+      <Form.Row>
         <Form.Group as={Col} controlId="formGridLocation">
           <Form.Label>Location</Form.Label>
           <Form.Control value={inputForm.location} name="location" onChange={handleChange} placeholder="Section A, Shelf 1" />
+        </Form.Group>
+        <Form.Group as={Col} controlId="formGridPurchaseLocation">
+          <Form.Label>Purchase Location</Form.Label>
+          <Form.Control value={inputForm.purchaseLocation} name="purchaseLocation" onChange={handleChange} placeholder="" />
         </Form.Group>
       </Form.Row>
 

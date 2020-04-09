@@ -61,7 +61,7 @@ syncRouter.get("/getNewListings", async (req, res, next) => {
     //Need to get this token req.user.ebayToken
     const userInfo = await User.findById(req.user._id);
     const user = userInfo.toObject();
-    const ebayAuthToken = user.ebayToken
+    const ebayAuthToken = user.ebayToken;
 
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetMyeBaySellingRequest xmlns="urn:ebay:apis:eBLBaseComponents">
@@ -141,7 +141,7 @@ syncRouter.put("/linkItem/:id", async (req, res, next) => {
         const payPalFee = listedPrice * 0.029 + 0.3;
         const ebayFee = listedPrice * 0.1
         //Need to get purchasePrice
-        return listedPrice - payPalFee - ebayFee - averageShippingCost - purchasePrice;
+        return +(listedPrice - payPalFee - ebayFee - averageShippingCost - purchasePrice).toFixed(2);
     }
 })
 

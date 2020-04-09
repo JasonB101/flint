@@ -6,7 +6,7 @@ const VerifyUserToken = (props) => {
     useEffect(() => {
         props.history.push("/inventory")
         setEbayToken();
-    }, [setEbayToken])
+    }, [setEbayToken, props.history])
 
     return (
         <div></div>

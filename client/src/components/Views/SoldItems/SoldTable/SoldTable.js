@@ -1,27 +1,40 @@
 import React, { useEffect } from "react";
-import { Button } from "react-bootstrap";
-import Styles from "./InventoryTable.module.scss";
+import Styles from "./SoldTable.module.scss";
 import { Table } from "react-bootstrap";
-import getDays from "../../../../lib/getDays"
-import $ from "jquery"
+import $ from "jquery";
 
-const InventoryTable = (props) => {
-    const inventoryItems = props.inventoryList;
-    const currencyFormatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
-    const items = inventoryItems.map(x => populateRow(x));
-    const { openLinkModal } = props;
-    
+const SoldTable = (props) => {
+    const { soldItems } = props;
+    const items = soldItems.map(x => populateRow(x));
 
     useEffect(() => {
         applySortingToDOM()
-    }, [inventoryItems])
+    }, [items])
+
+    function populateRow(itemObject) {
+        const { item, partNo, sku, datePurchased,
+            dateSold, purchasePrice, priceSold, shippingCost,
+            ebayFees, payPalFees, profit, _id } = itemObject;
+        return (
+            <tr key={_id}>
+                <td style={{ textAlign: "left" }}>{item}</td>
+                <td>{partNo}</td>
+                <td>{sku}</td>
+                <td>{datePurchased}</td>
+                <td>{dateSold}</td>
+                <td>${purchasePrice}</td>
+                <td>${priceSold}</td>
+                <td>${shippingCost}</td>
+                <td>${ebayFees}</td>
+                <td>${payPalFees}</td>
+                <td>${profit}</td>
+            </tr>
+        )
+    }
 
     function applySortingToDOM() {
-         //borrowed from stackoverflow added some sugar
-         $('th').click(function () {
+        //borrowed from stackoverflow added some sugar
+        $('th').click(function () {
             var table = $(this).parents('table').eq(0)
             var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
             this.asc = !this.asc
@@ -50,40 +63,26 @@ const InventoryTable = (props) => {
         }
         function getCellValue(row, index) { return $(row).children('td').eq(index).text() }
     }
-
-    function populateRow(itemObject) {
-        const { listed, item, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit } = itemObject;
-        return (
-
-            <tr key={_id}>
-                <td style={{ textAlign: "left" }}>{item}</td>
-                <td>{partNo || "n/a"}</td>
-                <td>{sku || "n/a"}</td>
-                <td>{location || "n/a"}</td>
-                <td>{getDays(datePurchased)}</td>
-                <td>{currencyFormatter.format(purchasePrice)}</td>
-                <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id)}
-                >Link Item</Button>}</td>
-                <td>{currencyFormatter.format(expectedProfit)}</td>
-            </tr>
-        )
-    }
     return (
         <div className={Styles.wrapper}>
+
             <Table striped bordered responsive hover>
                 <thead>
                     <tr>
                         <th>Item</th>
                         <th>Part No</th>
                         <th>SKU</th>
-                        <th>Location</th>
-                        <th>Days in Inventory</th>
+                        <th>Date Purchased</th>
+                        <th>Date Sold</th>
                         <th>Purchase Price</th>
-                        <th>Listed Price</th>
-                        <th>Expected Profit</th>
+                        <th>Price Sold</th>
+                        <th>Shipping Cost</th>
+                        <th>eBay Fees</th>
+                        <th>PayPal Fees</th>
+                        <th>Profit</th>
                     </tr>
                 </thead>
-                <tbody className={Styles.itemsList}>
+                <tbody className={Styles.itesmList}>
                     {items}
                 </tbody>
             </Table>
@@ -91,4 +90,4 @@ const InventoryTable = (props) => {
     );
 }
 
-export default InventoryTable;
+export default SoldTable;

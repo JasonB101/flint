@@ -7,6 +7,7 @@ import './global.scss';
 import Header from "./components/Header/Header"
 import SideBar from './components/SideBar/SideBar';
 import { storeContext } from "./Store"
+import SoldItems from './components/Views/SoldItems/SoldItems';
 
 function App() {
   const storeData = useContext(storeContext);
@@ -19,7 +20,8 @@ function App() {
       <Switch>
         {/* <Route path="/auth/signin" component={SignIn} /> */}
         {/* <Route exact path="/" component={() => <Redirect to="/auth/signin" />} /> */}
-        <ProtectedRoute path="/inventory" component={() => <Inventory />} />
+        <ProtectedRoute path="/inventory" component={() => <Inventory {...storeData} />} />
+        <ProtectedRoute path="/reports/solditems" component={() => <SoldItems {...storeData} />} />
         <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
 
       </Switch>

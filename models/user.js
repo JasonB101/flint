@@ -37,6 +37,7 @@ const userSchema = new Schema({
         default: false
     },
     ebayToken: String
+
 })
 
 userSchema.pre("save", function (next) {

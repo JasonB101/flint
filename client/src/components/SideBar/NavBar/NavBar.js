@@ -18,10 +18,10 @@ const NavBar = (props) => {
                 </NavLink>,
                 <NavLink
                     key="sold"
-                    to="/reports/sold"
+                    to="/reports/solditems"
                     activeStyle={{
                         backgroundColor: "#353a42"
-                    }}>Sold<div className="spacer"></div>
+                    }}>Sold Items<div className="spacer"></div>
                 </NavLink>
             ]
         },

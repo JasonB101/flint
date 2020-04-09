@@ -1,15 +1,15 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./Inventory.module.scss";
 import InventoryTable from "./InventoryTable/InventoryTable"
 import NewItemModal from "./NewItemModal/NewItemModal";
 import LinkItemModal from "./InventoryTable/LinkItemModal/LinkItemModal";
 import Toolbar from "./Toolbar/Toolbar"
-import { storeContext } from "../../../Store"
 
 const Inventory = (props) => {
-    const storeData = useContext(storeContext);
-    const { items, submitNewItem, newListings, linkItem } = storeData;
-    const [itemsToShow, filterItems] = useState(items);
+    
+    const { items, submitNewItem, newListings, linkItem } = props;
+    const inventoryList = items.filter(x => x.status === "active");
+    const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
 
     // After this inventoryId is cleared, the link Modal will close.
@@ -23,9 +23,9 @@ const Inventory = (props) => {
 
     useEffect(() => {
         if (inventorySearchTerm === "") {
-            filterItems(items)
+            filterItems(inventoryList)
         } else {
-            filterItems(items.filter(x => {
+            filterItems(inventoryList.filter(x => {
                 const { item, partNo, sku } = x;
                 const conditionsArray = [item, partNo, sku];
                 return conditionsArray.some(j => j.toLowerCase().includes(inventorySearchTerm.toLowerCase()));
@@ -33,13 +33,13 @@ const Inventory = (props) => {
         }
 
 
-    }, [inventorySearchTerm, items]);
+    }, [inventorySearchTerm, inventoryList]);
     return (
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
                 searchTerm={inventorySearchTerm}
                 toggleModal={toggleNewItemModal} />
-            <InventoryTable openLinkModal={openLinkModal} items={itemsToShow} />
+            <InventoryTable openLinkModal={openLinkModal} inventoryList={itemsToShow} />
             {inventoryId && <LinkItemModal inventoryId={inventoryId}
                 linkItem={linkItem}
                 newListings={newListings}
