@@ -42,10 +42,21 @@ const inventoryItemSchema = new Schema({
         default: 0
     },
     dateSold: String,
-    shippingCost: Number,
+    shippingCost:{
+        type: Number,
+        default: 0
+    },
     ebayFees: Number,
     payPalFees: Number,
     profit: Number,
+    shipped: {
+        type: Boolean,
+        default: false
+    },
+    sold: {
+        type: Boolean,
+        default: false
+    },
     status:{
         type: String,
         default: "active"
@@ -54,8 +65,10 @@ const inventoryItemSchema = new Schema({
         //waste
     },
     imgUrl: String,
-    trackingNumber: {
-        type: String
+    trackingNumber: String,
+    buyer: {
+        type: Schema.Types.ObjectId,
+        ref: 'Buyer'
     },
     userId: {
         type: Schema.Types.ObjectId,

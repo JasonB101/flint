@@ -2,8 +2,13 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const buyerSchema = new Schema({
-    buyerId: { //<UserID>marcmoren_152</UserID>
+    username: { //<UserID>marcmoren_152</UserID>
         type: String,
+        required: true
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     buyerFirstName: String,
@@ -13,6 +18,10 @@ const buyerSchema = new Schema({
     feedbackPercent: Number,
     memberSince: String, //<RegistrationDate>2018-01-28T20:29:23.000Z</RegistrationDate>
     phone: String,
+    totalPurchases: {
+        type: Number,
+        default: 1
+    },
     shippingAddress: {
         name: String,
         street: String,

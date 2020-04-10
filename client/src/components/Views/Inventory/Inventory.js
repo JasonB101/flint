@@ -33,7 +33,7 @@ const Inventory = (props) => {
         }
 
 
-    }, [inventorySearchTerm, inventoryList]);
+    }, [inventorySearchTerm, items]);
     return (
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}

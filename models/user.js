@@ -36,6 +36,7 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    notifications: Array,
     ebayToken: String
 
 })

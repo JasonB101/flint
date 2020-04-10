@@ -5,6 +5,8 @@ const parseString = require('xml2js').parseString;
 const InventoryItem = require("../models/inventoryItem");
 const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
+
+const {saveBuyer} = require("../lib/buyerMethods")
 require("dotenv").config()
 
 syncRouter.get("/gettokenlink", async (req, res, next) => {
@@ -55,59 +57,6 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
     }
 
 
-})
-
-syncRouter.get("/getNewListings", async (req, res, next) => {
-    //Need to get this token req.user.ebayToken
-    const userInfo = await User.findById(req.user._id);
-    const user = userInfo.toObject();
-    const ebayAuthToken = user.ebayToken;
-
-    const queryString = `<?xml version="1.0" encoding="utf-8"?>
-    <GetMyeBaySellingRequest xmlns="urn:ebay:apis:eBLBaseComponents">
-      <RequesterCredentials>
-        <eBayAuthToken>${ebayAuthToken}</eBayAuthToken>
-      </RequesterCredentials>
-        <ErrorLanguage>en_US</ErrorLanguage>
-        <WarningLevel>High</WarningLevel>
-      <ActiveList>
-        <Sort>TimeLeft</Sort>
-        <Pagination>
-          <EntriesPerPage>200</EntriesPerPage>
-          <PageNumber>1</PageNumber>
-        </Pagination>
-      </ActiveList>
-    </GetMyeBaySellingRequest>`
-    // NEED TO REMEMBER, this will only send 200 active listings in one request. Need to setup a system for paganation.
-    const config = {
-        headers: {
-            'Content-Type': 'text/xml',
-            'X-EBAY-API-COMPATIBILITY-LEVEL': 967,
-            'X-EBAY-API-CALL-NAME': 'GetMyeBaySelling',
-            'X-EBAY-API-SITEID': 0
-        }
-    }
-
-    const ebayRequest = await axios.post(process.env.EBAY_API_URL, queryString, config);
-    const data = ebayRequest.data;
-
-    try {
-        parseString(data, { explicitArray: false, ignoreAttrs: true }, async function (err, result) {
-            if (err) res.status(500).send(err);
-            // console.log(result);
-            const ebayItems = result.GetMyeBaySellingResponse.ActiveList.ItemArray.Item;
-            const inventoryItems = await InventoryItem.find({ userId: req.user._id });
-            const ebayIds = inventoryItems.map(x => x.ebayId);
-            const newEbayListings = ebayItems.filter(x => {
-                return ebayIds.indexOf(x.ItemID) === -1
-            });
-
-            return res.status(200).send(newEbayListings)
-
-        })
-    } catch (e) {
-        return res.status(500).send(e)
-    }
 })
 
 syncRouter.put("/linkItem/:id", async (req, res, next) => {

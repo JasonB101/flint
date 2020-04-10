@@ -14,7 +14,8 @@ const SoldTable = (props) => {
     function populateRow(itemObject) {
         const { item, partNo, sku, datePurchased,
             dateSold, purchasePrice, priceSold, shippingCost,
-            ebayFees, payPalFees, profit, _id } = itemObject;
+            ebayFees, payPalFees, profit, _id, buyer } = itemObject;
+        const username = buyer.username;
         return (
             <tr key={_id}>
                 <td style={{ textAlign: "left" }}>{item}</td>
@@ -28,6 +29,7 @@ const SoldTable = (props) => {
                 <td>${ebayFees}</td>
                 <td>${payPalFees}</td>
                 <td>${profit}</td>
+                <td>{username}</td>
             </tr>
         )
     }
@@ -80,6 +82,7 @@ const SoldTable = (props) => {
                         <th>eBay Fees</th>
                         <th>PayPal Fees</th>
                         <th>Profit</th>
+                        <th>Buyer</th>
                     </tr>
                 </thead>
                 <tbody className={Styles.itesmList}>

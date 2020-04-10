@@ -23,8 +23,7 @@ const Store = (props) => {
     useEffect(() => {
         getInventoryItems();
         if (user.syncedWithEbay) {
-            //need to rename this and handle all ebay data not just listings.
-            getNewListings();
+            // getEbay();
         }
        
 
@@ -105,13 +104,15 @@ const Store = (props) => {
 
     }
 
-    function getNewListings() {
-        userAxios.get("/api/syncebay/getNewListings")
+    function getEbay() {
+        userAxios.get("/api/ebay/getebay")
             .then(result => {
-                setNewListings(result.data)
-                // console.log(result.data)
+                const data = result.data;
+                const { newListings, inventoryItems } = data;
+                changeItems(inventoryItems);
+                setNewListings(newListings);
             })
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
     }
 
     return (
@@ -120,7 +121,6 @@ const Store = (props) => {
             user,
             items,
             submitNewItem,
-            getNewListings,
             newListings,
             linkItem,
             syncWithEbay,
