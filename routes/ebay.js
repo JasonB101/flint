@@ -9,7 +9,8 @@ const {updateInventoryWithSales} = require("../lib/inventoryMethods")
 // NEED USE PAYPAL API TO GET SHIPPING COST getSaleInfo() in inventory methods.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
 //Sort array based on the purchase date. Update the first item in the array, on the next iteration that item will now be
-//set as "Sold" ;) Goodluck, ima play a video game :P
+//set as "Sold" ;) Goodluck, ima play a video game :P Need to think about how to filter between transactions that have been recorded
+//already. There may be more in inventory and the same part is counted more than once
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userId = req.user._id;
     const userInfo = await User.findById(userId);
