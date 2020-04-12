@@ -23,7 +23,7 @@ const Store = (props) => {
     useEffect(() => {
         getInventoryItems();
         if (user.syncedWithEbay) {
-            // getEbay();
+            getEbay();
         }
        
 

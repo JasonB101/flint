@@ -1,16 +1,17 @@
 const express = require("express");
 const ebayRouter = express.Router();
 const User = require("../models/user");
-const InventoryItem = require("../models/inventoryItem");
 const {getNewListings, getCompletedSales} = require("../lib/ebayMethods")
-const {updateInventoryWithSales} = require("../lib/inventoryMethods")
+const {updateInventoryWithSales, getInventoryItems} = require("../lib/inventoryMethods")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED USE PAYPAL API TO GET SHIPPING COST getSaleInfo() in inventory methods.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
 //Sort array based on the purchase date. Update the first item in the array, on the next iteration that item will now be
 //set as "Sold" ;) Goodluck, ima play a video game :P Need to think about how to filter between transactions that have been recorded
-//already. There may be more in inventory and the same part is counted more than once
+//already. There may be more in inventory and the same part is counted more than once. Save the transaction ID to the item
+//so when you retrieve transactions to merge, you filter the list by which transactions have not been merged. (I am your father)
+
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userId = req.user._id;
     const userInfo = await User.findById(userId);
@@ -19,7 +20,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     // const newListings = await getNewListings(ebayAuthToken, userId);
     const completedSales = await getCompletedSales(ebayAuthToken);
     const newSoldItems = await updateInventoryWithSales(userId, completedSales);
-    const inventoryItems = await InventoryItem.find({userId: userId})
+    const inventoryItems = await getInventoryItems(userId)
     const newListings = await getNewListings(ebayAuthToken, userId)
     const response = {
         newListings,

@@ -1,7 +1,7 @@
 const express = require("express")
 const inventoryRouter = express.Router()
+const { getInventoryItems } = require("../lib/inventoryMethods")
 const InventoryItem = require("../models/inventoryItem")
-const Buyer = require("../models/buyer")
 
 
 inventoryRouter.post("/", (req, res, next) => {
@@ -15,23 +15,13 @@ inventoryRouter.post("/", (req, res, next) => {
 })
 
 inventoryRouter.get("/", async (req, res, next) => {
+    const userId = req.user._id
     try {
-        const userId = req.user._id;
-        const inventoryList = await InventoryItem.find({ userId: userId }); //array
-        const buyers = await Buyer.find(); //array
-        const modifiedList = inventoryList.map(item => {
-            let buyer = buyers.find(x => {
-                return (String(x._id) === String(item.buyer) && String(x.userId) === String(userId))
-            })
-            if (buyer) {
-                item.buyer = buyer;
-            }
-            return item;
-        })
-        return res.send(modifiedList);
+        const items = await getInventoryItems(userId)
+        return res.send(items);
     } catch (e) {
         console.log(e)
-        return res.status(500).send({success: false, message: "Server Error"})
+        return res.status(500).send({ success: false, message: "Server Error" })
     }
 
 })
