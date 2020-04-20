@@ -8,11 +8,7 @@ import NavBar from "./NavBar/NavBar";
 
 const SideBar = (props) => {
 
-    const { syncWithEbay, user, login } = props;
-
-    function handleClick(e) {
-        syncWithEbay();
-    }
+    const { syncWithEbay, syncWithPayPal, user, login } = props;
 
     return (
         <div className={Styles.wrapper}>
@@ -22,8 +18,16 @@ const SideBar = (props) => {
             {
                 !user.syncedWithEbay &&
                 <div className={Styles.syncWrapper}>
-                    <Button onClick={handleClick}>Sync with eBay</Button>
+                    <Button onClick={() => syncWithEbay()}>Sync with eBay</Button>
                     <p>Sync your Flint account with your eBay account.</p>
+                </div>
+            }
+            <br></br>
+            {
+                !user.syncedWithPayPal &&
+                <div className={Styles.syncWrapper}>
+                    <Button onClick={() => syncWithPayPal()}>Sync with PayPal</Button>
+                    <p>Sync your Flint account with your PayPal account.</p>
                 </div>
             }
 

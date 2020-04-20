@@ -25,7 +25,7 @@ const Store = (props) => {
         if (user.syncedWithEbay) {
             getEbay();
         }
-       
+
 
     }, [user])
 
@@ -43,16 +43,6 @@ const Store = (props) => {
             })
     }
 
-    async function syncWithEbay() {
-        try {
-            const linkData = await userAxios.get("/api/syncebay/gettokenlink");
-            const link = linkData.data;
-            window.location=link;
-        } catch (err) {
-            console.log(err)
-            return null
-        }
-    }
 
     const logout = () => {
         localStorage.removeItem("user");
@@ -75,7 +65,7 @@ const Store = (props) => {
     }
 
     function linkItem(inventoryId, listingInfo) {
-        userAxios.put(`/api/syncebay/linkItem/${inventoryId}`, listingInfo).then(result => {
+        userAxios.put(`/api/ebay/linkItem/${inventoryId}`, listingInfo).then(result => {
             const success = result.data.success
 
             if (success) {
@@ -93,14 +83,39 @@ const Store = (props) => {
         )
 
     }
+    async function syncWithEbay() {
+        try {
+            const linkData = await userAxios.get("/api/syncebay/gettokenlink");
+            const link = linkData.data;
+            window.location = link;
+        } catch (err) {
+            console.log(err)
+            return null
+        }
+    }
+
+    async function syncWithPayPal() {
+        alert("Syncing now Jimmy....")
+    }
+
     function setEbayToken() {
         userAxios.post("/api/syncebay/setebaytoken")
-        .then(results => {
-            const data = results.data
-            if (data.success) {
-                setUser(data.user)
-            }
-        })
+            .then(results => {
+                const data = results.data
+                if (data.success) {
+                    setUser(data.user)
+                }
+            })
+
+    }
+    function setPayPalToken() {
+        // userAxios.post("/api/syncebay/setebaytoken")
+        // .then(results => {
+        //     const data = results.data
+        //     if (data.success) {
+        //         setUser(data.user)
+        //     }
+        // })
 
     }
 
@@ -124,6 +139,8 @@ const Store = (props) => {
             newListings,
             linkItem,
             syncWithEbay,
+            syncWithPayPal,
+            setPayPalToken,
             setEbayToken,
             login
         }} >

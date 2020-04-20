@@ -1,6 +1,7 @@
 const express = require("express");
 const ebayRouter = express.Router();
 const User = require("../models/user");
+const InventoryItem = require("../models/inventoryItem");
 const {getNewListings, getCompletedSales} = require("../lib/ebayMethods")
 const {updateInventoryWithSales, getInventoryItems} = require("../lib/inventoryMethods")
 
@@ -29,6 +30,41 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     }
     res.send(response);
 
+})
+
+ebayRouter.put("/linkItem/:id", async (req, res, next) => {
+    const { ItemID, BuyItNowPrice } = req.body;
+    console.log(req.body)
+    const user = await User.findById(req.user._id);
+    const userObject = user.toObject();
+    const { averageShippingCost } = userObject;
+    const item = await InventoryItem.findById(req.params.id);
+    const purchasePrice = item.toObject().purchasePrice;
+
+    const updatedInfo = {
+        listed: true,
+        ebayId: ItemID,
+        listedPrice: BuyItNowPrice,
+        expectedProfit: figureProfit(BuyItNowPrice, purchasePrice, averageShippingCost),
+        userId: req.user._id
+    }
+    InventoryItem.findByIdAndUpdate(req.params.id, updatedInfo, { new: true }, (err, updatedItem) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).send({ success: false, error: err })
+        }
+        res.send({ success: true, updatedItem })
+
+    })
+
+    function figureProfit(listedPrice, purchasePrice, averageShippingCost) {
+        console.log(listedPrice, averageShippingCost)
+        //Need to find a way to determine what tier the user is on, and how much their eBay fees are.
+        const payPalFee = listedPrice * 0.029 + 0.3;
+        const ebayFee = listedPrice * 0.1
+        //Need to get purchasePrice
+        return +(listedPrice - payPalFee - ebayFee - averageShippingCost - purchasePrice).toFixed(2);
+    }
 })
 
 

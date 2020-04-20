@@ -5,8 +5,6 @@ const parseString = require('xml2js').parseString;
 const InventoryItem = require("../models/inventoryItem");
 const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
-
-const {saveBuyer} = require("../lib/buyerMethods")
 require("dotenv").config()
 
 syncRouter.get("/gettokenlink", async (req, res, next) => {
@@ -57,41 +55,6 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
     }
 
 
-})
-
-syncRouter.put("/linkItem/:id", async (req, res, next) => {
-    const { ItemID, BuyItNowPrice } = req.body;
-    console.log(req.body)
-    const user = await User.findById(req.user._id);
-    const userObject = user.toObject();
-    const { averageShippingCost } = userObject;
-    const item = await InventoryItem.findById(req.params.id);
-    const purchasePrice = item.toObject().purchasePrice;
-
-    const updatedInfo = {
-        listed: true,
-        ebayId: ItemID,
-        listedPrice: BuyItNowPrice,
-        expectedProfit: figureProfit(BuyItNowPrice, purchasePrice, averageShippingCost),
-        userId: req.user._id
-    }
-    InventoryItem.findByIdAndUpdate(req.params.id, updatedInfo, { new: true }, (err, updatedItem) => {
-        if (err) {
-            console.log(err)
-            return res.status(500).send({ success: false, error: err })
-        }
-        res.send({ success: true, updatedItem })
-
-    })
-
-    function figureProfit(listedPrice, purchasePrice, averageShippingCost) {
-        console.log(listedPrice, averageShippingCost)
-        //Need to find a way to determine what tier the user is on, and how much their eBay fees are.
-        const payPalFee = listedPrice * 0.029 + 0.3;
-        const ebayFee = listedPrice * 0.1
-        //Need to get purchasePrice
-        return +(listedPrice - payPalFee - ebayFee - averageShippingCost - purchasePrice).toFixed(2);
-    }
 })
 
 syncRouter.post("/setebaytoken", async (req, res, next) => {

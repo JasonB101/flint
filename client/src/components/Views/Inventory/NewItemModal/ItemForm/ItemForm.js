@@ -59,7 +59,7 @@ const ItemForm = (props) => {
         </Form.Group>
         <Form.Group as={Col} controlId="formGridPurchaseLocation">
           <Form.Label>Purchase Location</Form.Label>
-          <Form.Control value={inputForm.purchaseLocation} name="purchaseLocation" onChange={handleChange} placeholder="" />
+          <Form.Control value={inputForm.purchaseLocation} name="purchaseLocation" required onChange={handleChange} placeholder="" />
         </Form.Group>
       </Form.Row>
 

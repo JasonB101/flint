@@ -36,8 +36,13 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    syncedWithPayPal: {
+        type: Boolean,
+        default: false
+    },
     notifications: Array,
-    ebayToken: String
+    ebayToken: String,
+    payPalToken: String,
 
 })
 
@@ -57,6 +62,7 @@ userSchema.methods.withoutSensitiveInfo = function () {
     delete user.email
     delete user.lname
     delete user.ebayToken
+    delete user.payPalToken
     return user
 }
 
