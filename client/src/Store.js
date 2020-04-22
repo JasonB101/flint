@@ -111,7 +111,7 @@ const Store = (props) => {
 
     }
     function setPayPalToken() {
-        userAxios.get("/api/syncpaypal/getAccessToken")
+        userAxios.get("/api/syncpaypal/setAccessToken")
         .then(results => {
             const data = results.data
             if (data.success) {

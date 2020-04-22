@@ -1,8 +1,13 @@
 const express = require("express");
 const syncPayPalRouter = express.Router();
-const {getAccessToken} = require("../lib/payPalMethods")
+const { setAccessToken } = require("../lib/payPalMethods")
 
-syncPayPalRouter.get("/getAccessToken", (req, res, next) => {
-    getAccessToken(req, res)
+syncPayPalRouter.get("/setAccessToken", async (req, res, next) => {
+    const data = await setAccessToken(req.user._id);
+    if (data.success) {
+        return res.send(data)
+    } else {
+        return res.status(500).send(data)
+    }
 })
 module.exports = syncPayPalRouter
