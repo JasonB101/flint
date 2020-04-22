@@ -23,15 +23,19 @@ const SoldTable = (props) => {
                 <td>{sku}</td>
                 <td>{datePurchased}</td>
                 <td>{dateSold}</td>
-                <td>${purchasePrice}</td>
-                <td>${priceSold}</td>
-                <td>${shippingCost}</td>
-                <td>${ebayFees}</td>
-                <td>${payPalFees}</td>
-                <td>${profit}</td>
+                <td>${valueToFixed(purchasePrice)}</td>
+                <td>${valueToFixed(priceSold)}</td>
+                <td>${valueToFixed(shippingCost)}</td>
+                <td>${valueToFixed(ebayFees)}</td>
+                <td>${valueToFixed(payPalFees)}</td>
+                <td>${valueToFixed(profit)}</td>
                 <td>{username}</td>
             </tr>
         )
+
+        function valueToFixed(value) {
+            return Number(value).toFixed(2);
+        }
     }
 
     function applySortingToDOM() {
