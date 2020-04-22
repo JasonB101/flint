@@ -7,11 +7,12 @@ import './global.scss';
 import Header from "./components/Header/Header"
 import SideBar from './components/SideBar/SideBar';
 import { storeContext } from "./Store"
+import VerifyPayPalToken from "./components/ServiceComponents/VerifyPayPalToken"
 import SoldItems from './components/Views/SoldItems/SoldItems';
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, syncWithPayPal, user, setEbayToken, login } = storeData;
+  const { syncWithEbay, setPayPalToken, syncWithPayPal, user, setEbayToken, login } = storeData;
 
   return (
     <div className="appWrapper">

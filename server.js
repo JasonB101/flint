@@ -18,6 +18,7 @@ app.use("/api", expressJWT({ secret: process.env.SECRET }));
 
 app.use("/api/inventoryItems", require("./routes/inventoryItems"))
 app.use("/api/syncebay", require("./routes/syncEbay"))
+app.use("/api/syncpaypal", require("./routes/syncPayPal"))
 app.use("/api/ebay", require("./routes/ebay"))
 app.use("/auth", require("./routes/auth"))
 

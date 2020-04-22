@@ -81,7 +81,7 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
                     EbayTokenSession.findByIdAndRemove(ebaySessionsId, (err, result) => {
                         if (err) console.log(err)
                     })
-                    return res.send({ success: true, user: result })
+                    return res.send({ success: true, user: result.withOutSensitiveInfo() })
                 })
             })
         } else {

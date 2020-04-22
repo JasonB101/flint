@@ -95,7 +95,9 @@ const Store = (props) => {
     }
 
     async function syncWithPayPal() {
-        alert("Syncing now Jimmy....")
+        //Eventually this will be a Permissions Flow, for right now, its only 1st person capable
+        //Wish eBay would fix their ish 
+        setPayPalToken()
     }
 
     function setEbayToken() {
@@ -109,13 +111,13 @@ const Store = (props) => {
 
     }
     function setPayPalToken() {
-        // userAxios.post("/api/syncebay/setebaytoken")
-        // .then(results => {
-        //     const data = results.data
-        //     if (data.success) {
-        //         setUser(data.user)
-        //     }
-        // })
+        userAxios.get("/api/syncpaypal/getAccessToken")
+        .then(results => {
+            const data = results.data
+            if (data.success) {
+                setUser(data.user)
+            }
+        })
 
     }
 
