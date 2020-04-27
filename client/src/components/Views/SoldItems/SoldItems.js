@@ -6,11 +6,10 @@ import Toolbar from "./Toolbar/Toolbar"
 const SoldItems = (props) => {
     
     const [soldItemsSearchTerm, changeSearchTerm] = useState("");
-    const soldItems = props.items.filter(x => x.status === "completed");
+    const soldItems = props.items.filter(x => x.sold === true);
     const [itemsToShow, filterItems] = useState(soldItems);
 
     useEffect(() => {
-        console.log("WEEEEEEEEEE")
         if (soldItemsSearchTerm === "") {
             filterItems(soldItems)
         } else {

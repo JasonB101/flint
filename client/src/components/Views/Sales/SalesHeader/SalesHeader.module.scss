@@ -1,0 +1,17 @@
+.wrapper {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+
+    h4 {
+        font-weight: normal;
+        margin: 0;
+    }
+
+    span {
+        font-size: 20px;
+        margin-left: 5px;
+        font-family: "Roboto:wght@100"
+    }
+}
