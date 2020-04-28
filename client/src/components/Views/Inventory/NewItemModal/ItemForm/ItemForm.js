@@ -5,12 +5,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const ItemForm = (props) => {
-  const { toggleModal, submitNewItem } = props;
+  const { toggleModal, submitNewItem, nextSku } = props;
   const [purchaseDate, changePurchaseDate] = useState(new Date())
   const [inputForm, setInput] = useState({
     item: "",
     partNo: "",
-    sku: "",
+    sku: nextSku,
     location: "",
     datePurchased: "",
     purchasePrice: "",

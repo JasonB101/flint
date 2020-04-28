@@ -4,9 +4,9 @@ import SalesHeader from "./SalesHeader/SalesHeader";
 
 const Sales = (props) => {
 
-    const { items } = props;
+    const { items, expenses } = props;
 
-    const salesInfo = assembleSalesInfo(items)
+    const salesInfo = assembleSalesInfo(items, expenses)
 
     return (
         <div className={Styles.wrapper}>
@@ -25,7 +25,7 @@ const Sales = (props) => {
             totalListed: 0
         }
 
-        //Once I add expenses I will be able to implement that into my YTD Profit
+        const expenseTotal = expenses[0] ? expenses.reduce((sum, x) => sum += x.amount, 0) : 0
         const info = items.reduce((salesInfo, x) => {
             if (x.sold) {
                 salesInfo.YTDProfit += x.profit;
@@ -41,7 +41,8 @@ const Sales = (props) => {
 
             return salesInfo;
         }, salesObj);
-
+        console.log(expenseTotal)
+        info.YTDProfit = info.YTDProfit - expenseTotal;
         return info
     }
 }

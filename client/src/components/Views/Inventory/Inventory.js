@@ -6,11 +6,17 @@ import LinkItemModal from "./InventoryTable/LinkItemModal/LinkItemModal";
 import Toolbar from "./Toolbar/Toolbar"
 
 const Inventory = (props) => {
-    
+
     const { items, submitNewItem, newListings, linkItem } = props;
-    const inventoryList = items.filter(x => x.status === "active");
+    const [inventoryList] = useState(items.filter(x => x.status === "active"))
     const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
+    const nextSku = items.reduce((highest, x) => {
+        if (+x.sku > highest) {
+            highest = +x.sku
+        }
+        return highest;
+    }, 0) + 1;
 
     // After this inventoryId is cleared, the link Modal will close.
     const [inventoryId, setInventoryId] = useState("");
@@ -33,7 +39,7 @@ const Inventory = (props) => {
         }
 
 
-    }, [inventorySearchTerm, items]);
+    }, [inventorySearchTerm, inventoryList]);
     return (
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
@@ -44,10 +50,11 @@ const Inventory = (props) => {
                 linkItem={linkItem}
                 newListings={newListings}
                 setInventoryId={setInventoryId} />}
-            {showNewItemModal && <NewItemModal submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} />}
+            {showNewItemModal && <NewItemModal nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} />}
         </div>
     );
 }
+
 
 
 export default Inventory;

@@ -1,10 +1,10 @@
 import React from "react";
 import { Modal} from "react-bootstrap"
-import ItemForm from "./ItemForm/ItemForm"
-import Styles from "./NewItemModal.module.scss";
+import ExpenseForm from "./ExpenseForm/ExpenseForm"
+import Styles from "./NewExpenseModal.module.scss";
 
 const NewItemModal = (props) => {
-    const {toggleModal, submitNewItem, nextSku} = props;
+    const {toggleModal, submitNewExpense} = props;
     return (
         <div className={Styles.modalWrapper}>
             <Modal.Dialog>
@@ -13,7 +13,7 @@ const NewItemModal = (props) => {
                 </Modal.Header>
 
                 <Modal.Body>
-                    <ItemForm nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleModal}/>
+                    <ExpenseForm {...{toggleModal, submitNewExpense}}/>
                 </Modal.Body>
 
             </Modal.Dialog>

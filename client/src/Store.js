@@ -16,12 +16,14 @@ const Store = (props) => {
     //change initial value of user to empty object
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
     const [items, changeItems] = useState([]);
+    const [expenses, setExpenses] = useState([])
     const [newListings, setNewListings] = useState([]);
 
 
 
     useEffect(() => {
         getInventoryItems();
+        getExpenses();
         if (user.syncedWithEbay) {
             getEbay();
         }
@@ -53,8 +55,15 @@ const Store = (props) => {
     function submitNewItem(form) {
         userAxios.post("/api/inventoryItems", form)
             .then(result => {
-                console.log(result.data)
                 changeItems([...items, result.data.item])
+            })
+            .catch(err => console.log(err))
+    }
+
+    function submitNewExpense(form){
+        userAxios.post("/api/expense/addexpense", form)
+            .then(result => {
+                setExpenses([...expenses, result.data.expense])
             })
             .catch(err => console.log(err))
     }
@@ -62,6 +71,12 @@ const Store = (props) => {
     function getInventoryItems() {
         userAxios.get("/api/inventoryItems")
             .then(result => changeItems(result.data))
+    }
+    function getExpenses() {
+        userAxios.get("/api/expense")
+        .then(result => {
+            setExpenses(result.data)
+        })
     }
 
     function linkItem(inventoryId, listingInfo) {
@@ -138,13 +153,15 @@ const Store = (props) => {
             user,
             items,
             submitNewItem,
+            submitNewExpense,
             newListings,
             linkItem,
             syncWithEbay,
             syncWithPayPal,
             setPayPalToken,
             setEbayToken,
-            login
+            login,
+            expenses
         }} >
             {props.children}
         </storeContext.Provider >

@@ -19,7 +19,7 @@ const SoldItems = (props) => {
                 return conditionsArray.some(j => j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()));
             }))
         }
-    }, [soldItemsSearchTerm])
+    }, [soldItemsSearchTerm, soldItems])
     
 
     return (

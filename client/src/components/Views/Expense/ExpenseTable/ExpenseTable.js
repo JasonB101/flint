@@ -1,27 +1,24 @@
 import React, { useEffect } from "react";
-import { Button } from "react-bootstrap";
-import Styles from "./InventoryTable.module.scss";
+import Styles from "./ExpenseTable.module.scss";
 import { Table } from "react-bootstrap";
-import getDaysSince from "../../../../lib/getDaysSince"
 import $ from "jquery"
 
-const InventoryTable = (props) => {
-    const inventoryItems = props.inventoryList;
+const ExpenseTable = (props) => {
+    const { expenses} = props
     const currencyFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
     });
-    const items = inventoryItems.map(x => populateRow(x));
-    const { openLinkModal } = props;
-    
 
     useEffect(() => {
         applySortingToDOM()
-    }, [inventoryItems])
+    }, [expenses])
+
+    const expenseList = expenses.map(x => populateRow(x));
 
     function applySortingToDOM() {
-         //borrowed from stackoverflow added some sugar
-         $('th').click(function () {
+        //borrowed from stackoverflow added some sugar
+        $('th').click(function () {
             var table = $(this).parents('table').eq(0)
             var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
             this.asc = !this.asc
@@ -51,20 +48,14 @@ const InventoryTable = (props) => {
         function getCellValue(row, index) { return $(row).children('td').eq(index).text() }
     }
 
-    function populateRow(itemObject) {
-        const { listed, item, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit } = itemObject;
+    function populateRow(expenseObject) {
+        const { title, date, _id, amount } = expenseObject;
         return (
 
             <tr key={_id}>
-                <td style={{ textAlign: "left" }}>{item}</td>
-                <td>{partNo || "n/a"}</td>
-                <td>{sku || "n/a"}</td>
-                <td>{location || "n/a"}</td>
-                <td>{getDaysSince(datePurchased)}</td>
-                <td>{currencyFormatter.format(purchasePrice)}</td>
-                <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id)}
-                >Link Item</Button>}</td>
-                <td>{currencyFormatter.format(expectedProfit)}</td>
+                <td style={{ textAlign: "left" }}>{title}</td>
+                <td>{date}</td>
+                <td>{currencyFormatter.format(amount)}</td>
             </tr>
         )
     }
@@ -73,22 +64,17 @@ const InventoryTable = (props) => {
             <Table striped bordered responsive hover>
                 <thead>
                     <tr>
-                        <th>Item</th>
-                        <th>Part No</th>
-                        <th>SKU</th>
-                        <th>Location</th>
-                        <th>Days in Inventory</th>
-                        <th>Purchase Price</th>
-                        <th>Listed Price</th>
-                        <th>Expected Profit</th>
+                        <th>Title</th>
+                        <th>Date of Expense</th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
-                <tbody className={Styles.itemsList}>
-                    {items}
+                <tbody className={Styles.expenseList}>
+                    {expenseList}
                 </tbody>
             </Table>
         </div>
     );
 }
 
-export default InventoryTable;
+export default ExpenseTable;

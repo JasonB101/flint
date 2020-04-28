@@ -10,10 +10,11 @@ import SideBar from './components/SideBar/SideBar';
 import { storeContext } from "./Store"
 import VerifyPayPalToken from "./components/ServiceComponents/VerifyPayPalToken"
 import SoldItems from './components/Views/SoldItems/SoldItems';
+import Expense from "./components/Views/Expense/Expense"
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, setPayPalToken, syncWithPayPal, user, setEbayToken, login } = storeData;
+  const { syncWithEbay, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense } = storeData;
 
   return (
     <div className="appWrapper">
@@ -23,6 +24,7 @@ function App() {
         {/* <Route path="/auth/signin" component={SignIn} /> */}
         {/* <Route exact path="/" component={() => <Redirect to="/auth/signin" />} /> */}
         <ProtectedRoute path="/inventory" component={() => <Inventory {...storeData} />} />
+        <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} submitNewExpense={submitNewExpense} />} />
         <ProtectedRoute path="/reports/sales" component={() => <Sales {...storeData} />} />
         <ProtectedRoute path="/reports/solditems" component={() => <SoldItems {...storeData} />} />
         <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
