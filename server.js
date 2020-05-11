@@ -27,7 +27,7 @@ app.use("/auth", require("./routes/auth"))
 mongoose.set('useCreateIndex', true)
 mongoose.set('useFindAndModify', false);
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect(process.env.MONGODB_URI,{
+mongoose.connect(process.env.MONGOLAB_CYAN_URI,{
     useNewUrlParser: true
 }, ((err) => {
     if (err) throw (err)
