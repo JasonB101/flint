@@ -82,7 +82,7 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
                         if (err) console.log(err)
                     })
 //Major security flaw. After ebay is synced, it returns the user object with sensitive info. Need to return\
-                    const user = await User.findById(result._id)
+                    const user = await User.findOne({_id: result._id})
                     return res.send({ success: true, user: user.withOutSensitiveInfo() })
                 })
             })
