@@ -3,12 +3,9 @@ const app = express()
 const morgan = require("morgan")
 const mongoose = require("mongoose")
 require("dotenv").config()
-const PORT = 5000
+const PORT = process.env.PORT || 3825
 const path = require("path")
 const expressJWT = require("express-jwt")
-
-const path = require('path');
-app.use(express.static(path.join(__dirname, 'client/build')))
 
 app.use(express.json())
 app.use(morgan('dev'))
