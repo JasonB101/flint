@@ -6,7 +6,7 @@ const SideBarHeader = (props) => {
     const {login} = props
     return (
         <div className={Styles.wrapper}
-        onClick={() =>  login({ email: "ebay", password: "ebay" })}>
+        onClick={() =>  login({ email: "jason.brown91@outlook.com", password: "Wtf10101" })}>
             <img className={Styles.logo} src={flintLogo} alt="logo"/>
         </div>
     );
