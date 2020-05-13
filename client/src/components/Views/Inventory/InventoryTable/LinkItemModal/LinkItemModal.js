@@ -22,7 +22,6 @@ const LinkItemModal = (props) => {
             <div className={Styles.detailsWrapper}>
                 <p key={ItemID}>{Title}</p>
                 <p>SKU: <span>{SKU || ""}</span></p>
-                <p>Part No: <span>{PartNo || ""}</span></p>
                 <p>Listed For: <span>{currencyFormatter.format(BuyItNowPrice)}</span></p>
             </div>
         </div>)
