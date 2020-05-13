@@ -16,7 +16,7 @@ const LinkItemModal = (props) => {
       });
 
     const listings = newListings.map(ebayObject => {
-        const { BuyItNowPrice, ItemID, Title, PictureDetails: { GalleryURL } } = ebayObject
+        const { BuyItNowPrice, SKU, ItemID, Title, PictureDetails: { GalleryURL } } = ebayObject
         return (<div onClick={() => handleClick(inventoryId, ebayObject)} key={ItemID} className={Styles.ebayItemWrapper}>
             <img src={GalleryURL} alt="Ebay Item" />
             <div className={Styles.detailsWrapper}>
