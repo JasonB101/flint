@@ -23,8 +23,8 @@ const Inventory = (props) => {
 
     const [inventorySearchTerm, changeSearchTerm] = useState("");
 
-    function openLinkModal(id) {
-        setInventoryId(id);
+    function openLinkModal(id, sku) {
+        setInventoryId({id, sku});
     }
 
     useEffect(() => {

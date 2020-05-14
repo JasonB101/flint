@@ -62,7 +62,7 @@ const InventoryTable = (props) => {
                 <td>{location || "n/a"}</td>
                 <td>{getDaysSince(datePurchased)}</td>
                 <td>{currencyFormatter.format(purchasePrice)}</td>
-                <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id)}
+                <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id, sku)}
                 >Link Item</Button>}</td>
                 <td>{currencyFormatter.format(expectedProfit)}</td>
             </tr>

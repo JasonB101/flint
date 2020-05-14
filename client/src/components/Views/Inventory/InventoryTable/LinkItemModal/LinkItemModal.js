@@ -3,19 +3,20 @@ import { Modal } from "react-bootstrap";
 import Styles from "./LinkItemModal.module.scss";
 
 const LinkItemModal = (props) => {
-    const { inventoryId, linkItem, setInventoryId, newListings, SKU, PartNo } = props;
+    const { inventoryId, linkItem, setInventoryId, newListings} = props;
     
-    // linkItem(inventoryId, listingInfo)
+    //inventoryId is {id: ###, sku: ###}
+
     function handleClick(inventoryId, listingInfo){
-        linkItem(inventoryId, listingInfo)
+        linkItem(inventoryId.id, listingInfo)
     }
 
     var currencyFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
       });
-
-    const listings = newListings.map(ebayObject => {
+    const sortedListings = newListings.sort((a, b) => a.SKU == inventoryId.sku ? -1 : b.SKU == inventoryId.sku ? 1 : 0)
+    const listings = sortedListings.map(ebayObject => {
         const { BuyItNowPrice, SKU, ItemID, Title, PictureDetails: { GalleryURL } } = ebayObject
         return (<div onClick={() => handleClick(inventoryId, ebayObject)} key={ItemID} className={Styles.ebayItemWrapper}>
             <img src={GalleryURL} alt="Ebay Item" />
@@ -26,6 +27,7 @@ const LinkItemModal = (props) => {
             </div>
         </div>)
     })
+
     return (
         <div id="outsidePartentDiv" className={Styles.modalWrapper} onClick={(e) => {
 

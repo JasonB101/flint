@@ -3,7 +3,7 @@ const ebayRouter = express.Router();
 const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
 const {getNewListings, getCompletedSales} = require("../lib/ebayMethods")
-const {updateInventoryWithSales, getInventoryItems} = require("../lib/inventoryMethods")
+const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost} = require("../lib/inventoryMethods")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED USE PAYPAL API TO GET SHIPPING COST getSaleInfo() in inventory methods.
@@ -19,6 +19,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     const user = userInfo.toObject();
     const ebayAuthToken = user.ebayToken;
     // const newListings = await getNewListings(ebayAuthToken, userId);
+    updateAllZeroShippingCost(userId)
     const completedSales = await getCompletedSales(ebayAuthToken);
     const newSoldItems = await updateInventoryWithSales(userId, completedSales);
     const inventoryItems = await getInventoryItems(userId)
