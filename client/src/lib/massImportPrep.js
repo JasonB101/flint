@@ -62,4 +62,4 @@ function currencyToNum(string) {
     return +string.replace("$", "")
 }
 
-module.exports = prepItemsForImport
+export default prepItemsForImport;
