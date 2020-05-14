@@ -1,0 +1,8 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    grid-area: vv;
+    height: calc(100vh - 90px);
+    background: rgb(250, 250, 250);
+}

@@ -1,7 +1,9 @@
-import React, { createContext, useState, useEffect } from 'react'
-import axios from "axios"
-const authAxios = axios.create()
+import React, { createContext, useState, useEffect } from 'react';
+import axios from "axios";
+import prepItemsForImport from "./lib/massImportPrep"
+const authAxios = axios.create();
 const userAxios = axios.create();
+const { readFile } = require("./lib/readAndParseCVS")
 export const storeContext = createContext({});
 
 userAxios.interceptors.request.use((config) => {
@@ -60,7 +62,8 @@ const Store = (props) => {
             .catch(err => console.log(err))
     }
 
-    function submitNewExpense(form){
+
+    function submitNewExpense(form) {
         userAxios.post("/api/expense/addexpense", form)
             .then(result => {
                 setExpenses([...expenses, result.data.expense])
@@ -74,9 +77,9 @@ const Store = (props) => {
     }
     function getExpenses() {
         userAxios.get("/api/expense")
-        .then(result => {
-            setExpenses(result.data)
-        })
+            .then(result => {
+                setExpenses(result.data)
+            })
     }
 
     function linkItem(inventoryId, listingInfo) {
@@ -127,12 +130,12 @@ const Store = (props) => {
     }
     function setPayPalToken() {
         userAxios.get("/api/syncpaypal/setAccessToken")
-        .then(results => {
-            const data = results.data
-            if (data.success) {
-                setUser(data.user)
-            }
-        })
+            .then(results => {
+                const data = results.data
+                if (data.success) {
+                    setUser(data.user)
+                }
+            })
 
     }
 
@@ -145,6 +148,12 @@ const Store = (props) => {
                 setNewListings(newListings);
             })
             .catch(err => console.log(err))
+    }
+
+    async function importItemsFromCVS(file) {
+        let items = await readFile(file);
+        let preppedItems = prepItemsForImport(items);
+        preppedItems.forEach(x => submitNewItem(x));
     }
 
     return (
@@ -161,7 +170,8 @@ const Store = (props) => {
             setPayPalToken,
             setEbayToken,
             login,
-            expenses
+            expenses,
+            importItemsFromCVS
         }} >
             {props.children}
         </storeContext.Provider >

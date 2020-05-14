@@ -14,12 +14,12 @@ import Expense from "./components/Views/Expense/Expense"
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense } = storeData;
+  const { syncWithEbay, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS } = storeData;
 
   return (
     <div className="appWrapper">
       <Header />
-      <SideBar login={login} syncWithPayPal={syncWithPayPal} syncWithEbay={syncWithEbay} user={user}/>
+      <SideBar importItemsFromCVS={importItemsFromCVS} login={login} syncWithPayPal={syncWithPayPal} syncWithEbay={syncWithEbay} user={user}/>
       <Switch>
         {/* <Route path="/auth/signin" component={SignIn} /> */}
         {/* <Route exact path="/" component={() => <Redirect to="/auth/signin" />} /> */}

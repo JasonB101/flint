@@ -15,7 +15,7 @@ const SoldTable = (props) => {
         const { item, partNo, sku, datePurchased,
             dateSold, purchasePrice, priceSold, shippingCost,
             ebayFees, payPalFees, profit, _id, buyer } = itemObject;
-        const username = buyer.username;
+        const username = buyer ? buyer.username : "Unknown";
         return (
             <tr key={_id}>
                 <td style={{ textAlign: "left" }}>{item}</td>
@@ -71,7 +71,6 @@ const SoldTable = (props) => {
     }
     return (
         <div className={Styles.wrapper}>
-
             <Table striped bordered responsive hover>
                 <thead>
                     <tr>

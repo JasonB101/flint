@@ -18,11 +18,14 @@
 
     td {
         text-align: center;
+        vertical-align: middle !important;
+        padding: 3px 10px !important;
+
     }
 
     td {
         border: 1px solid rgba(0, 0, 0, 0.2);
-        padding: 5px 3px;
+        // padding: 5px 3px;
     }
 
     th {
@@ -52,6 +55,8 @@
         button {
             max-height: 30px;
             font-size: 12px;
+            text-align: center;
+            vertical-align: middle !important;
         }
 
     }

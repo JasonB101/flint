@@ -16,13 +16,11 @@
 
     }
 
-    td {
-        text-align: center;
-    }
 
     td {
+        text-align: center;
+        vertical-align: middle !important;
         border: 1px solid rgba(0, 0, 0, 0.2);
-        padding: 5px 3px;
     }
 
     th {
