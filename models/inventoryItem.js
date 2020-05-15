@@ -33,10 +33,6 @@ const inventoryItemSchema = new Schema({
         type: Number,
         default: 0
     },
-    expectedProfit: {
-        type: Number,
-        default: 0
-    },
     priceSold: {
         type: String,
         default: 0
