@@ -35,6 +35,7 @@ const Sales = (props) => {
             } else {
                 salesInfo.activeSales[0] += x.listedPrice;
                 salesInfo.activeSales[1] += x.expectedProfit;
+                salesInfo.YTDProfit -= x.purchasePrice;
                 salesInfo.totalListed++
                 
             }

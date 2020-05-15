@@ -13,6 +13,7 @@ const SideBar = (props) => {
     return (
         <div className={Styles.wrapper}>
             <SideBarHeader login={login} />
+            
             <NavBar />
             <div className="spacer"></div>
             {

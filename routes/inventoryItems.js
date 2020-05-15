@@ -5,6 +5,8 @@ const InventoryItem = require("../models/inventoryItem")
 
 
 inventoryRouter.post("/", (req, res, next) => {
+    //Check to see if it needs to be listed. If so, send it through a listing route.
+    
     let inventoryItem = new InventoryItem(req.body);
     inventoryItem.userId = req.user._id;
     inventoryItem.save((err, item) => {

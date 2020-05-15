@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const ItemForm = (props) => {
-  const { toggleModal, submitNewItem, nextSku } = props;
+  const { toggleModal, setAndToggleForm, nextSku } = props;
   const [purchaseDate, changePurchaseDate] = useState(new Date())
   const [inputForm, setInput] = useState({
     item: "",
@@ -24,22 +24,14 @@ const ItemForm = (props) => {
     })
   }
 
-  function saveChanges(e) {
+  function moveToNext(e) {
     let form = inputForm;
     form.datePurchased = purchaseDate.toLocaleDateString();
-    submitNewItem(form)
-    toggleModal(false)
+    setAndToggleForm(form)
   }
 
   return (
-    <Form onSubmit={saveChanges}>
-      <Form.Row>
-        <Form.Group as={Col} controlId="formGridItemName">
-          <Form.Label>Item Name</Form.Label>
-          <Form.Control value={inputForm.item} name="item" onChange={(e) => handleChange(e)} required placeholder="" />
-        </Form.Group>
-      </Form.Row>
-
+    <Form onSubmit={moveToNext}>
       <Form.Row>
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
@@ -75,10 +67,9 @@ const ItemForm = (props) => {
         </Form.Group>
       </Form.Row>
 
-
       <Modal.Footer>
         <Button onClick={() => toggleModal(false)} variant="secondary">Close</Button>
-        <Button type="submit" variant="primary">Save changes</Button>
+        <Button type="submit" variant="primary">{"Next\t>"}</Button>
       </Modal.Footer>
     </Form>
 
