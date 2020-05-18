@@ -52,7 +52,7 @@ const SignIn = (props) => {
             <div className={Styles.signInBox}>
                 <div className={Styles.title}>
                     <img alt="logo" src={flintLogo} />
-                    <h2>Sign In</h2>
+                    <h2>Login</h2>
                 </div>
                 <Form onSubmit={handleSubmit}>
                     <Form.Row>
