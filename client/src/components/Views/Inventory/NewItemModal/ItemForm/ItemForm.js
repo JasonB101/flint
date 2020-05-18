@@ -19,12 +19,12 @@ const ItemForm = (props) => {
   const handleChange = (e) => {
     setInput({
       ...inputForm,
-      [e.target.name]: e.target.value
+      [e.target.name]: isNaN(+e.target.value) ? e.target.value : +e.target.value
     })
   }
 
-  function moveToNext(e) {
-    let form = inputForm;
+  function moveToNext() {
+    let form = {...inputForm};
     form.datePurchased = purchaseDate.toLocaleDateString();
     setAndToggleForm(form)
   }

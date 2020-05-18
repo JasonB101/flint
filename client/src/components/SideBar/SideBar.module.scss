@@ -32,5 +32,17 @@
             margin-bottom: 10px;
         }
     }
+
+    .cvsImportBox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+        & * {
+            margin: 0;
+            width: fit-content;
+            max-width: 250px;
+        }
+    }
     
 }

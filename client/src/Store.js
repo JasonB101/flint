@@ -24,13 +24,13 @@ const Store = (props) => {
 
 
     useEffect(() => {
-        getInventoryItems();
-        getExpenses();
-        if (user.syncedWithEbay) {
-            getEbay();
+        if (user.token) {
+            getInventoryItems();
+            getExpenses();
+            if (user.syncedWithEbay) {
+                getEbay();
+            }
         }
-
-
     }, [user])
 
 
@@ -61,7 +61,13 @@ const Store = (props) => {
             })
             .catch(err => console.log(err))
     }
-
+    function submitMassImport(form) {
+        userAxios.post("/api/inventoryItems//massImport", form)
+            .then(result => {
+                changeItems([...items, result.data.item])
+            })
+            .catch(err => console.log(err))
+    }
 
     function submitNewExpense(form) {
         userAxios.post("/api/expense/addexpense", form)
@@ -153,7 +159,7 @@ const Store = (props) => {
     async function importItemsFromCVS(file) {
         let items = await readFile(file);
         let preppedItems = prepItemsForImport(items);
-        preppedItems.forEach(x => submitNewItem(x));
+        preppedItems.forEach(x => submitMassImport(x));
     }
 
     return (
@@ -171,7 +177,8 @@ const Store = (props) => {
             setEbayToken,
             login,
             expenses,
-            importItemsFromCVS
+            importItemsFromCVS,
+            logout
         }} >
             {props.children}
         </storeContext.Provider >

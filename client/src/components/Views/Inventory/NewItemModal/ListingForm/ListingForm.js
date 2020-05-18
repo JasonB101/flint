@@ -21,7 +21,7 @@ const ListingForm = (props) => {
     const handleChange = (e) => {
         setInput({
             ...inputForm,
-            [e.target.name]: e.target.value
+            [e.target.name]: isNaN(+e.target.value) ? e.target.value : +e.target.value
         })
     }
 
@@ -58,8 +58,8 @@ const ListingForm = (props) => {
     }
 
     function saveChanges(e) {
-        let form = inputForm;
-        submitNewItem({ ebayForm: form, newItemForm: itemForm })
+        let ebayForm = inputForm;
+        submitNewItem({ ...ebayForm, ...itemForm})
         toggleModal(false)
     }
 
