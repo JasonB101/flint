@@ -16,7 +16,7 @@ const readUploadedFileAsText = (inputFile) => {
     });
   };
   
-  async function readFile(file){  
+  const readFile = async (file) => {  
     try {
       const fileContents = await readUploadedFileAsText(file);
       return Papa.parse(fileContents, { header: true }).data
@@ -25,6 +25,4 @@ const readUploadedFileAsText = (inputFile) => {
     }
   }
 
-module.exports = {
-    readFile
-}
+export default readFile
