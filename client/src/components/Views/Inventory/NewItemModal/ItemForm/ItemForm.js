@@ -8,7 +8,6 @@ const ItemForm = (props) => {
   const { toggleModal, setAndToggleForm, nextSku } = props;
   const [purchaseDate, changePurchaseDate] = useState(new Date())
   const [inputForm, setInput] = useState({
-    item: "",
     partNo: "",
     sku: nextSku,
     location: "",

@@ -68,7 +68,7 @@ const ListingForm = (props) => {
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridTitle">
                     <Form.Label>Title</Form.Label>
-                    <Form.Control value={inputForm.title} name="title" onChange={handleChange} placeholder="" />
+                    <Form.Control required value={inputForm.title} name="title" onChange={handleChange} placeholder="" />
                 </Form.Group>
             </Form.Row>
             <Form.Label>Condition</Form.Label>
@@ -102,7 +102,7 @@ const ListingForm = (props) => {
                     </Form.Control>
                 </Form.Group>
                 <Form.Group md={4} as={Col} controlId="formGridCategoryId">
-                    <Form.Control value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
+                    <Form.Control required value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
                 </Form.Group>
             </Form.Row>
 
@@ -126,7 +126,7 @@ const ListingForm = (props) => {
             <Form.Label>Money</Form.Label>
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridListPrice">
-                    <Form.Control value={inputForm.listPrice} name="listPrice" onChange={handleChange} placeholder="List Price" />
+                    <Form.Control required value={inputForm.listPrice} name="listPrice" onChange={handleChange} placeholder="List Price" />
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="formGridAcceptOfferHigh">

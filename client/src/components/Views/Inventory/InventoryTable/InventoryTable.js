@@ -52,11 +52,11 @@ const InventoryTable = (props) => {
     }
 
     function populateRow(itemObject) {
-        const { listed, item, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit } = itemObject;
+        const { listed, title, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit } = itemObject;
         return (
 
             <tr key={_id}>
-                <td style={{ textAlign: "left" }}>{item}</td>
+                <td style={{ textAlign: "left" }}>{title}</td>
                 <td>{partNo || "n/a"}</td>
                 <td>{sku || "n/a"}</td>
                 <td>{location || "n/a"}</td>
@@ -73,7 +73,7 @@ const InventoryTable = (props) => {
             <Table striped bordered responsive hover>
                 <thead>
                     <tr>
-                        <th>Item</th>
+                        <th>Title</th>
                         <th>Part No</th>
                         <th>SKU</th>
                         <th>Location</th>

@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const inventoryItemSchema = new Schema({
-    item: {
+    title: {
         type: String,
         required: true
     },
@@ -30,6 +30,10 @@ const inventoryItemSchema = new Schema({
         required: true
     },
     listedPrice: {
+        type: Number,
+        default: 0
+    },
+    expectedProfit: {
         type: Number,
         default: 0
     },

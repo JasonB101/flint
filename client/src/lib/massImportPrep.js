@@ -8,14 +8,14 @@ function prepItemsForImport(items) {
 }
 
 function soldItemParse(item) {
-    let { DatePurchased, DateSold, Item, PartNo, PayPalFees, PriceSold, PurchasePrice, SKU, Shipping, eBayFees } = item;
+    let { DatePurchased, DateSold, Title, PartNo, PayPalFees, PriceSold, PurchasePrice, SKU, Shipping, eBayFees } = item;
     PriceSold = currencyToNum(PriceSold);
     PayPalFees = currencyToNum(PayPalFees);
     eBayFees = currencyToNum(eBayFees);
     PurchasePrice = currencyToNum(PurchasePrice);
     Shipping = currencyToNum(Shipping)
     let form = {
-        item: Item,
+        title: Title,
         partNo: PartNo,
         sku: SKU,
         datePurchased: modifyDate(DatePurchased),
@@ -36,9 +36,9 @@ function soldItemParse(item) {
 }
 
 function activeItemParse(item) {
-    const { DatePurchased, Item, PartNo, PurchasePrice, SKU } = item
+    const { DatePurchased, Title, PartNo, PurchasePrice, SKU } = item
     let form = {
-        item: Item,
+        title: Title,
         partNo: PartNo,
         sku: SKU,
         datePurchased: modifyDate(DatePurchased),
