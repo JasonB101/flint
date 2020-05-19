@@ -109,7 +109,7 @@ const ListingForm = (props) => {
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridDescription">
                     <Form.Label>Item Description</Form.Label>
-                    <Form.Control as="textarea" rows="6" value={inputForm.description} name="description" onChange={handleChange} />
+                    <Form.Control as="textarea" rows="6" value={inputForm.description} name="description" onChange={handleChange} placeholder="Item Specifics"/>
                 </Form.Group>
             </Form.Row>
 
