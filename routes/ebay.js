@@ -4,7 +4,7 @@ const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
 const {updateSellerAvgShipping} = require("../lib/userMethods")
 const {getNewListings, getCompletedSales} = require("../lib/ebayMethods")
-const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost} = require("../lib/inventoryMethods")
+const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, figureProfit} = require("../lib/inventoryMethods")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -59,14 +59,6 @@ ebayRouter.put("/linkItem/:id", async (req, res, next) => {
 
     })
 
-    function figureProfit(listedPrice, purchasePrice, averageShippingCost) {
-        console.log(listedPrice, averageShippingCost)
-        //Need to find a way to determine what tier the user is on, and how much their eBay fees are.
-        const payPalFee = listedPrice * 0.029 + 0.3;
-        const ebayFee = listedPrice * 0.1
-        //Need to get purchasePrice
-        return +(listedPrice - payPalFee - ebayFee - averageShippingCost - purchasePrice).toFixed(2);
-    }
 })
 
 

@@ -1,23 +1,33 @@
-const express = require("express")
-const inventoryRouter = express.Router()
-const { getInventoryItems } = require("../lib/inventoryMethods")
-const InventoryItem = require("../models/inventoryItem")
+const express = require("express");
+const inventoryRouter = express.Router();
+const { getInventoryItems, figureProfit} = require("../lib/inventoryMethods");
+const { createListing } = require("../lib/ebayMethods");
+const InventoryItem = require("../models/inventoryItem");
+const User = require("../models/user");
 
 
-inventoryRouter.post("/", (req, res, next) => {
-    console.log(req.body)
-    // let inventoryItem = new InventoryItem(req.body);
-    // inventoryItem.userId = req.user._id;
-    // inventoryItem.save((err, item) => {
-    //     if (err) {
-    //         console.log(err.message)
-    //         console.log(req.body)
-    //         return res.status(500).send({success: false})
-    //     }
-    //     else res.send({ success: true, item })
-    // });
 
-}); 
+inventoryRouter.post("/", async (req, res, next) => {
+    // console.log(req.body)
+    const userRaw = await User.findOne({ _id: req.user._id })
+    const user = userRaw.toObject();
+    const {ebayToken, averageShippingCost} = user;
+    const listingDetails = req.body;
+    const listingResponse = await createListing(ebayToken, listingDetails)
+    // console.log(listingResponse)
+    const inventoryItemBody = parseInventoryObject(listingResponse, listingDetails, averageShippingCost)
+    let inventoryItem = new InventoryItem(inventoryItemBody);
+    inventoryItem.userId = req.user._id;
+    inventoryItem.save((err, item) => {
+        if (err) {
+            console.log(err.message)
+            console.log(req.body)
+            return res.status(500).send({ success: false })
+        }
+        else res.send({ success: true, item })
+    });
+
+});
 
 inventoryRouter.post("/massImport", (req, res, next) => {
     let inventoryItem = new InventoryItem(req.body);
@@ -26,7 +36,7 @@ inventoryRouter.post("/massImport", (req, res, next) => {
         if (err) {
             console.log(err.message)
             console.log(req.body)
-            return res.status(500).send({success: false})
+            return res.status(500).send({ success: false })
         }
         else res.send({ success: true, item })
     });
@@ -61,5 +71,21 @@ inventoryRouter.delete("/:id", (req, res, next) => {
         else res.send({ success: true })
     })
 })
+
+function parseInventoryObject(listingResponse, listingDetails, averageShipping) {
+    const { title, partNo, sku, listPrice: listedPrice, location,
+        datePurchased, purchasePrice, purchaseLocation } = listingDetails;
+    const { AddFixedPriceItemResponse: { ItemID: ebayId } } = listingResponse;
+    //may have to suck the listing fees out of this object someday as well
+    const inventoryItemBody = {
+        title, partNo, sku, listedPrice, location, datePurchased, purchasePrice,
+        purchaseLocation,
+        ebayId,
+        listed: true,
+        expectedProfit: figureProfit(listedPrice, purchasePrice, averageShipping),
+
+    }
+    return inventoryItemBody
+}
 
 module.exports = inventoryRouter
