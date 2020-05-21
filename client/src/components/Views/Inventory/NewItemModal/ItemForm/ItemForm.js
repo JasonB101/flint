@@ -25,8 +25,9 @@ const ItemForm = (props) => {
 
   function moveToNext(e) {
     e.preventDefault();
-    const partNumberElement = document.querySelector('#partNumber');
+    const partNumberElement = document.querySelector("input[name='partNo']");
     partNumberElement.select();
+    console.log(partNumberElement)
     document.execCommand('copy');
     let form = {...inputForm};
     form.datePurchased = purchaseDate.toLocaleDateString();
@@ -38,7 +39,7 @@ const ItemForm = (props) => {
       <Form.Row>
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
-          <Form.Control value={inputForm.partNo} name="partNo" id="partNumber" onChange={handleChange} placeholder="" />
+          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" />
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridSku">
