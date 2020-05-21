@@ -25,7 +25,7 @@ inventoryRouter.post("/", async (req, res, next) => {
                 console.log(req.body)
                 return res.status(500).send({ success: false, message: "Failed while trying to save item into database." })
             }
-            else res.send({ success: true, item })
+            else return res.send({ success: true, item })
         });
     }
 
