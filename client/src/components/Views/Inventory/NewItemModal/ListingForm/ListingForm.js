@@ -21,7 +21,7 @@ const ListingForm = (props) => {
     const handleChange = (e) => {
         setInput({
             ...inputForm,
-            [e.target.name]: isNaN(+e.target.value) ? e.target.value : +e.target.value
+            [e.target.name]: e.target.value
         })
     }
 
