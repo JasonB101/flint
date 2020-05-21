@@ -9,6 +9,7 @@ const expressJWT = require("express-jwt")
 
 app.use(express.json())
 app.use(morgan('dev'))
+app.use(express.static('media'))
 
 //Heroku Deployment 
 app.use(express.static(path.join(__dirname, "client", "build")))
