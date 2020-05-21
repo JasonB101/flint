@@ -57,10 +57,12 @@ const ListingForm = (props) => {
         });
     }
 
-    function saveChanges(e) {
+    async function saveChanges(e) {
         let ebayForm = inputForm;
-        submitNewItem({ ...ebayForm, ...itemForm})
-        toggleModal(false)
+        const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm});
+        if (successfullyListed){
+            toggleModal(false)
+        }
     }
 
     return (

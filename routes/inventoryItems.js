@@ -1,6 +1,6 @@
 const express = require("express");
 const inventoryRouter = express.Router();
-const { getInventoryItems, figureProfit} = require("../lib/inventoryMethods");
+const { getInventoryItems, figureProfit } = require("../lib/inventoryMethods");
 const { createListing } = require("../lib/ebayMethods");
 const InventoryItem = require("../models/inventoryItem");
 const User = require("../models/user");
@@ -11,21 +11,25 @@ inventoryRouter.post("/", async (req, res, next) => {
     // console.log(req.body)
     const userRaw = await User.findOne({ _id: req.user._id })
     const user = userRaw.toObject();
-    const {ebayToken, averageShippingCost} = user;
+    const { ebayToken, averageShippingCost } = user;
     const listingDetails = req.body;
     const listingResponse = await createListing(ebayToken, listingDetails)
     // console.log(listingResponse)
     const inventoryItemBody = parseInventoryObject(listingResponse, listingDetails, averageShippingCost)
-    let inventoryItem = new InventoryItem(inventoryItemBody);
-    inventoryItem.userId = req.user._id;
-    inventoryItem.save((err, item) => {
-        if (err) {
-            console.log(err.message)
-            console.log(req.body)
-            return res.status(500).send({ success: false })
-        }
-        else res.send({ success: true, item })
-    });
+    if (inventoryItemBody.ebayId) {
+        let inventoryItem = new InventoryItem(inventoryItemBody);
+        inventoryItem.userId = req.user._id;
+        inventoryItem.save((err, item) => {
+            if (err) {
+                console.log(err.message)
+                console.log(req.body)
+                return res.status(500).send({ success: false, message: "Failed while trying to save item into database." })
+            }
+            else res.send({ success: true, item })
+        });
+    }
+
+    res.status(500).send({success: false, message: "Ebay listing was not created."})
 
 });
 

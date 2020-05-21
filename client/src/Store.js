@@ -58,8 +58,12 @@ const Store = (props) => {
         userAxios.post("/api/inventoryItems", form)
             .then(result => {
                 changeItems([...items, result.data.item])
+                return true;
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                return false;
+            })
     }
     function submitMassImport(form) {
         userAxios.post("/api/inventoryItems//massImport", form)
