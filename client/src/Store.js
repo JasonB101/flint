@@ -54,7 +54,7 @@ const Store = (props) => {
         setUser({});
     }
 
-    function submitNewItem(form) {
+    async function submitNewItem(form) {
         userAxios.post("/api/inventoryItems", form)
             .then(result => {
                 changeItems([...items, result.data.item])
