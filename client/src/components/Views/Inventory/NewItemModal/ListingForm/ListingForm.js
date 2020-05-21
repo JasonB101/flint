@@ -58,6 +58,7 @@ const ListingForm = (props) => {
     }
 
     async function saveChanges(e) {
+        e.preventDefault();
         let ebayForm = inputForm;
         const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm});
         if (successfullyListed){

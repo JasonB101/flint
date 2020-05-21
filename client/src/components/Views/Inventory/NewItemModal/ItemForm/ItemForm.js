@@ -23,7 +23,8 @@ const ItemForm = (props) => {
     })
   }
 
-  function moveToNext() {
+  function moveToNext(e) {
+    e.preventDefault();
     let form = {...inputForm};
     form.datePurchased = purchaseDate.toLocaleDateString();
     setAndToggleForm(form)
