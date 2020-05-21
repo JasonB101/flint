@@ -63,6 +63,9 @@ const ListingForm = (props) => {
         if (successfullyListed){
             toggleModal(false)
         }
+        else {
+            alert("The listing failed...")
+        }
     }
 
     return (
