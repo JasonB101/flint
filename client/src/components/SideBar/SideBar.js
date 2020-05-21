@@ -33,10 +33,10 @@ const SideBar = (props) => {
                         <p>Sync your Flint account with your PayPal account.</p>
                     </div>
                 }
-                <div className={Styles.cvsImportBox}>
+                {/* <div className={Styles.cvsImportBox}>
                     <h5>Import CSV File</h5>
                     <input type="file" id="fileInput" onChange={(e) => importItemsFromCVS(e.target.files[0])}></input>
-                </div>
+                </div> */}
 
             </>}
 
