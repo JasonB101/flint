@@ -61,11 +61,8 @@ const ListingForm = (props) => {
         e.preventDefault();
         let ebayForm = inputForm;
         const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm});
-        if (successfullyListed){
+        if (successfullyListed === true){
             toggleModal(false)
-        }
-        else {
-            alert("The listing failed...")
         }
     }
 
