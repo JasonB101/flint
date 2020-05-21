@@ -73,7 +73,7 @@ const ListingForm = (props) => {
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridTitle">
                     <Form.Label>Title</Form.Label>
-                    <Form.Control required value={inputForm.title} name="title" onChange={handleChange} placeholder="" />
+                    <Form.Control required value={inputForm.title} maxLength="80" name="title" onChange={handleChange} placeholder="" />
                 </Form.Group>
             </Form.Row>
             <Form.Label>Condition</Form.Label>
