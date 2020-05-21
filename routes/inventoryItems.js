@@ -23,13 +23,13 @@ inventoryRouter.post("/", async (req, res, next) => {
             if (err) {
                 console.log(err.message)
                 console.log(req.body)
-                return res.status(500).send({ success: false, message: "Failed while trying to save item into database." })
+                res.status(500).send({ success: false, message: "Failed while trying to save item into database." })
             }
-            else return res.send({ success: true, item })
+            else res.send({ success: true, item })
         });
+    } else {
+       return res.status(500).send({success: false, message: "Ebay listing was not created."})
     }
-
-    res.status(500).send({success: false, message: "Ebay listing was not created."})
 
 });
 
