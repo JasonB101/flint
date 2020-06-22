@@ -55,9 +55,10 @@ const SoldTable = (props) => {
                     valB = stripSpecial(valB);
                 }
                 function stripSpecial(value) {
-                    value = value.replace("$", "")
-                    while (value.includes(",")) {
-                        value = value.replace(",", "")
+                    const specialChars = ["$", ",", "/"]
+
+                    while (specialChars.some(x => value.includes(x))) {
+                        specialChars.forEach(j => value = value.replace(j, ""))
                     }
 
                     console.log(value)
