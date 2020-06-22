@@ -48,22 +48,32 @@ const SoldTable = (props) => {
         })
         function comparer(index) {
             return function (a, b) {
-                const specialChars = ["$", ",", "/"]
+                const specialChars = ["$", ","]
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
                 //Strips commas and dollar sign off of numbers.
                 if (specialChars.some(x => valA.includes(x))) {
                     valA = stripSpecial(valA);
                     valB = stripSpecial(valB);
                 }
-                function stripSpecial(value) {
-                    
+                if (valA.includes("/")){
+                    valA = standardDate(valA);
+                    valB = standardDate(valB);
+                }
 
+                function stripSpecial(value) {
                     while (specialChars.some(x => value.includes(x))) {
                         specialChars.forEach(j => value = value.replace(j, ""))
                     }
 
                     console.log(value)
                     return +value;
+                }
+                function standardDate(value){
+                    const dateArray = value.split("/");
+                    dateArray[0] = dateArray[0].length === 1 ? `0${dateArray[0]}` : dateArray[0];
+                    dateArray[1] = dateArray[1].length === 1 ? `0${dateArray[1]}` : dateArray[1];
+                    const newValue = dateArray.join("");
+                    return newValue;
                 }
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
             }
