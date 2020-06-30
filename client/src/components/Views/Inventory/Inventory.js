@@ -34,7 +34,7 @@ const Inventory = (props) => {
             filterItems(inventoryList.filter(x => {
                 const { item, partNo, sku } = x;
                 const conditionsArray = [item, partNo, sku];
-                return conditionsArray.some(j => j.toLowerCase().includes(inventorySearchTerm.toLowerCase()));
+                return conditionsArray.some(j => String(j).toLowerCase().includes(inventorySearchTerm.toLowerCase()));
             }))
         }
 
