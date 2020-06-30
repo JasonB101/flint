@@ -14,8 +14,8 @@ const SoldItems = (props) => {
             filterItems(soldItems)
         } else {
             filterItems(soldItems.filter(x => {
-                const { item, partNo, sku, buyer: {username} } = x;
-                const conditionsArray = [item, partNo, sku, username];
+                const { title, partNo, sku, buyer: {username} } = x;
+                const conditionsArray = [title, partNo, sku, username];
                 return conditionsArray.some(j => j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()));
             }))
         }
