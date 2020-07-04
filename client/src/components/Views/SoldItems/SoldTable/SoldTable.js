@@ -51,11 +51,11 @@ const SoldTable = (props) => {
                 const specialChars = ["$", ","]
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
                 //Strips commas and dollar sign off of numbers.
-                if (specialChars.some(x => valA.includes(x))) {
+                if (specialChars.some(x => String(valA).includes(x))) {
                     valA = stripSpecial(valA);
                     valB = stripSpecial(valB);
                 }
-                if (valA.indexOf("/") !== -1){
+                if (String(valA).includes("/")){
                     valA = standardDate(valA);
                     valB = standardDate(valB);
                 }
