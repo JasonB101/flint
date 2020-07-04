@@ -4,6 +4,10 @@
     border-top: 1px solid rgb(206, 204, 204);
     overflow: auto;
 
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
 
     th::before {
         content: '';
@@ -29,7 +33,7 @@
     }
 
     th {
-        position: -webkit-sticky;
+        // position: -webkit-sticky;
         position: sticky;
         background: white;
         top: 0;
