@@ -55,7 +55,7 @@ const SoldTable = (props) => {
                     valA = stripSpecial(valA);
                     valB = stripSpecial(valB);
                 }
-                if (String(valA).includes("/")){
+                if (String(valA).includes("/")) {
                     valA = standardDate(valA);
                     valB = standardDate(valB);
                 }
@@ -65,15 +65,19 @@ const SoldTable = (props) => {
                         specialChars.forEach(j => value = value.replace(j, ""))
                     }
 
-                    console.log(value)
                     return +value;
                 }
-                function standardDate(value){
+                function standardDate(value) {
                     const dateArray = value.split("/");
-                    dateArray[0] = dateArray[0].length === 1 ? `0${dateArray[0]}` : dateArray[0];
-                    dateArray[1] = dateArray[1].length === 1 ? `0${dateArray[1]}` : dateArray[1];
-                    const newValue = dateArray.join("");
-                    return newValue;
+                    if (dateArray.length === 3) {
+                        dateArray[0] = dateArray[0].length === 1 ? `0${dateArray[0]}` : dateArray[0];
+                        dateArray[1] = dateArray[1].length === 1 ? `0${dateArray[1]}` : dateArray[1];
+                        const newValue = dateArray.join("");
+                        return newValue;
+                    }
+
+                    return value;
+
                 }
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
             }
