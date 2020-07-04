@@ -55,7 +55,7 @@ const SoldTable = (props) => {
                     valA = stripSpecial(valA);
                     valB = stripSpecial(valB);
                 }
-                if (valA.includes("/")){
+                if (valA.indexOf("/") !== -1){
                     valA = standardDate(valA);
                     valB = standardDate(valB);
                 }
