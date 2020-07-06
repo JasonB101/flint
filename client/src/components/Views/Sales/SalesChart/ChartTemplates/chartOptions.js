@@ -12,15 +12,15 @@ class ChartOptions {
 }
 
 export class YearSalesChart extends ChartOptions {
-    constructor(year, soldItems) {
-        super(`Sales for year ${year}`);
+    constructor(year, soldItems, profitSetToTrue) {
+        super(`${profitSetToTrue ? "Profits" : "Sales"} for year ${year}`);
         this.axisY = {
             title: "Sales",
             includeZero: false,
             prefix: "$"
         }
         this.axisX = {
-            title: "Day of the Year",
+            title: "",
             interval: 5
         }
         this.data = [{
@@ -41,12 +41,13 @@ export class YearSalesChart extends ChartOptions {
 
             return filteredItems.reduce((dataPoints, item) => {
                 const dateSold = standardDate(item.dateSold);
+                const price = profitSetToTrue ? +item.profit : +item.priceSold;
                 const itemFoundIndex = dataPoints.findIndex(x => x.x === dateSold);
                 if (itemFoundIndex !== -1){
-                    dataPoints[itemFoundIndex] = {x: dateSold, y: dataPoints[itemFoundIndex].y + +item.priceSold};
+                    dataPoints[itemFoundIndex] = {x: dateSold, y: dataPoints[itemFoundIndex].y + price};
                     return dataPoints;
                 } else {
-                    dataPoints.push({x: dateSold, y: +item.priceSold});
+                    dataPoints.push({x: dateSold, y: price});
                     return dataPoints;
                 }
             }, []).map(j => ({x: new Date(j.x), y: +j.y}));

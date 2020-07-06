@@ -10,7 +10,7 @@ const Sales = (props) => {
 
     const salesInfo = assembleSalesInfo(items, expenses)
 
-    const options = new YearSalesChart(2020, items.filter(x => x.sold));
+    const options = new YearSalesChart(2020, items.filter(x => x.sold), true);
 
     return (
         <div className={Styles.wrapper}>
