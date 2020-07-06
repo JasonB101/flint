@@ -2,7 +2,7 @@ import React from "react";
 import Styles from "./Sales.module.scss";
 import SalesHeader from "./SalesHeader/SalesHeader";
 import SalesChart from "./SalesChart/SalesChart";
-import {YearSalesChart} from "./SalesChart/ChartTemplates/chartOptions";
+import { YearSalesChart } from "./SalesChart/ChartTemplates/chartOptions";
 
 const Sales = (props) => {
 
@@ -21,11 +21,15 @@ const Sales = (props) => {
             <SalesHeader salesInfo={salesInfo} />
             <hr></hr>
             <div className={Styles.annualChartContainer}>
-            <SalesChart options={options}/>
-            <br></br>
-            <h4>{`Annual Sales: ${currencyFormatter.format(soldItems.reduce((sales, item) => (sales += Number(item.priceSold)), 0).toFixed(2))}`}</h4>
+                <SalesChart options={options} />
+                <br></br>
+                <h4>{`Annual Sales: ${currencyFormatter.format(
+                    soldItems.reduce((sales, item) =>
+                        (sales += Number(item.priceSold)), 0)
+                        .toFixed(2))
+                    }`}</h4>
             </div>
-            
+
 
         </div>
     );
@@ -46,13 +50,13 @@ const Sales = (props) => {
                 salesInfo.YTDProfit += x.profit;
                 salesInfo.allItemsProfit += x.profit;
                 salesInfo.totalSold++
-                salesInfo.profitPerItem = "$" + (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2); 
+                salesInfo.profitPerItem = "$" + (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
             } else {
                 salesInfo.activeSales[0] += x.listedPrice;
                 salesInfo.activeSales[1] += x.expectedProfit;
                 salesInfo.YTDProfit -= x.purchasePrice;
                 salesInfo.totalListed++
-                
+
             }
 
             return salesInfo;
