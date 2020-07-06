@@ -3,7 +3,7 @@ class ChartOptions {
     constructor(title) {
         this.animationEnabled = true;
         this.exportEnabled = true;
-        this.theme = "light2" // "light1", "dark1", "dark2";
+        this.theme = "light1" // "light1", "dark1", "dark2";
         this.title = {
             text: title
         };
@@ -20,9 +20,8 @@ export class YearSalesChart extends ChartOptions {
             prefix: "$"
         }
         this.axisX = {
-            title: "Day/Month",
-            prefix: "Day ",
-            interval: 10
+            title: "Day of the Year",
+            interval: 5
         }
         this.data = [{
             type: "column",
@@ -42,7 +41,7 @@ export class YearSalesChart extends ChartOptions {
             });
             const sortedItems = filteredItems.sort((a, b) => standardDateToNumber(a.dateSold) - standardDateToNumber(b.dateSold));
             sortedItems.forEach(item => dataPoints.push(
-                { x: daysIntoYear(item.dateSold), y: +item.priceSold }
+                { x: new Date(item.dateSold), y: +item.priceSold }
             ));
             console.log(dataPoints)
             return dataPoints;
