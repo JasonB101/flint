@@ -43,7 +43,7 @@ export class YearSalesChart extends ChartOptions {
                 const dateSold = standardDate(item.dateSold);
                 const itemFoundIndex = dataPoints.findIndex(x => x.x === dateSold);
                 if (itemFoundIndex !== -1){
-                    dataPoints[itemFoundIndex] = {x: dateSold, y: +dataPoints[itemFoundIndex].y + item.priceSold};
+                    dataPoints[itemFoundIndex] = {x: dateSold, y: dataPoints[itemFoundIndex].y + +item.priceSold};
                     return dataPoints;
                 } else {
                     dataPoints.push({x: dateSold, y: +item.priceSold});
