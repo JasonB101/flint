@@ -12,7 +12,10 @@ const Sales = (props) => {
     const salesInfo = assembleSalesInfo(items, expenses)
 
     const options = new YearSalesChart(2020, soldItems, true);
-
+    const currencyFormatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
     return (
         <div className={Styles.wrapper}>
             <SalesHeader salesInfo={salesInfo} />
@@ -20,7 +23,7 @@ const Sales = (props) => {
             <div className={Styles.annualChartContainer}>
             <SalesChart options={options}/>
             <br></br>
-            <h4>{`Annual Sales: $${soldItems.reduce((sales, item) => (sales += Number(item.priceSold)), 0).toFixed(2)}`}</h4>
+            <h4>{`Annual Sales: ${currencyFormatter.format(soldItems.reduce((sales, item) => (sales += Number(item.priceSold)), 0).toFixed(2))}`}</h4>
             </div>
             
 
