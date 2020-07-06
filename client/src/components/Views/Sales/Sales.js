@@ -7,16 +7,23 @@ import {YearSalesChart} from "./SalesChart/ChartTemplates/chartOptions";
 const Sales = (props) => {
 
     const { items, expenses } = props;
+    const soldItems = items.filter(x => x.sold)
 
     const salesInfo = assembleSalesInfo(items, expenses)
 
-    const options = new YearSalesChart(2020, items.filter(x => x.sold), true);
+    const options = new YearSalesChart(2020, soldItems, true);
 
     return (
         <div className={Styles.wrapper}>
             <SalesHeader salesInfo={salesInfo} />
             <hr></hr>
+            <div className={Styles.annualChartContainer}>
             <SalesChart options={options}/>
+            <br></br>
+            <h4>{`Annual Sales: $${soldItems.reduce((sales, item) => (sales += Number(item.priceSold)), 0).toFixed(2)}`}</h4>
+            </div>
+            
+
         </div>
     );
 
