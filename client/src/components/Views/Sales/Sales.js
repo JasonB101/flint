@@ -1,6 +1,8 @@
 import React from "react";
 import Styles from "./Sales.module.scss";
 import SalesHeader from "./SalesHeader/SalesHeader";
+import SalesChart from "./SalesChart/SalesChart";
+import {YearSalesChart} from "./SalesChart/ChartTemplates/chartOptions";
 
 const Sales = (props) => {
 
@@ -8,10 +10,13 @@ const Sales = (props) => {
 
     const salesInfo = assembleSalesInfo(items, expenses)
 
+    const options = new YearSalesChart(2020, items.filter(x => x.sold));
+
     return (
         <div className={Styles.wrapper}>
             <SalesHeader salesInfo={salesInfo} />
             <hr></hr>
+            <SalesChart options={options}/>
         </div>
     );
 
