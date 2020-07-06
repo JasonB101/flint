@@ -30,7 +30,6 @@ export class YearSalesChart extends ChartOptions {
         }]
 
         function getYearDataPoints(soldItems) {
-            const dataPoints = [];
             const filteredItems = soldItems.filter(item => {
                 try {
                     return item.dateSold.includes(year);
@@ -39,24 +38,31 @@ export class YearSalesChart extends ChartOptions {
                     return false;
                 }
             });
-            const sortedItems = filteredItems.sort((a, b) => standardDateToNumber(a.dateSold) - standardDateToNumber(b.dateSold));
-            sortedItems.forEach(item => dataPoints.push(
-                { x: new Date(item.dateSold), y: +item.priceSold }
-            ));
-            console.log(dataPoints)
-            return dataPoints;
+
+            return filteredItems.reduce((dataPoints, item) => {
+                const dateSold = standardDate(item.dateSold);
+                const itemFoundIndex = dataPoints.findIndex(x => x.x === dateSold);
+                if (itemFoundIndex !== -1){
+                    dataPoints[itemFoundIndex] = {x: dateSold, y: +dataPoints[itemFoundIndex].y + item.priceSold};
+                    return dataPoints;
+                } else {
+                    dataPoints.push({x: dateSold, y: +item.priceSold});
+                    return dataPoints;
+                }
+            }, []).map(j => ({x: new Date(j.x), y: +j.y}));
+
 
         }
     }
 
 }
 
-function standardDateToNumber(value) {
+function standardDate(value) {
     const dateArray = value.split("/");
     if (dateArray.length === 3) {
         dateArray[0] = dateArray[0].length === 1 ? `0${dateArray[0]}` : dateArray[0];
         dateArray[1] = dateArray[1].length === 1 ? `0${dateArray[1]}` : dateArray[1];
-        const newValue = dateArray.join("");
+        const newValue = dateArray.join("/");
         return newValue;
     }
 
