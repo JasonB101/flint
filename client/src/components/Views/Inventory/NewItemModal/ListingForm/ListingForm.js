@@ -25,8 +25,8 @@ const ListingForm = (props) => {
             [name]: value,
         }
         if (name === "listPrice"){
-            updateForm.acceptOfferHigh = +value - 4.99;
-            updateForm.declineOfferLow = +value - 14.99;
+            updateForm.acceptOfferHigh = (+value - 4.99).toFixed(2);
+            updateForm.declineOfferLow = (+value - 14.99).toFixed(2);
         }
         setInput(updateForm);
     }
