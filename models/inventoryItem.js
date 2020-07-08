@@ -21,6 +21,7 @@ const inventoryItemSchema = new Schema({
         type: String,
         required: true
     },
+    categoryId: String,
     purchaseLocation: {
         type: String,
         required: true
