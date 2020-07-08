@@ -18,11 +18,17 @@ const ListingForm = (props) => {
         categoryId: 33596
     })
 
-    const handleChange = (e) => {
-        setInput({
+    const handleChange = ({target}) => {
+        const {name, value} = target;
+        const updateForm = {
             ...inputForm,
-            [e.target.name]: e.target.value
-        })
+            [name]: value,
+        }
+        if (name === "listPrice"){
+            updateForm.acceptOfferHigh = value - 4.99,
+            updateForm.declineOfferLow = value - 14.99
+        }
+        setInput(updateForm);
     }
 
     const handleSelect = (e) => {
