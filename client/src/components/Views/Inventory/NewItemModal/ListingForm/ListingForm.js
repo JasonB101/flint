@@ -5,7 +5,7 @@ import getEbayCategoryId from "../../../../../lib/getEbayCategoryId"
 const ListingForm = (props) => {
     const { toggleModal, submitNewItem, itemForm } = props;
     const [inputForm, setInput] = useState({
-        title: "",
+        title: `Engine Computer ECU ECM PCM ${itemForm.partNo}`,
         mpn: itemForm.partNo,
         sku: itemForm.sku,
         brand: "",
