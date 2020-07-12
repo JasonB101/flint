@@ -11,6 +11,8 @@ const InventoryTable = (props) => {
         style: 'currency',
         currency: 'USD',
     });
+    const duplicateEbayListingIds = checkForDuplicateListings(inventoryItems);
+    console.log(duplicateEbayListingIds);
     const items = inventoryItems.map(x => populateRow(x));
     const { openLinkModal } = props;
     
@@ -52,10 +54,11 @@ const InventoryTable = (props) => {
     }
 
     function populateRow(itemObject) {
-        const { listed, title, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit } = itemObject;
+        const { listed, title, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit, ebayId } = itemObject;
+        
         return (
 
-            <tr key={_id}>
+            <tr key={_id} style={duplicateEbayListingIds.indexOf(ebayId) !== -1 ? {backgroundColor: "orange"} : {}}>
                 <td style={{ textAlign: "left" }}>{title}</td>
                 <td>{partNo || "n/a"}</td>
                 <td>{sku || "n/a"}</td>
@@ -68,6 +71,25 @@ const InventoryTable = (props) => {
             </tr>
         )
     }
+    function checkForDuplicateListings(listings){
+        const duplicateListings = listings.reduce((saved, item, index) => {
+            const lastIndex = index === listings.length - 1;
+            // console.log(item)
+            saved[item.ebayId] = saved[item.ebayId] ? saved[item.ebayId] + 1 : 1;
+            // console.log(saved)
+            if (lastIndex){
+                const duplicates = [];
+                for (let id in saved){
+                    if (saved[id] > 1) duplicates.push(id);
+                }
+                return duplicates;
+            }
+            return saved
+        }, {})
+
+        return duplicateListings;
+    }
+
     return (
         <div className={Styles.wrapper}>
             <Table striped bordered responsive hover>
