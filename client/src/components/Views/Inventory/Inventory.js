@@ -7,7 +7,7 @@ import Toolbar from "./Toolbar/Toolbar"
 
 const Inventory = (props) => {
 
-    const { items, submitNewItem, newListings, linkItem } = props;
+    const { items, ebayListings, submitNewItem, newListings, linkItem } = props;
     const [inventoryList] = useState(items.filter(x => x.status === "active"))
     const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
@@ -17,6 +17,8 @@ const Inventory = (props) => {
         }
         return highest;
     }, 0) + 1;
+
+    
 
     // After this inventoryId is cleared, the link Modal will close.
     const [inventoryId, setInventoryId] = useState("");
@@ -45,7 +47,7 @@ const Inventory = (props) => {
             <Toolbar changeSearchTerm={changeSearchTerm}
                 searchTerm={inventorySearchTerm}
                 toggleModal={toggleNewItemModal} />
-            <InventoryTable openLinkModal={openLinkModal} inventoryList={itemsToShow} />
+            <InventoryTable openLinkModal={openLinkModal} ebayListings={ebayListings} inventoryList={itemsToShow} />
             {inventoryId && <LinkItemModal inventoryId={inventoryId}
                 linkItem={linkItem}
                 newListings={newListings}

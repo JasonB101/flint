@@ -3,7 +3,7 @@ const ebayRouter = express.Router();
 const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
 const {updateSellerAvgShipping} = require("../lib/userMethods")
-const {getNewListings, getCompletedSales} = require("../lib/ebayMethods")
+const {getEbayListings, getCompletedSales} = require("../lib/ebayMethods")
 const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, figureProfit} = require("../lib/inventoryMethods")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
@@ -18,15 +18,14 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     const userInfo = await User.findById(userId);
     const user = userInfo.toObject();
     const ebayAuthToken = user.ebayToken;
-    // const newListings = await getNewListings(ebayAuthToken, userId);
-    updateAllZeroShippingCost(userId)
-    updateSellerAvgShipping(userId)
+    updateAllZeroShippingCost(userId);
+    updateSellerAvgShipping(userId);
     const completedSales = await getCompletedSales(ebayAuthToken);
     const newSoldItems = await updateInventoryWithSales(userId, completedSales);
     const inventoryItems = await getInventoryItems(userId)
-    const newListings = await getNewListings(ebayAuthToken, userId)
+    const ebayListings = await getEbayListings(ebayAuthToken, userId)
     const response = {
-        newListings,
+        ebayListings,
         newSoldItems,
         inventoryItems,
     }

@@ -6,16 +6,16 @@ import getDaysSince from "../../../../lib/getDaysSince"
 import $ from "jquery"
 
 const InventoryTable = (props) => {
-    const inventoryItems = props.inventoryList;
+    const {inventoryList: inventoryItems, ebayListings} = props;
     const currencyFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
     });
-    const duplicateEbayListingIds = checkForDuplicateListings(inventoryItems);
-    console.log(duplicateEbayListingIds);
+    // const duplicateEbayListingIds = checkForDuplicateListings(inventoryItems);
+    const unlistedItems = checkForUnlistedItems(inventoryItems, ebayListings);
+    console.log(unlistedItems);
     const items = inventoryItems.map(x => populateRow(x));
     const { openLinkModal } = props;
-    
 
     useEffect(() => {
         applySortingToDOM()
@@ -58,7 +58,7 @@ const InventoryTable = (props) => {
         
         return (
 
-            <tr key={_id} style={duplicateEbayListingIds.indexOf(ebayId) !== -1 ? {backgroundColor: "orange"} : {}}>
+            <tr key={_id} style={unlistedItems.indexOf(ebayId) !== -1 ? {backgroundColor: "#ffa8a3"} : {}}>
                 <td style={{ textAlign: "left" }}>{title}</td>
                 <td>{partNo || "n/a"}</td>
                 <td>{sku || "n/a"}</td>
@@ -88,6 +88,20 @@ const InventoryTable = (props) => {
         }, {})
 
         return duplicateListings;
+    }
+
+    function checkForUnlistedItems(inventoryListings, ebayListings){
+        const unlistedIds = [];
+        inventoryListings.forEach(inventoryItem => {
+            const {ebayId} = inventoryItem;
+            const ebayItem = ebayListings.find(ebayItem => {
+                const {ItemID} = ebayItem;
+                // console.log(ebayItem);
+                return ItemID == ebayId;
+            })
+            if (!ebayItem) unlistedIds.push(ebayId);
+        })
+        return unlistedIds;
     }
 
     return (

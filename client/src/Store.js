@@ -18,8 +18,9 @@ const Store = (props) => {
     //change initial value of user to empty object
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
     const [items, changeItems] = useState([]);
-    const [expenses, setExpenses] = useState([])
-    const [newListings, setNewListings] = useState([]);
+    const [expenses, setExpenses] = useState([]);
+    const [ebayListings, setEbayListings] = useState([])
+    const [newListings, setNewListings] = useState(sortNewListings());
 
 
 
@@ -153,9 +154,9 @@ const Store = (props) => {
         userAxios.get("/api/ebay/getebay")
             .then(result => {
                 const data = result.data;
-                const { newListings, inventoryItems } = data;
+                const { ebayListings, inventoryItems } = data;
                 changeItems(inventoryItems);
-                setNewListings(newListings);
+                setEbayListings(ebayListings);
             })
             .catch(err => console.log(err))
     }
@@ -164,6 +165,14 @@ const Store = (props) => {
         let items = await readFile(file);
         let preppedItems = prepItemsForImport(items);
         preppedItems.forEach(x => submitMassImport(x));
+    }
+
+    function sortNewListings(){
+        const ebayIds = items.map(x => x.ebayId);
+        const newEbayListings = ebayListings.filter(x => {
+            return ebayIds.indexOf(x.ItemID) === -1
+        });
+        return newEbayListings;
     }
 
     return (
@@ -182,7 +191,8 @@ const Store = (props) => {
             login,
             expenses,
             importItemsFromCVS,
-            logout
+            logout,
+            ebayListings
         }} >
             {props.children}
         </storeContext.Provider >
