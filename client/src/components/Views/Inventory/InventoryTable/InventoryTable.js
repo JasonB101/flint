@@ -58,7 +58,7 @@ const InventoryTable = (props) => {
         
         return (
 
-            <tr key={_id} style={unlistedItems.length > 1 ? unlistedItems.indexOf(ebayId) !== -1 ? {backgroundColor: "#ffa8a3"} : {} : {}}>
+            <tr key={_id} style={unlistedItems.length > 0 ? unlistedItems.indexOf(ebayId) !== -1 ? {backgroundColor: "#ffa8a3"} : {} : {}}>
                 <td style={{ textAlign: "left" }}>{title}</td>
                 <td>{partNo || "n/a"}</td>
                 <td>{sku || "n/a"}</td>
