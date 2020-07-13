@@ -12,8 +12,7 @@ const InventoryTable = (props) => {
         currency: 'USD',
     });
     // const duplicateEbayListingIds = checkForDuplicateListings(inventoryItems);
-    const unlistedItems = checkForUnlistedItems(inventoryItems, ebayListings);
-    console.log(unlistedItems);
+    const unlistedItems = ebayListings.length > 0 ? checkForUnlistedItems(inventoryItems, ebayListings) : [];
     const items = inventoryItems.map(x => populateRow(x));
     const { openLinkModal } = props;
 

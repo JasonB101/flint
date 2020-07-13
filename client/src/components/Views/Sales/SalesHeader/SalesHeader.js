@@ -8,7 +8,7 @@ const SalesHeader = ({salesInfo}) => {
             <h5>Listed 
                 <span>{totalListed}</span>
             </h5>
-            <h5>Active sales 
+            <h5>Active Listings 
                 <span>{`$${activeSales[0].toFixed(2)} /`}
                     <span style={{color: "green", display: "inline"}}>{`$${activeSales[1].toFixed(2)}`}
                     </span>
