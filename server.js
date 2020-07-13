@@ -15,7 +15,7 @@ app.use(express.static('media'))
 app.use(express.static(path.join(__dirname, "client", "build")))
 
 //Logged in routes, attatches user to req
-app.use("/api", expressJWT({ secret: process.env.SECRET, algorithms: ['RS256'] }));
+app.use("/api", expressJWT({ secret: process.env.SECRET, algorithms: ['HS256'] }));
 
 app.use("/api/inventoryItems", require("./routes/inventoryItems"))
 app.use("/api/expense", require("./routes/expense"))
