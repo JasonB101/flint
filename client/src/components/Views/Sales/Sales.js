@@ -6,6 +6,7 @@ import { YearSalesChart, YearSalesChartByWeek } from "./SalesChart/ChartTemplate
 
 const Sales = (props) => {
     const [dateType, setDateType] = useState("week");
+    const [year, setYear] = useState(2020);
 
     const [profitTrue, setProfitState] = useState(true);
 
@@ -16,15 +17,15 @@ const Sales = (props) => {
     const salesInfo = assembleSalesInfo(items, expenses)
     //day, week, month, year
     const options = () => {
-        switch (dateType){
+        switch (dateType) {
             case "day":
-            return new YearSalesChart(2020, soldItems, true);
+                return new YearSalesChart(year, soldItems, true);
             case "week":
-            return new YearSalesChartByWeek(2020, soldItems, true);
+                return new YearSalesChartByWeek(year, soldItems, true);
             case "month":
-            return {};
+                return {};
             case "year":
-            return {};
+                return {};
             default:
         }
     }
@@ -34,24 +35,45 @@ const Sales = (props) => {
         currency: 'USD',
     });
 
+    const sales = soldItems.reduce((sales, item) => sales + Number(item.priceSold), 0).toFixed(2)
+    const profit = soldItems.reduce((sales, item) => sales + Number(item.profit), 0).toFixed(2)
+
+
+    function getProjected(profitOrSales) {
+        const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+        const oneDay = 1000 * 60 * 60 * 24;
+        const day = Math.floor(diff / oneDay);
+        const average = (+profitOrSales / day).toFixed(2);
+        const difference = 365 - day;
+        const projected = Number(+profitOrSales + difference * average);
+        return currencyFormatter.format(projected);
+    }
+
     return (
         <div className={Styles.wrapper}>
             <SalesHeader salesInfo={salesInfo} />
             <hr></hr>
             <div className={Styles.annualChartContainer}>
-                    <div>
-                        <span onClick={() => setDateType("day")} className={dateType === "day" ? Styles.glowSpan : ""}>Day</span>
-                        <span onClick={() => setDateType("week")} className={dateType === "week" ? Styles.glowSpan : ""}>Week</span>
-                        <span onClick={() => setDateType("month")} className={dateType === "month" ? Styles.glowSpan : ""}>Month</span>
-                        <span onClick={() => setDateType("year")} className={dateType === "year" ? Styles.glowSpan : ""}>Year</span>
-                    </div>
+                <div>
+                    <span onClick={() => setDateType("day")} className={dateType === "day" ? Styles.glowSpan : ""}>Day</span>
+                    <span onClick={() => setDateType("week")} className={dateType === "week" ? Styles.glowSpan : ""}>Week</span>
+                    <span onClick={() => setDateType("month")} className={dateType === "month" ? Styles.glowSpan : ""}>Month</span>
+                    <span onClick={() => setDateType("year")} className={dateType === "year" ? Styles.glowSpan : ""}>Year</span>
+                </div>
                 <SalesChart options={options()} />
                 <br></br>
                 <h4>{`Annual Sales: ${currencyFormatter.format(
                     soldItems.reduce((sales, item) =>
                         (sales += Number(item.priceSold)), 0)
                         .toFixed(2))
-                    }`}</h4>
+                    }`}
+                </h4>
+                <br></br>
+                <h5>{`Projected ${year} Sales: ${getProjected(sales)}`}</h5>
+                <h5>{`Projected ${year} Profit: ${getProjected(profit)}`}</h5>
+                
             </div>
 
 
