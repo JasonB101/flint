@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
-import getEbayCategoryId from "../../../../../lib/getEbayCategoryId"
 
 const ListingForm = (props) => {
     const { toggleModal, submitNewItem, itemForm } = props;
@@ -15,16 +14,16 @@ const ListingForm = (props) => {
         acceptOfferHigh: "",
         declineOfferLow: "",
         description: "Please double check the part number you are looking for to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by me. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.\n\nThank you!",
-        categoryId: 33596
+        location: "",
     })
 
-    const handleChange = ({target}) => {
-        const {name, value} = target;
+    const handleChange = ({ target }) => {
+        const { name, value } = target;
         const updateForm = {
             ...inputForm,
             [name]: value,
         }
-        if (name === "listPrice"){
+        if (name === "listPrice") {
             updateForm.acceptOfferHigh = (+value - 4.99).toFixed(2);
             updateForm.declineOfferLow = (+value - 14.99).toFixed(2);
         }
@@ -56,18 +55,13 @@ const ListingForm = (props) => {
         }
     }
 
-    const handleCategorySelect = (e) => {
-        setInput({
-            ...inputForm,
-            categoryId: getEbayCategoryId(e.target.value)
-        });
-    }
+
 
     async function saveChanges(e) {
         e.preventDefault();
         let ebayForm = inputForm;
-        const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm});
-        if (successfullyListed === true){
+        const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm });
+        if (successfullyListed === true) {
             toggleModal(false)
         }
     }
@@ -95,30 +89,10 @@ const ListingForm = (props) => {
             </Form.Row>
 
             <Form.Label>Category</Form.Label>
-
-            <Form.Row>
-                <Form.Group md={8} as={Col} controlId="formGridConditionId">
-                    <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
-                        <option>Engine Computer ECU</option>
-                        <option>Computer Chip (Other)</option>
-                        <option>Head Light</option>
-                        <option>Tail Light</option>
-                        <option>Climate Control</option>
-                        <option>Interior Part (Other)</option>
-                        <option>Exterior Mirror</option>
-                        <option>Interior Mirror</option>
-                        <option>Dash Parts</option>
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group md={4} as={Col} controlId="formGridCategoryId">
-                    <Form.Control required value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
-                </Form.Group>
-            </Form.Row>
-
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridDescription">
                     <Form.Label>Item Description</Form.Label>
-                    <Form.Control as="textarea" rows="6" value={inputForm.description} name="description" onChange={handleChange} placeholder="Item Specifics"/>
+                    <Form.Control as="textarea" rows="6" value={inputForm.description} name="description" onChange={handleChange} placeholder="Item Specifics" />
                 </Form.Group>
             </Form.Row>
 
@@ -147,6 +121,13 @@ const ListingForm = (props) => {
                     <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
                 </Form.Group>
             </Form.Row>
+            <Form.Row>
+                <Form.Group as={Col} controlId="formGridLocation">
+                    <Form.Label>Stock Location</Form.Label>
+                    <Form.Control value={inputForm.location} name="location" onChange={handleChange} placeholder="Section A, Shelf 1" />
+                </Form.Group>
+            </Form.Row>
+
 
             <Modal.Footer>
                 <Button onClick={() => toggleModal(false)} variant="secondary">Close</Button>
