@@ -26,7 +26,7 @@ export class YearSalesChart extends ChartOptions {
             prefix: "$"
         }
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per Day: ${false}`,
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(this.data[0].dataPoints)}`,
             interval: 7
         }
         this.data = [{
