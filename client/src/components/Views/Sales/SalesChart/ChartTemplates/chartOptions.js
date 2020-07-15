@@ -71,10 +71,16 @@ export class YearSalesChartByWeek extends YearSalesChart {
             return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()) / 7);
         }
 
+        this.axisX = {
+            title: "",
+            interval: 1
+        }
+
         this.data = [{
             type: "column",
             toolTipContent: " {label}: ${y}",
-            dataPoints: getYearDataPointsByWeek(soldItems).sort((a, b) => a.label.split(" ")[1] - b.label.split(" ")[1])
+            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems)) 
+            .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
         }]
 
         console.log(this);
@@ -89,7 +95,7 @@ export class YearSalesChartByWeek extends YearSalesChart {
                 }
             });
 
-            return filteredItems.reduce((dataPoints, item) => {
+            const dataPoints = filteredItems.reduce((dataPoints, item) => {
                 const dateSold = standardDate(item.dateSold);
                 const price = profitSetToTrue ? +item.profit : +item.priceSold;
                 const week = new Date(dateSold).getWeek()
@@ -105,8 +111,39 @@ export class YearSalesChartByWeek extends YearSalesChart {
                 }
             }, []).map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
 
+
+            return dataPoints;
+
         }
     }
+}
+
+function fillInMissingWeeks(dataArray) {
+    const allWeeks = [];
+    const sorted = dataArray.sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]);
+    if (sorted.length > 1 && sorted[0].label.split(" ")[1] !== 1) {
+        sorted.unshift({label: "Week 1 ", y: 0});
+    }
+    sorted.forEach((dataPoint, index) => {
+        const firstPoint = sorted[index - 1] ? +sorted[index - 1].label.split(" ")[1] : 1;
+        const secondPoint = +dataPoint.label.split(" ")[1];
+
+        if (secondPoint - firstPoint !== 1){
+            insertWeeks(firstPoint, secondPoint);
+        }
+
+        allWeeks.push(dataPoint);
+    })
+    
+    function insertWeeks(low, high){
+        console.log("MADE IT")
+        for (let i = low + 1; i < high; i++){
+            allWeeks.push({label: `Week ${i} `, y: 0});
+        }
+    }
+
+    return allWeeks;
+
 }
 
 function standardDate(value) {
