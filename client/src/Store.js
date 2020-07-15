@@ -29,7 +29,7 @@ const Store = (props) => {
             getInventoryItems();
             getExpenses();
             if (user.syncedWithEbay) {
-                // getEbay();
+                getEbay();
             }
         }
     }, [user])
