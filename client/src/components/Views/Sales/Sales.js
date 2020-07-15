@@ -72,7 +72,7 @@ const Sales = (props) => {
                 </h4>
                 <br></br>
                 <h5>{`Projected ${year} Sales: ${getProjected(sales)}`}</h5>
-                <h5>{`Projected ${year} Profit: ${getProjected(profit)}`}</h5>
+                <h5>{`Projected ${year} Net Sales: ${getProjected(profit)}`}</h5>
                 
             </div>
 

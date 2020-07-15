@@ -31,7 +31,7 @@ export class YearSalesChart extends ChartOptions {
             dataPoints: getYearDataPoints(soldItems)
         }]
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${ getAverage(fillInMissingDays(this.data[0].dataPoints))}`,
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(fillInMissingDays(this.data[0].dataPoints))}`,
             interval: 7
         }
 
@@ -122,30 +122,104 @@ export class YearSalesChartByWeek extends YearSalesChart {
         }
     }
 }
+export class YearSalesChartByMonth extends YearSalesChart {
+    constructor(year, soldItems, profitSetToTrue) {
+        super(year, soldItems, true);
+
+        this.data = [{
+            type: "column",
+            toolTipContent: " {label}: ${y}",
+            dataPoints: fillInMissingMonths(getYearDataPointsByMonth(soldItems))
+                .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
+        }]
+
+        this.axisX = {
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per month: ${getAverage(this.data[0].dataPoints)}`,
+            interval: 1
+        }
+
+        function fillInMissingMonths(dataPoints) {
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const newDataPoints = [];
+            const maxMonth = dataPoints.reduce((highestMonth, dp) => {
+                if (highestMonth < dp.indexOf(dp.label)) return dp.indexOf(dp.label);
+                return highestMonth;
+            }, 0)
+        
+            for (let i = 0; i <= maxMonth; i++) {
+                const foundIndex = dataPoints.findIndex(x => x.label === months[i])
+                if (foundIndex !== -1) {
+                    newDataPoints.push(dataPoints[foundIndex])
+                } else {
+                    newDataPoints.push({label: months[i], y: 0})
+                }
+
+
+            }
+
+            return newDataPoints;
+
+        }
+
+        function getYearDataPointsByMonth(soldItems) {
+            const filteredItems = soldItems.filter(item => {
+                try {
+                    return item.dateSold.includes(year);
+                } catch (e) {
+                    console.log("Item with no Date Sold", item);
+                    return false;
+                }
+            });
+
+            const dataPoints = filteredItems.reduce((dataPoints, item) => {
+                const dateSold = standardDate(item.dateSold);
+                const price = profitSetToTrue ? +item.profit : +item.priceSold;
+                const month = new Date(dateSold).toLocaleString('default', { month: 'long' });
+
+                const itemFoundIndex = dataPoints.findIndex(x => x.label === month);
+                if (itemFoundIndex !== -1) {
+                    const dP = dataPoints[itemFoundIndex];
+                    dataPoints[itemFoundIndex] = { label: month, y: dataPoints[itemFoundIndex].y + price };
+                    return dataPoints;
+                } else {
+                    dataPoints.push({ label: month, y: price });
+                    return dataPoints;
+                }
+            }, [])
+                .map(j => ({ label: month, y: +j.y.toFixed(2) }));
+
+
+            return dataPoints;
+
+        }
+    }
+}
+
+///Methods//////////////////////////
 
 function checkAndMergeMonths(originalMonth, newMonth) {
     if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;
     return `${originalMonth}/${newMonth}`
 }
-function fillInMissingDays(dataArray){
+function fillInMissingDays(dataArray) {
     //get day  for i < length - day
     const newArray = [...dataArray]
     const difference = getDay() - newArray.length;
 
-    for (let i = 0; i < difference; i++){
-        newArray.push({y: 0})
+    for (let i = 0; i < difference; i++) {
+        newArray.push({ y: 0 })
     }
 
     return newArray;
 }
 
-function getDay(){
+function getDay() {
     const now = new Date();
-        const start = new Date(now.getFullYear(), 0, 0);
-        const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-        const oneDay = 1000 * 60 * 60 * 24;
-        const day = Math.floor(diff / oneDay);
-        return day;
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+    const oneDay = 1000 * 60 * 60 * 24;
+    const day = Math.floor(diff / oneDay);
+    return day;
 }
 function fillInMissingWeeks(dataArray) {
     const allWeeks = [];
