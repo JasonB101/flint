@@ -202,8 +202,17 @@ function checkAndMergeMonths(originalMonth, newMonth) {
 }
 function fillInMissingDays(dataArray) {
     //get day  for i < length - day
-    const newArray = [...dataArray]
-    const difference = getDay() - newArray.length;
+    const newArray = [...dataArray];
+    const maxDay = newArray.reduce((highestDay, dp) => {
+        console.log(typeof(dp.x))
+        if (highestDay < getDay(dp.x)) return getDay(dp.x);
+        return highestDay;
+    }, 1)
+    // console.log(maxDay)
+    const difference = maxDay - newArray.length;
+    const difference2 = new Date().getDay() - newArray.length;
+
+    // console.log(difference, difference2)
 
     for (let i = 0; i < difference; i++) {
         newArray.push({ y: 0 })
@@ -212,10 +221,12 @@ function fillInMissingDays(dataArray) {
     return newArray;
 }
 
-function getDay() {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+function getDay(date) {
+    // console.log(typeof(date))
+    if (typeof(date) === "string") date = new Date(date);
+    // console.log(date)
+    const start = new Date(date.getFullYear(), 0, 0);
+    const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
     const oneDay = 1000 * 60 * 60 * 24;
     const day = Math.floor(diff / oneDay);
     return day;
