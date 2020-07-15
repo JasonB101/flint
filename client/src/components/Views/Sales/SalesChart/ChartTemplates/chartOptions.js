@@ -31,7 +31,7 @@ export class YearSalesChart extends ChartOptions {
             dataPoints: getYearDataPoints(soldItems)
         }]
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(this.data[0].dataPoints)}`,
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${ getAverage(fillInMissingDays(this.data[0].dataPoints))}`,
             interval: 7
         }
 
@@ -127,7 +127,26 @@ function checkAndMergeMonths(originalMonth, newMonth) {
     if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;
     return `${originalMonth}/${newMonth}`
 }
+function fillInMissingDays(dataArray){
+    //get day  for i < length - day
+    const newArray = [...dataArray]
+    const difference = getDay() - newArray.length;
 
+    for (let i = 0; i < difference; i++){
+        newArray.push({y: 0})
+    }
+
+    return newArray;
+}
+
+function getDay(){
+    const now = new Date();
+        const start = new Date(now.getFullYear(), 0, 0);
+        const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+        const oneDay = 1000 * 60 * 60 * 24;
+        const day = Math.floor(diff / oneDay);
+        return day;
+}
 function fillInMissingWeeks(dataArray) {
     const allWeeks = [];
     const sorted = dataArray.sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]);
