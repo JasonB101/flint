@@ -171,7 +171,7 @@ function standardDate(value) {
 function getAverage(dataPoints) {
     let result = "";
     if (dataPoints) {
-        const quantity = dataPoints.length - 7;
+        const quantity = dataPoints.length;
         const sum = dataPoints.reduce((sum, dp) => sum + +dp.y, 0);
         result = currencyFormatter.format(sum / quantity)
     }
