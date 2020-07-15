@@ -25,15 +25,15 @@ export class YearSalesChart extends ChartOptions {
             includeZero: false,
             prefix: "$"
         }
-        this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(this.data[0].dataPoints)}`,
-            interval: 7
-        }
         this.data = [{
             type: "column",
             toolTipContent: " {x}: ${y}",
             dataPoints: getYearDataPoints(soldItems)
         }]
+        this.axisX = {
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(this.data[0].dataPoints)}`,
+            interval: 7
+        }
 
 
         function getYearDataPoints(soldItems) {

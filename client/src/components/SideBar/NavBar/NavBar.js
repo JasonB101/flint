@@ -22,6 +22,13 @@ const NavBar = (props) => {
                     activeStyle={{
                         backgroundColor: "#353a42"
                     }}>Sold Items<div className="spacer"></div>
+                </NavLink>,
+                <NavLink
+                    key="milestones"
+                    to="/reports/milestones"
+                    activeStyle={{
+                        backgroundColor: "#353a42"
+                    }}>Milestones<div className="spacer"></div>
                 </NavLink>
             ]
         },
@@ -39,10 +46,6 @@ const NavBar = (props) => {
                     backgroundColor: "#353a42"
                 }}>Expenses</NavLink>
             <Menu id="reports" {...navMenu.reports} />
-            <NavLink to="/feedback"
-                activeStyle={{
-                    backgroundColor: "#353a42"
-                }}>Leave Feeback</NavLink>
         </div>
     );
 }
