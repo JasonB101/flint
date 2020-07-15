@@ -1,4 +1,3 @@
-
 class ChartOptions {
     constructor(title) {
         this.animationEnabled = true;
@@ -11,6 +10,8 @@ class ChartOptions {
     }
 }
 
+
+
 export class YearSalesChart extends ChartOptions {
     constructor(year, soldItems, profitSetToTrue) {
         super(`${profitSetToTrue ? "Profits" : "Sales"} for year ${year}`);
@@ -21,7 +22,7 @@ export class YearSalesChart extends ChartOptions {
         }
         this.axisX = {
             title: "",
-            interval: 5
+            interval: 7
         }
         this.data = [{
             type: "column",
@@ -29,7 +30,56 @@ export class YearSalesChart extends ChartOptions {
             dataPoints: getYearDataPoints(soldItems)
         }]
 
+
         function getYearDataPoints(soldItems) {
+            const filteredItems = soldItems.filter(item => {
+                try {
+                    return item.dateSold.includes(year);
+                } catch (e) {
+                    console.log("Item with no Date Sold", item);
+                    return false;
+                }
+            });
+
+            const dataPoints = filteredItems.reduce((dataPoints, item) => {
+                const dateSold = standardDate(item.dateSold);
+                const price = profitSetToTrue ? +item.profit : +item.priceSold;
+                const itemFoundIndex = dataPoints.findIndex(x => x.x === dateSold);
+                if (itemFoundIndex !== -1) {
+                    dataPoints[itemFoundIndex] = { x: dateSold, y: dataPoints[itemFoundIndex].y + price };
+                    return dataPoints;
+                } else {
+                    dataPoints.push({ x: dateSold, y: price });
+                    return dataPoints;
+                }
+            }, []).map(j => ({ x: new Date(j.x), y: +j.y.toFixed(2) }));
+
+            return dataPoints;
+
+
+        }
+    }
+
+}
+
+export class YearSalesChartByWeek extends YearSalesChart {
+    constructor(year, soldItems, profitSetToTrue) {
+        super(year, soldItems, true);
+
+        Date.prototype.getWeek = function () {
+            var onejan = new Date(this.getFullYear(), 0, 1);
+            return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()) / 7);
+        }
+
+        this.data = [{
+            type: "column",
+            toolTipContent: " {label}: ${y}",
+            dataPoints: getYearDataPointsByWeek(soldItems).sort((a, b) => a.label.split(" ")[1] - b.label.split(" ")[1])
+        }]
+
+        console.log(this);
+
+        function getYearDataPointsByWeek(soldItems) {
             const filteredItems = soldItems.filter(item => {
                 try {
                     return item.dateSold.includes(year);
@@ -42,20 +92,21 @@ export class YearSalesChart extends ChartOptions {
             return filteredItems.reduce((dataPoints, item) => {
                 const dateSold = standardDate(item.dateSold);
                 const price = profitSetToTrue ? +item.profit : +item.priceSold;
-                const itemFoundIndex = dataPoints.findIndex(x => x.x === dateSold);
-                if (itemFoundIndex !== -1){
-                    dataPoints[itemFoundIndex] = {x: dateSold, y: dataPoints[itemFoundIndex].y + price};
+                const week = new Date(dateSold).getWeek()
+                const month = new Date(dateSold).toLocaleString('default', { month: 'long' });
+
+                const itemFoundIndex = dataPoints.findIndex(x => x.label === `${week} ${month}`);
+                if (itemFoundIndex !== -1) {
+                    dataPoints[itemFoundIndex] = { label: `${week} ${month}`, y: dataPoints[itemFoundIndex].y + price };
                     return dataPoints;
                 } else {
-                    dataPoints.push({x: dateSold, y: price});
+                    dataPoints.push({ label: `${week} ${month}`, y: price });
                     return dataPoints;
                 }
-            }, []).map(j => ({x: new Date(j.x), y: +j.y}));
-
+            }, []).map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
 
         }
     }
-
 }
 
 function standardDate(value) {
@@ -71,7 +122,7 @@ function standardDate(value) {
 
 }
 
-function daysIntoYear(dateString){
+function daysIntoYear(dateString) {
     const date = new Date(dateString);
     return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
 }

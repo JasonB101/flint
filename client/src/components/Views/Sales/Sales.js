@@ -1,27 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import Styles from "./Sales.module.scss";
 import SalesHeader from "./SalesHeader/SalesHeader";
 import SalesChart from "./SalesChart/SalesChart";
-import { YearSalesChart } from "./SalesChart/ChartTemplates/chartOptions";
+import { YearSalesChart, YearSalesChartByWeek } from "./SalesChart/ChartTemplates/chartOptions";
 
 const Sales = (props) => {
+    const [dateType, setDateType] = useState("week");
 
+    const [profitTrue, setProfitState] = useState(true);
+
+    //dateType is day week year
     const { items, expenses } = props;
     const soldItems = items.filter(x => x.sold)
 
     const salesInfo = assembleSalesInfo(items, expenses)
+    //day, week, month, year
+    const options = () => {
+        switch (dateType){
+            case "day":
+            return new YearSalesChart(2020, soldItems, true);
+            case "week":
+            return new YearSalesChartByWeek(2020, soldItems, true);
+            case "month":
+            return {};
+            case "year":
+            return {};
+            default:
+        }
+    }
 
-    const options = new YearSalesChart(2020, soldItems, true);
     const currencyFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
     });
+
     return (
         <div className={Styles.wrapper}>
             <SalesHeader salesInfo={salesInfo} />
             <hr></hr>
             <div className={Styles.annualChartContainer}>
-                <SalesChart options={options} />
+                    <div>
+                        <span onClick={() => setDateType("day")} className={dateType === "day" ? Styles.glowSpan : ""}>Day</span>
+                        <span onClick={() => setDateType("week")} className={dateType === "week" ? Styles.glowSpan : ""}>Week</span>
+                        <span onClick={() => setDateType("month")} className={dateType === "month" ? Styles.glowSpan : ""}>Month</span>
+                        <span onClick={() => setDateType("year")} className={dateType === "year" ? Styles.glowSpan : ""}>Year</span>
+                    </div>
+                <SalesChart options={options()} />
                 <br></br>
                 <h4>{`Annual Sales: ${currencyFormatter.format(
                     soldItems.reduce((sales, item) =>
@@ -61,7 +85,6 @@ const Sales = (props) => {
 
             return salesInfo;
         }, salesObj);
-        console.log(expenseTotal)
         info.YTDProfit = info.YTDProfit - expenseTotal;
         return info
     }
