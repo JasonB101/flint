@@ -101,21 +101,28 @@ export class YearSalesChartByWeek extends YearSalesChart {
                 const week = new Date(dateSold).getWeek()
                 const month = new Date(dateSold).toLocaleString('default', { month: 'long' });
 
-                const itemFoundIndex = dataPoints.findIndex(x => x.label === `${week} ${month}`);
+                const itemFoundIndex = dataPoints.findIndex(x => x.label.split(" ")[0] === String(week));
                 if (itemFoundIndex !== -1) {
-                    dataPoints[itemFoundIndex] = { label: `${week} ${month}`, y: dataPoints[itemFoundIndex].y + price };
+                    const dP = dataPoints[itemFoundIndex];
+                    dataPoints[itemFoundIndex] = { label: `${week} ${checkAndMergeMonths(dP.label.split(" ")[1], month)}`, y: dataPoints[itemFoundIndex].y + price };
                     return dataPoints;
                 } else {
                     dataPoints.push({ label: `${week} ${month}`, y: price });
                     return dataPoints;
                 }
-            }, []).map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
+            }, [])
+            .map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
 
 
             return dataPoints;
 
         }
     }
+}
+
+function checkAndMergeMonths(originalMonth, newMonth){
+    if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;
+    return `${originalMonth}/${newMonth}`
 }
 
 function fillInMissingWeeks(dataArray) {
