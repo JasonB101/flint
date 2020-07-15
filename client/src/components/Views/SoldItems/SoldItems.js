@@ -16,7 +16,7 @@ const SoldItems = (props) => {
             filterItems(soldItems.filter(x => {
                 const { title = "n/a", partNo = "n/a", sku = "n/a", buyer: {username} = "Unknown" } = x;
                 const conditionsArray = [title, partNo, sku, username];
-                conditionsArray.forEach(x => x ? null : console.log(x))
+                conditionsArray.forEach((x, i) => x ? null : console.log(i))
                 return conditionsArray.some(j => j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()));
             }))
         }
