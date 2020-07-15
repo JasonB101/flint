@@ -1,3 +1,9 @@
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});
+
 class ChartOptions {
     constructor(title) {
         this.animationEnabled = true;
@@ -11,7 +17,6 @@ class ChartOptions {
 }
 
 
-
 export class YearSalesChart extends ChartOptions {
     constructor(year, soldItems, profitSetToTrue) {
         super(`${profitSetToTrue ? "Profits" : "Sales"} for year ${year}`);
@@ -21,7 +26,7 @@ export class YearSalesChart extends ChartOptions {
             prefix: "$"
         }
         this.axisX = {
-            title: "",
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per Day: ${false}`,
             interval: 7
         }
         this.data = [{
@@ -71,17 +76,17 @@ export class YearSalesChartByWeek extends YearSalesChart {
             return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()) / 7);
         }
 
-        this.axisX = {
-            title: "",
-            interval: 1
-        }
-
         this.data = [{
             type: "column",
             toolTipContent: " {label}: ${y}",
-            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems)) 
-            .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
+            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems))
+                .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
         }]
+
+        this.axisX = {
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per week: ${getAverage(this.data[0].dataPoints)}`,
+            interval: 1
+        }
 
         function getYearDataPointsByWeek(soldItems) {
             const filteredItems = soldItems.filter(item => {
@@ -109,7 +114,7 @@ export class YearSalesChartByWeek extends YearSalesChart {
                     return dataPoints;
                 }
             }, [])
-            .map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
+                .map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
 
 
             return dataPoints;
@@ -118,7 +123,7 @@ export class YearSalesChartByWeek extends YearSalesChart {
     }
 }
 
-function checkAndMergeMonths(originalMonth, newMonth){
+function checkAndMergeMonths(originalMonth, newMonth) {
     if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;
     return `${originalMonth}/${newMonth}`
 }
@@ -127,22 +132,22 @@ function fillInMissingWeeks(dataArray) {
     const allWeeks = [];
     const sorted = dataArray.sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]);
     if (sorted.length > 1 && sorted[0].label.split(" ")[1] !== 1) {
-        sorted.unshift({label: "Week 1 ", y: 0});
+        sorted.unshift({ label: "Week 1 ", y: 0 });
     }
     sorted.forEach((dataPoint, index) => {
         const firstPoint = sorted[index - 1] ? +sorted[index - 1].label.split(" ")[1] : 1;
         const secondPoint = +dataPoint.label.split(" ")[1];
 
-        if (secondPoint - firstPoint !== 1){
+        if (secondPoint - firstPoint !== 1) {
             insertWeeks(firstPoint, secondPoint);
         }
 
         allWeeks.push(dataPoint);
     })
-    
-    function insertWeeks(low, high){
-        for (let i = low + 1; i < high; i++){
-            allWeeks.push({label: `Week ${i} `, y: 0});
+
+    function insertWeeks(low, high) {
+        for (let i = low + 1; i < high; i++) {
+            allWeeks.push({ label: `Week ${i} `, y: 0 });
         }
     }
 
@@ -163,6 +168,17 @@ function standardDate(value) {
 
 }
 
+function getAverage(dataPoints) {
+    let result = "";
+    if (dataPoints) {
+        const quantity = dataPoints.length - 7;
+        const sum = dataPoints.reduce((sum, dp) => sum + +dp.y, 0);
+        result = currencyFormatter.format(sum / quantity)
+    }
+
+    return result;
+
+}
 function daysIntoYear(dateString) {
     const date = new Date(dateString);
     return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;
