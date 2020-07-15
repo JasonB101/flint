@@ -142,7 +142,7 @@ export class YearSalesChartByMonth extends YearSalesChart {
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const newDataPoints = [];
             const maxMonth = dataPoints.reduce((highestMonth, dp) => {
-                if (highestMonth < dp.indexOf(dp.label)) return dp.indexOf(dp.label);
+                if (highestMonth < months.indexOf(dp.label)) return months.indexOf(dp.label);
                 return highestMonth;
             }, 0)
         
@@ -153,8 +153,6 @@ export class YearSalesChartByMonth extends YearSalesChart {
                 } else {
                     newDataPoints.push({label: months[i], y: 0})
                 }
-
-
             }
 
             return newDataPoints;
@@ -186,7 +184,7 @@ export class YearSalesChartByMonth extends YearSalesChart {
                     return dataPoints;
                 }
             }, [])
-                .map(j => ({ label: month, y: +j.y.toFixed(2) }));
+                .map(j => ({ label: j.label, y: +j.y.toFixed(2) }));
 
 
             return dataPoints;
@@ -196,6 +194,7 @@ export class YearSalesChartByMonth extends YearSalesChart {
 }
 
 ///Methods//////////////////////////
+
 
 function checkAndMergeMonths(originalMonth, newMonth) {
     if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;

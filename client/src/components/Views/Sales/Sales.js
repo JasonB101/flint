@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Styles from "./Sales.module.scss";
 import SalesHeader from "./SalesHeader/SalesHeader";
 import SalesChart from "./SalesChart/SalesChart";
-import { YearSalesChart, YearSalesChartByWeek } from "./SalesChart/ChartTemplates/chartOptions";
+import { YearSalesChart, YearSalesChartByWeek, YearSalesChartByMonth } from "./SalesChart/ChartTemplates/chartOptions";
 
 const Sales = (props) => {
     const [dateType, setDateType] = useState("week");
@@ -23,7 +23,7 @@ const Sales = (props) => {
             case "week":
                 return new YearSalesChartByWeek(year, soldItems, true);
             case "month":
-                return {};
+                return new YearSalesChartByMonth(year, soldItems, true);
             case "year":
                 return {};
             default:
