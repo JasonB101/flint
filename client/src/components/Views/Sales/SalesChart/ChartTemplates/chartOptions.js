@@ -83,8 +83,6 @@ export class YearSalesChartByWeek extends YearSalesChart {
             .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
         }]
 
-        console.log(this);
-
         function getYearDataPointsByWeek(soldItems) {
             const filteredItems = soldItems.filter(item => {
                 try {
@@ -143,7 +141,6 @@ function fillInMissingWeeks(dataArray) {
     })
     
     function insertWeeks(low, high){
-        console.log("MADE IT")
         for (let i = low + 1; i < high; i++){
             allWeeks.push({label: `Week ${i} `, y: 0});
         }
