@@ -73,7 +73,7 @@ const Sales = (props) => {
                 <br></br>
                 <h5>{`Projected ${year} Sales: ${getProjected(sales)}`}</h5>
                 <h5>{`Projected ${year} Net Sales: ${getProjected(profit)}`}</h5>
-                
+
             </div>
 
 
@@ -98,12 +98,14 @@ const Sales = (props) => {
                 salesInfo.totalSold++
                 salesInfo.profitPerItem = "$" + (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
             } else {
-                salesInfo.activeSales[0] += x.listedPrice;
-                salesInfo.activeSales[1] += x.expectedProfit;
+                if (x.listed) {
+                    salesInfo.totalListed++;
+                    salesInfo.activeSales[0] += x.listedPrice;
+                    salesInfo.activeSales[1] += x.expectedProfit;
+                }
                 salesInfo.YTDProfit -= x.purchasePrice + (x.shippingCost ? x.shippingCost : 0);
-                salesInfo.totalListed++
-
             }
+
 
             return salesInfo;
         }, salesObj);
