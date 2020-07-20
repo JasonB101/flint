@@ -100,7 +100,7 @@ const Sales = (props) => {
             } else {
                 salesInfo.activeSales[0] += x.listedPrice;
                 salesInfo.activeSales[1] += x.expectedProfit;
-                salesInfo.YTDProfit -= x.purchasePrice + x.shippingCost ? x.shippingCost : 0;
+                salesInfo.YTDProfit -= x.purchasePrice + (x.shippingCost ? x.shippingCost : 0);
                 salesInfo.totalListed++
 
             }
