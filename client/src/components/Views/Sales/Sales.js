@@ -19,11 +19,11 @@ const Sales = (props) => {
     const options = () => {
         switch (dateType) {
             case "day":
-                return new YearSalesChart(year, soldItems, true);
+                return new YearSalesChart(year, soldItems, profitTrue);
             case "week":
-                return new YearSalesChartByWeek(year, soldItems, true);
+                return new YearSalesChartByWeek(year, soldItems, profitTrue);
             case "month":
-                return new YearSalesChartByMonth(year, soldItems, true);
+                return new YearSalesChartByMonth(year, soldItems, profitTrue);
             case "year":
                 return {};
             default:
@@ -100,7 +100,7 @@ const Sales = (props) => {
             } else {
                 salesInfo.activeSales[0] += x.listedPrice;
                 salesInfo.activeSales[1] += x.expectedProfit;
-                salesInfo.YTDProfit -= x.purchasePrice;
+                salesInfo.YTDProfit -= x.purchasePrice + x.shippingCost ? x.shippingCost : 0;
                 salesInfo.totalListed++
 
             }
