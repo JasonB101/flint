@@ -15,7 +15,7 @@ const SalesHeader = ({ salesInfo }) => {
             </h5>
             <h5>Active Listings
                 <span>{`${currencyFormatter.format(activeSales[0].toFixed(2))} /`}
-                    <span style={{ color: "green", display: "inline" }}>{currencyFormatter.format(activeSales[1].toFixed(2))}>
+                    <span style={{ color: "green", display: "inline" }}>{currencyFormatter.format(activeSales[1].toFixed(2))}
                     </span>
                 </span>
             </h5>
@@ -26,7 +26,7 @@ const SalesHeader = ({ salesInfo }) => {
                 <span style={{ color: "green" }}>{currencyFormatter.format(profitPerItem)}</span>
             </h5>
             <h5>YTD Profit
-                <span style={{ color: "green" }}>{currencyFormatter.format(YTDProfit.toFixed(2))}}</span>
+                <span style={{ color: "green" }}>{currencyFormatter.format(YTDProfit.toFixed(2))}</span>
             </h5>
 
         </div>
