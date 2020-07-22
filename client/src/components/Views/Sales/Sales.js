@@ -95,8 +95,8 @@ const Sales = (props) => {
             if (x.sold) {
                 salesInfo.YTDProfit += x.profit;
                 salesInfo.allItemsProfit += x.profit;
-                salesInfo.totalSold++
-                salesInfo.profitPerItem = "$" + (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
+                salesInfo.totalSold++;
+                salesInfo.profitPerItem = (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
             } else {
                 if (x.listed) {
                     salesInfo.totalListed++;
