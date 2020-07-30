@@ -15,10 +15,8 @@ const SoldItems = (props) => {
         } else {
             filterItems(soldItems.filter(x => {
                 const { title = "n/a", partNo = "n/a", sku = "n/a", buyer: {username} = "Unknown" } = x;
-                console.log(title, partNo, sku, username)
                 const conditionsArray = [title, partNo, sku, username];
-                conditionsArray.forEach((x, i) => x ? null : console.log(i))
-                return conditionsArray.some(j => j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()));
+                return conditionsArray.some(j => j ? j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()) : false);
             }))
         }
     }, [soldItemsSearchTerm, soldItems])
