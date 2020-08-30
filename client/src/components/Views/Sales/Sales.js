@@ -70,6 +70,12 @@ const Sales = (props) => {
                         .toFixed(2))
                     }`}
                 </h4>
+                <h4>{`Annual Sales: ${currencyFormatter.format(
+                    soldItems.reduce((sales, item) =>
+                        (sales += Number(item.profit)), 0)
+                        .toFixed(2))
+                    }`}
+                </h4>
                 <br></br>
                 <h5>{`Projected ${year} Sales: ${getProjected(sales)}`}</h5>
                 <h5>{`Projected ${year} Net Sales: ${getProjected(profit)}`}</h5>
