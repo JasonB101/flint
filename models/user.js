@@ -28,10 +28,6 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    expectedProfit: {
-        type: Number,
-        default: 0
-    },
     averageShippingCost: {
         type: Number,
         default: 10
