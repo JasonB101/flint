@@ -14,13 +14,14 @@ const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, f
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged. (I am your father)
 
 ebayRouter.get("/getebay", async (req, res, next) => {
-    const userObject = getUserObject(req.user._id);
+    const userObject = await getUserObject(req.user._id);
     const { averageShippingCost } = userObject;
     const ebayAuthToken = user.ebayToken;
     updateAllZeroShippingCost(userId);
     updateSellerAvgShipping(userId);
     const inventoryItems = await getInventoryItems(userId);
     const ebayListings = await getEbayListings(ebayAuthToken, userId);
+    //verifiedCorrectInfo is an action function, doesn't return anything usable atm
     const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(inventoryItems, ebayListings, averageShippingCost);
     const completedSales = await getCompletedSales(ebayAuthToken);
     const newSoldItems = await updateInventoryWithSales(userId, completedSales);
@@ -60,9 +61,9 @@ ebayRouter.put("/linkItem/:id", async (req, res, next) => {
 
 })
 
-function getUserObject(userId){
+async function getUserObject(userId){
     const userInfo = await User.findById(userId);
-    const user = userInfo.toObject();
+    return userInfo.toObject();
 }
 
 
