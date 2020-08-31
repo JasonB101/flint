@@ -4,7 +4,7 @@ const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
 const {updateSellerAvgShipping} = require("../lib/userMethods")
 const {getEbayListings, getCompletedSales} = require("../lib/ebayMethods")
-const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, figureProfit} = require("../lib/inventoryMethods")
+const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, figureProfit, verifyCorrectPricesInInventoryItems} = require("../lib/inventoryMethods")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -14,16 +14,17 @@ const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, f
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged. (I am your father)
 
 ebayRouter.get("/getebay", async (req, res, next) => {
-    const userId = req.user._id;
-    const userInfo = await User.findById(userId);
-    const user = userInfo.toObject();
+    const userObject = getUserObject(req.user._id);
+    const { averageShippingCost } = userObject;
     const ebayAuthToken = user.ebayToken;
     updateAllZeroShippingCost(userId);
     updateSellerAvgShipping(userId);
+    const inventoryItems = await getInventoryItems(userId);
+    const ebayListings = await getEbayListings(ebayAuthToken, userId);
+    const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(inventoryItems, ebayListings, averageShippingCost);
     const completedSales = await getCompletedSales(ebayAuthToken);
     const newSoldItems = await updateInventoryWithSales(userId, completedSales);
-    const inventoryItems = await getInventoryItems(userId)
-    const ebayListings = await getEbayListings(ebayAuthToken, userId)
+    
     const response = {
         ebayListings,
         newSoldItems,
@@ -36,8 +37,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
 ebayRouter.put("/linkItem/:id", async (req, res, next) => {
     const { ItemID, BuyItNowPrice } = req.body;
     console.log(req.body)
-    const user = await User.findById(req.user._id);
-    const userObject = user.toObject();
+    const userObject = getUserObject(req.user._id);
     const { averageShippingCost } = userObject;
     const item = await InventoryItem.findById(req.params.id);
     const purchasePrice = item.toObject().purchasePrice;
@@ -60,6 +60,10 @@ ebayRouter.put("/linkItem/:id", async (req, res, next) => {
 
 })
 
+function getUserObject(userId){
+    const userInfo = await User.findById(userId);
+    const user = userInfo.toObject();
+}
 
 
 
