@@ -16,7 +16,7 @@ const {updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, f
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userObject = await getUserObject(req.user._id);
     const { averageShippingCost } = userObject;
-    const ebayAuthToken = user.ebayToken;
+    const ebayAuthToken = req.user.ebayToken;
     updateAllZeroShippingCost(userId);
     updateSellerAvgShipping(userId);
     const inventoryItems = await getInventoryItems(userId);
