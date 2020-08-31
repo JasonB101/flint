@@ -38,7 +38,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
 ebayRouter.put("/linkItem/:id", async (req, res, next) => {
     const { ItemID, BuyItNowPrice } = req.body;
     console.log(req.body)
-    const userObject = getUserObject(req.user._id);
+    const userObject = await getUserObject(req.user._id);
     const { averageShippingCost } = userObject;
     const item = await InventoryItem.findById(req.params.id);
     const purchasePrice = item.toObject().purchasePrice;
