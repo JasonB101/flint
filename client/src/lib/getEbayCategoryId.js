@@ -18,6 +18,8 @@ const getCategoryId = (categoryName) => {
             return 33699
         case "Dash Parts":
             return 40017
+        case "Switches":
+            return 50459;
         default:
             return ""
     }

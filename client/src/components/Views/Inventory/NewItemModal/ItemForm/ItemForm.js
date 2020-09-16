@@ -86,6 +86,7 @@ const ItemForm = (props) => {
                         <option>Exterior Mirror</option>
                         <option>Interior Mirror</option>
                         <option>Dash Parts</option>
+                        <option>Switches</option>
                     </Form.Control>
                 </Form.Group>
                 <Form.Group md={4} as={Col} controlId="formGridCategoryId">
