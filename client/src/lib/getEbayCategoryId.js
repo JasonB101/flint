@@ -20,6 +20,8 @@ const getCategoryId = (categoryName) => {
             return 40017
         case "Switches":
             return 50459;
+        case "Exterior Moulding":
+            return 33654;
         default:
             return ""
     }
