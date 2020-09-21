@@ -12,6 +12,7 @@ const ListingForm = (props) => {
         conditionId: 3000,
         conditionDescription: "",
         acceptOfferHigh: "",
+        shippingService: "USPSPriority",
         declineOfferLow: "",
         description: "Please double check the part number you are looking for and do your own research to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by me. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.\n\nThank you!",
         location: "",
@@ -55,7 +56,12 @@ const ListingForm = (props) => {
         }
     }
 
-
+    const handleShippingSelect = (e) => {
+        setInput({
+          ...inputForm,
+          shippingService: e.target.value
+        });
+      }
 
     async function saveChanges(e) {
         e.preventDefault();
@@ -104,6 +110,15 @@ const ListingForm = (props) => {
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridMpn">
                     <Form.Control value={inputForm.mpn} name="mpn" onChange={handleChange} placeholder="Part Number" />
+                </Form.Group>
+            </Form.Row>
+            <Form.Label>Shipping Service</Form.Label>
+            <Form.Row>
+                <Form.Group md={8} as={Col} controlId="formGridConditionId">
+                    <Form.Control as="select" name="conditionId" onChange={handleShippingSelect}>
+                        <option>USPSPriority</option>
+                        <option>USPSFirstClass</option>
+                    </Form.Control>
                 </Form.Group>
             </Form.Row>
             <Form.Label>Money</Form.Label>

@@ -26,10 +26,11 @@ const ItemForm = (props) => {
 
   const handleCategorySelect = (e) => {
     setInput({
-        ...inputForm,
-        categoryId: getEbayCategoryId(e.target.value)
+      ...inputForm,
+      categoryId: getEbayCategoryId(e.target.value)
     });
-}
+  }
+  
 
   function moveToNext(e) {
     e.preventDefault();
@@ -37,7 +38,7 @@ const ItemForm = (props) => {
     partNumberElement.select();
     console.log(partNumberElement)
     document.execCommand('copy');
-    let form = {...inputForm};
+    let form = { ...inputForm };
     form.datePurchased = purchaseDate.toLocaleDateString();
     setAndToggleForm(form)
   }
@@ -74,26 +75,27 @@ const ItemForm = (props) => {
           <Form.Control value={inputForm.purchasePrice} name="purchasePrice" onChange={handleChange} required placeholder="$0.00" />
         </Form.Group>
       </Form.Row>
+      
       <Form.Row>
-                <Form.Group md={8} as={Col} controlId="formGridConditionId">
-                    <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
-                        <option>Engine Computer ECU</option>
-                        <option>Computer Chip (Other)</option>
-                        <option>Head Light</option>
-                        <option>Tail Light</option>
-                        <option>Climate Control</option>
-                        <option>Interior Part (Other)</option>
-                        <option>Exterior Mirror</option>
-                        <option>Interior Mirror</option>
-                        <option>Dash Parts</option>
-                        <option>Switches</option>
-                        <option>Exterior Moulding</option>
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group md={4} as={Col} controlId="formGridCategoryId">
-                    <Form.Control required value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
-                </Form.Group>
-            </Form.Row>
+        <Form.Group md={8} as={Col} controlId="formGridConditionId">
+          <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
+            <option>Engine Computer ECU</option>
+            <option>Computer Chip (Other)</option>
+            <option>Head Light</option>
+            <option>Tail Light</option>
+            <option>Climate Control</option>
+            <option>Interior Part (Other)</option>
+            <option>Exterior Mirror</option>
+            <option>Interior Mirror</option>
+            <option>Dash Parts</option>
+            <option>Switches</option>
+            <option>Exterior Moulding</option>
+          </Form.Control>
+        </Form.Group>
+        <Form.Group md={4} as={Col} controlId="formGridCategoryId">
+          <Form.Control required value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
+        </Form.Group>
+      </Form.Row>
 
       <Modal.Footer>
         <Button onClick={() => toggleModal(false)} variant="secondary">Close</Button>
