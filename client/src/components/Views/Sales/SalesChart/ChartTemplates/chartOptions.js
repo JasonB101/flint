@@ -204,7 +204,6 @@ function fillInMissingDays(dataArray) {
     //get day  for i < length - day
     const newArray = [...dataArray];
     const maxDay = newArray.reduce((highestDay, dp) => {
-        console.log(typeof(dp.x))
         if (highestDay < getDay(dp.x)) return getDay(dp.x);
         return highestDay;
     }, 1)
