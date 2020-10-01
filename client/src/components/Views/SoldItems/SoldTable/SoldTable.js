@@ -14,7 +14,7 @@ const SoldTable = (props) => {
     function populateRow(itemObject) {
         const { title, partNo, sku, datePurchased,
             dateSold, purchasePrice, priceSold, shippingCost,
-            ebayFees, payPalFees, profit, _id, buyer } = itemObject;
+            ebayFees, profit, _id, buyer } = itemObject;
         const username = buyer ? buyer.username : "Unknown";
         return (
             <tr key={_id}>
@@ -26,7 +26,7 @@ const SoldTable = (props) => {
                 <td>${valueToFixed(purchasePrice)}</td>
                 <td>${valueToFixed(priceSold)}</td>
                 <td>${valueToFixed(shippingCost)}</td>
-                <td>${valueToFixed(payPalFees + ebayFees)}</td>
+                <td>${valueToFixed(ebayFees)}</td>
                 <td>${valueToFixed(profit)}</td>
                 <td>{username}</td>
             </tr>
