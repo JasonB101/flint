@@ -129,6 +129,7 @@ const Store = (props) => {
         setPayPalToken()
     }
 
+
     function setEbayToken() {
         userAxios.post("/api/syncebay/setebaytoken")
             .then(results => {
@@ -139,6 +140,13 @@ const Store = (props) => {
             })
 
     }
+    function setEbayOAuthToken(authCode) {
+        userAxios.post("/api/syncebay/setebayoauthtoken", {authCode})
+            .then(results => {
+                getEbay();
+            })
+    }
+
     function setPayPalToken() {
         userAxios.get("/api/syncpaypal/setAccessToken")
             .then(results => {

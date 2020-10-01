@@ -67,6 +67,7 @@ const inventoryItemSchema = new Schema({
     },
     imgUrl: String,
     trackingNumber: String,
+    orderId: String,
     buyer: {
         type: Schema.Types.ObjectId,
         ref: 'Buyer'

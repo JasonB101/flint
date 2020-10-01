@@ -42,6 +42,8 @@ const userSchema = new Schema({
     },
     notifications: Array,
     ebayToken: String,
+    ebayOAuthToken: String,
+    ebayRefreshOAuthToken: String,
     payPalToken: String,
 
 })

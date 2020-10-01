@@ -98,6 +98,15 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
 
 })
 
+syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
+const userId = req.user._id
+const {authCode} = req.body;
+
+const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
+
+})
+
+
 async function requestEbayToken(sessionId) {
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
 <FetchTokenRequest xmlns="urn:ebay:apis:eBLBaseComponents">
