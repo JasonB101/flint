@@ -25,9 +25,6 @@ app.use("/api/ebay", require("./routes/ebay"))
 app.use("/auth", require("./routes/auth"))
 
 // Connect to colection
-mongoose.set('useCreateIndex', true)
-mongoose.set('useFindAndModify', false);
-mongoose.set('useUnifiedTopology', true);
 mongoose.connect(process.env.MONGO_ATLAS_CLUSTER1,{
     useNewUrlParser: true
 }, ((err) => {
