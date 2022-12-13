@@ -56,8 +56,8 @@ const SoldTable = (props) => {
                     valB = stripSpecial(valB);
                 }
                 if (String(valA).includes("/")) {
-                    valA = standardDate(valA);
-                    valB = standardDate(valB);
+                    valA = dateToTime(valA);
+                    valB = dateToTime(valB);
                 }
 
                 function stripSpecial(value) {
@@ -67,17 +67,8 @@ const SoldTable = (props) => {
 
                     return +value;
                 }
-                function standardDate(value) {
-                    const dateArray = value.split("/");
-                    if (dateArray.length === 3) {
-                        dateArray[0] = dateArray[0].length === 1 ? `0${dateArray[0]}` : dateArray[0];
-                        dateArray[1] = dateArray[1].length === 1 ? `0${dateArray[1]}` : dateArray[1];
-                        const newValue = dateArray.join("");
-                        return newValue;
-                    }
-
-                    return value;
-
+                function dateToTime(value) {
+                    return new Date(value).getTime()
                 }
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
             }

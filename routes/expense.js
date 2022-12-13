@@ -3,7 +3,7 @@ const expenseRouter = express.Router();
 const Expense = require("../models/expense");
 
 expenseRouter.post("/addExpense", (req, res, next) => {
-    const userId = req.user._id;
+    const userId = req.auth._id;
     const newExpense = new Expense({
         ...req.body,
         userId
@@ -22,7 +22,7 @@ expenseRouter.post("/addExpense", (req, res, next) => {
 })
 
 expenseRouter.get("/", (req, res, next) => {
-    const expenses = Expense.find({userId: req.user._id}, (err, expenses) => {
+    const expenses = Expense.find({userId: req.auth._id}, (err, expenses) => {
         if (err){
             console.log(err)
             return res.status(500).send([])

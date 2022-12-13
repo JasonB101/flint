@@ -5,7 +5,7 @@ const mongoose = require("mongoose")
 require("dotenv").config()
 const PORT = process.env.PORT || 3825
 const path = require("path")
-const expressJWT = require("express-jwt")
+const {expressjwt: expressJWT} = require("express-jwt")
 
 app.use(express.json())
 app.use(morgan('dev'))
@@ -25,8 +25,10 @@ app.use("/api/ebay", require("./routes/ebay"))
 app.use("/auth", require("./routes/auth"))
 
 // Connect to colection
+mongoose.set('strictQuery', false)
 mongoose.connect(process.env.MONGO_ATLAS_CLUSTER1,{
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 }, ((err) => {
     if (err) throw (err)
     console.log("Connected to MongoDB")

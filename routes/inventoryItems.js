@@ -9,7 +9,7 @@ const User = require("../models/user");
 
 inventoryRouter.post("/", async (req, res, next) => {
     // console.log(req.body)
-    const userRaw = await User.findOne({ _id: req.user._id })
+    const userRaw = await User.findOne({ _id: req.auth._id })
     const user = userRaw.toObject();
     const { ebayToken, averageShippingCost } = user;
     const listingDetails = req.body;
@@ -18,7 +18,7 @@ inventoryRouter.post("/", async (req, res, next) => {
     const inventoryItemBody = parseInventoryObject(listingResponse, listingDetails, averageShippingCost)
     if (inventoryItemBody.ebayId) {
         let inventoryItem = new InventoryItem(inventoryItemBody);
-        inventoryItem.userId = req.user._id;
+        inventoryItem.userId = req.auth._id;
         inventoryItem.save((err, item) => {
             if (err) {
                 console.log(err.message)
@@ -35,7 +35,7 @@ inventoryRouter.post("/", async (req, res, next) => {
 
 inventoryRouter.post("/massImport", (req, res, next) => {
     let inventoryItem = new InventoryItem(req.body);
-    inventoryItem.userId = req.user._id;
+    inventoryItem.userId = req.auth._id;
     inventoryItem.save((err, item) => {
         if (err) {
             console.log(err.message)
@@ -50,7 +50,7 @@ inventoryRouter.post("/massImport", (req, res, next) => {
 
 
 inventoryRouter.get("/", async (req, res, next) => {
-    const userId = req.user._id
+    const userId = req.auth._id
     try {
         const items = await getInventoryItems(userId)
         return res.send(items);

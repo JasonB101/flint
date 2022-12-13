@@ -9,10 +9,12 @@ require("dotenv").config()
 
 syncRouter.get("/gettokenlink", async (req, res, next) => {
     //Check to see if there is already a session open and remove it for this user.
-    await EbayTokenSession.findOneAndRemove({ userId: req.user._id }, (err, result) => {
-        if (err) console.log(err)
-        console.log(result)
-    })
+    try {
+        await EbayTokenSession.findOneAndRemove({ userId: req.auth._id })
+    } catch (e) {
+        console.log(e)
+    }
+    
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetSessionIDRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RuName>${process.env.RU_NAME}</RuName>
@@ -40,7 +42,7 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
             const signInLink = `https://signin.ebay.com/ws/eBayISAPI.dll?SignIn&runame=${process.env.RU_NAME}&SessID=${sessionId}`;
             const newSession = new EbayTokenSession({
                 sessionId: sessionId,
-                userId: req.user._id,
+                userId: req.auth._id,
                 date: new Date().toLocaleDateString()
             })
             newSession.save((err, session) => {
@@ -58,9 +60,9 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
 })
 
 syncRouter.post("/setebaytoken", async (req, res, next) => {
-    //This does a post request with no data, uses the req.user._id to get the sessionId for current user. Then does the request
+    //This does a post request with no data, uses the req.auth._id to get the sessionId for current user. Then does the request
     //to ebay to get the ebayToken, and then saves that ebay token in the user's collection. Need to design all this ish better. 
-    const userId = req.user._id
+    const userId = req.auth._id
 
     try {
         const session = await EbayTokenSession.find({ userId: userId })
@@ -99,7 +101,7 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
 })
 
 syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
-const userId = req.user._id
+const userId = req.auth._id
 const {authCode} = req.body;
 
 const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")

@@ -114,7 +114,7 @@ export class YearSalesChartByWeek extends YearSalesChart {
                     return dataPoints;
                 }
             }, [])
-                .map(j => ({ label: `Week ${j.label}`, y: +j.y.toFixed(2) }));
+                .map(j => ({ label: `W${j.label}`, y: +j.y.toFixed(2) }));
 
 
             return dataPoints;
