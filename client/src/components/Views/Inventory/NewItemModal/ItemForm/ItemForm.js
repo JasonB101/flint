@@ -90,6 +90,10 @@ const ItemForm = (props) => {
             <option>Dash Parts</option>
             <option>Switches</option>
             <option>Exterior Moulding</option>
+            <option>Fuse Box</option>
+            <option>Wiper Motor/Transmissions Linkage</option>
+            <option>Steering & Suspension Parts</option>
+            <option>Audio Amplifier</option>
           </Form.Control>
         </Form.Group>
         <Form.Group md={4} as={Col} controlId="formGridCategoryId">

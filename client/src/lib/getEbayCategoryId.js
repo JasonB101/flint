@@ -19,9 +19,17 @@ const getCategoryId = (categoryName) => {
         case "Dash Parts":
             return 40017
         case "Switches":
-            return 50459;
+            return 50459
         case "Exterior Moulding":
-            return 33654;
+            return 33654
+        case "Fuse Box":
+            return 262221
+        case "Wiper Motor/Transmissions Linkage":
+            return 61941
+        case "Steering & Suspension Parts":
+            return 42609
+            case "Audio Amplifier":
+            return 21647
         default:
             return ""
     }
