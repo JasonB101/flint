@@ -11,9 +11,9 @@ const ItemForm = (props) => {
   const [inputForm, setInput] = useState({
     partNo: "",
     sku: nextSku,
-    datePurchased: "",
+    datePurchased: localStorage.getItem("tempDate") || "",
     purchasePrice: "",
-    purchaseLocation: "",
+    purchaseLocation: localStorage.getItem("tempLocation") || "",
     categoryId: 33596
   })
 
@@ -30,17 +30,24 @@ const ItemForm = (props) => {
       categoryId: getEbayCategoryId(e.target.value)
     });
   }
-  
+
 
   function moveToNext(e) {
     e.preventDefault();
     const partNumberElement = document.querySelector("input[name='partNo']");
     partNumberElement.select();
-    console.log(partNumberElement)
     document.execCommand('copy');
     let form = { ...inputForm };
     form.datePurchased = purchaseDate.toLocaleDateString();
+    setTempData()
     setAndToggleForm(form)
+  }
+
+  function setTempData() {
+    if (localStorage.getItem("tempDate") !== form.datePurchased && localStorage.getItem("tempLocation") !== form.purchaseLocation) {
+      localStorage.setItem("tempDate", form.datePurchased);
+      localStorage.setItem("tempLocation", form.purchaseLocation)
+    }
   }
 
   return (
@@ -75,7 +82,7 @@ const ItemForm = (props) => {
           <Form.Control value={inputForm.purchasePrice} name="purchasePrice" onChange={handleChange} required placeholder="$0.00" />
         </Form.Group>
       </Form.Row>
-      
+
       <Form.Row>
         <Form.Group md={8} as={Col} controlId="formGridConditionId">
           <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
