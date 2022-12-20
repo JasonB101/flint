@@ -4,7 +4,7 @@ import { Modal, Form, Button, Col } from "react-bootstrap";
 const ListingForm = (props) => {
     const { toggleModal, submitNewItem, itemForm } = props;
     const [inputForm, setInput] = useState({
-        title: `Engine Computer ECU ECM PCM ${itemForm.partNo}`,
+        title: `${itemForm.partNo}`,
         mpn: itemForm.partNo,
         sku: itemForm.sku,
         brand: "",
