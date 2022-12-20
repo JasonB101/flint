@@ -20,7 +20,7 @@ const ItemForm = (props) => {
   const handleChange = (e) => {
     setInput({
       ...inputForm,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value.toUpperCase()
     })
   }
 
