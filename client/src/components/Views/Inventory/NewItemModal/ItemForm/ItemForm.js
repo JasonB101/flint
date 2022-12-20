@@ -7,7 +7,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const ItemForm = (props) => {
   const { toggleModal, setAndToggleForm, nextSku } = props;
-  const [purchaseDate, changePurchaseDate] = useState(localStorage.getItem("tempDate") || new Date())
+  const tempDate = localStorage.getItem("tempDate") || false
+  const [purchaseDate, changePurchaseDate] = useState(tempDate ? new Date(tempDate) : new Date())
   const [inputForm, setInput] = useState({
     partNo: "",
     sku: nextSku,
@@ -44,7 +45,7 @@ const ItemForm = (props) => {
   }
 
   function setTempData(form) {
-    if (localStorage.getItem("tempDate") !== form.datePurchased && localStorage.getItem("tempLocation") !== form.purchaseLocation) {
+    if (tempDate !== form.datePurchased && localStorage.getItem("tempLocation") !== form.purchaseLocation) {
       localStorage.setItem("tempDate", form.datePurchased);
       localStorage.setItem("tempLocation", form.purchaseLocation)
     }
