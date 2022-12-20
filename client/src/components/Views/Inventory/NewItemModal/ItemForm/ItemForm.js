@@ -39,11 +39,11 @@ const ItemForm = (props) => {
     document.execCommand('copy');
     let form = { ...inputForm };
     form.datePurchased = purchaseDate.toLocaleDateString();
-    setTempData()
+    setTempData(form)
     setAndToggleForm(form)
   }
 
-  function setTempData() {
+  function setTempData(form) {
     if (localStorage.getItem("tempDate") !== form.datePurchased && localStorage.getItem("tempLocation") !== form.purchaseLocation) {
       localStorage.setItem("tempDate", form.datePurchased);
       localStorage.setItem("tempLocation", form.purchaseLocation)
