@@ -30,7 +30,9 @@ const getCategoryId = (categoryName) => {
             return 33706
         case "Steering & Suspension Parts":
             return 42609
-            case "Audio Amplifier":
+        case "Power Steering Pump":
+            return 33588
+        case "Audio Amplifier":
             return 21647
         default:
             return ""

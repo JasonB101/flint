@@ -95,19 +95,6 @@ const ListingForm = (props) => {
                     <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
                 </Form.Group>
             </Form.Row>
-            <Form.Label>Condition</Form.Label>
-            <Form.Row>
-                <Form.Group md={4} as={Col} controlId="formGridConditionId">
-                    <Form.Control as="select" name="conditionId" onChange={handleSelect}>
-                        <option>Used</option>
-                        <option>For Parts</option>
-                        <option>New</option>
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group as={Col} controlId="formGridConditionDescription">
-                    <Form.Control value={inputForm.conditionDescription} name="conditionDescription" onChange={handleChange} placeholder="eg. 'Used, but in working condition'" />
-                </Form.Group>
-            </Form.Row>
 
             <Form.Label>Category</Form.Label>
             <Form.Row>
@@ -136,7 +123,19 @@ const ListingForm = (props) => {
                     </Form.Control>
                 </Form.Group>
             </Form.Row>
-
+            <Form.Label>Condition</Form.Label>
+            <Form.Row>
+                <Form.Group md={4} as={Col} controlId="formGridConditionId">
+                    <Form.Control as="select" name="conditionId" onChange={handleSelect}>
+                        <option>Used</option>
+                        <option>For Parts</option>
+                        <option>New</option>
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridConditionDescription">
+                    <Form.Control value={inputForm.conditionDescription} name="conditionDescription" onChange={handleChange} placeholder="eg. 'Used, but in working condition'" />
+                </Form.Group>
+            </Form.Row>
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridLocation">
                     <Form.Label>Stock Location</Form.Label>
