@@ -89,6 +89,7 @@ const ItemForm = (props) => {
           <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
             <option>Engine Computer ECU</option>
             <option>Computer Chip (Other)</option>
+            <option>Cup Holders</option>
             <option>Head Light</option>
             <option>Tail Light</option>
             <option>Climate Control</option>

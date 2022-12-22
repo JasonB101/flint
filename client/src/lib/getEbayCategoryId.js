@@ -4,6 +4,8 @@ const getCategoryId = (categoryName) => {
             return 33596;
         case "Computer Chip (Other)":
             return 33598;
+        case "Cup Holders":
+            return 63691;
         case "Head Light":
             return 33710
         case "Tail Light":
