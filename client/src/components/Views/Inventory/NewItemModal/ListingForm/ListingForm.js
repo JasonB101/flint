@@ -14,7 +14,7 @@ const ListingForm = (props) => {
         acceptOfferHigh: "",
         shippingService: "USPSPriority",
         declineOfferLow: "",
-        description: "Please double check the part number you are looking for and do your own research to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by me. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
+        description: "Please double check the part number you are looking for and do your own research to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
         location: "",
     })
 
@@ -58,10 +58,10 @@ const ListingForm = (props) => {
 
     const handleShippingSelect = (e) => {
         setInput({
-          ...inputForm,
-          shippingService: e.target.value
+            ...inputForm,
+            shippingService: e.target.value
         });
-      }
+    }
 
     async function saveChanges(e) {
         e.preventDefault();
@@ -78,6 +78,21 @@ const ListingForm = (props) => {
                 <Form.Group as={Col} controlId="formGridTitle">
                     <Form.Label>Title</Form.Label>
                     <Form.Control required value={inputForm.title} maxLength="80" name="title" onChange={handleChange} placeholder="" />
+                </Form.Group>
+            </Form.Row>
+            <Form.Label>Money</Form.Label>
+            <Form.Row>
+                <Form.Group as={Col} controlId="formGridListPrice">
+                    <Form.Control required value={inputForm.listPrice} name="listPrice" onChange={handleChange} placeholder="List Price" />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formGridAcceptOfferHigh">
+
+                    <Form.Control value={inputForm.acceptOfferHigh} name="acceptOfferHigh" onChange={handleChange} placeholder="Accepted Offer" />
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridDeclineOfferLow">
+
+                    <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
                 </Form.Group>
             </Form.Row>
             <Form.Label>Condition</Form.Label>
@@ -121,21 +136,7 @@ const ListingForm = (props) => {
                     </Form.Control>
                 </Form.Group>
             </Form.Row>
-            <Form.Label>Money</Form.Label>
-            <Form.Row>
-                <Form.Group as={Col} controlId="formGridListPrice">
-                    <Form.Control required value={inputForm.listPrice} name="listPrice" onChange={handleChange} placeholder="List Price" />
-                </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridAcceptOfferHigh">
-
-                    <Form.Control value={inputForm.acceptOfferHigh} name="acceptOfferHigh" onChange={handleChange} placeholder="Accepted Offer" />
-                </Form.Group>
-                <Form.Group as={Col} controlId="formGridDeclineOfferLow">
-
-                    <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
-                </Form.Group>
-            </Form.Row>
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridLocation">
                     <Form.Label>Stock Location</Form.Label>

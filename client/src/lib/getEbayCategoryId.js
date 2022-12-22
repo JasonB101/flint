@@ -26,6 +26,8 @@ const getCategoryId = (categoryName) => {
             return 262221
         case "Wiper Motor/Transmissions Linkage":
             return 61941
+        case "Window Motor":
+            return 33706
         case "Steering & Suspension Parts":
             return 42609
             case "Audio Amplifier":

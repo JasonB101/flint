@@ -100,6 +100,7 @@ const ItemForm = (props) => {
             <option>Exterior Moulding</option>
             <option>Fuse Box</option>
             <option>Wiper Motor/Transmissions Linkage</option>
+            <option>Window Motor</option>
             <option>Steering & Suspension Parts</option>
             <option>Audio Amplifier</option>
           </Form.Control>
