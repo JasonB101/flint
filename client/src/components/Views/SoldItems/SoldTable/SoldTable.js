@@ -49,7 +49,7 @@ const SoldTable = (props) => {
         })
         function comparer(index) {
             return function (a, b) {
-                const specialChars = ["$", ","]
+                const specialChars = ["$", ",", "%"]
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
                 //Strips commas and dollar sign off of numbers.
                 if (specialChars.some(x => String(valA).includes(x))) {
