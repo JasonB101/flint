@@ -2,6 +2,8 @@ const getCategoryId = (categoryName) => {
     switch (categoryName) {
         case "Engine Computer ECU":
             return 33596;
+        case "Engine Coolant Components":
+            return 46096;
         case "Computer Chip (Other)":
             return 33598;
         case "Cup Holders":
@@ -18,6 +20,8 @@ const getCategoryId = (categoryName) => {
             return 33649
         case "Interior Mirror":
             return 33699
+        case "Intake Manifolds":
+            return 36474
         case "Dash Parts":
             return 40017
         case "Switches":
