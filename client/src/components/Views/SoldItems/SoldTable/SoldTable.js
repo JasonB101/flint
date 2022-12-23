@@ -28,6 +28,7 @@ const SoldTable = (props) => {
                 <td>${valueToFixed(shippingCost)}</td>
                 <td>${valueToFixed(ebayFees)}</td>
                 <td>${valueToFixed(profit)}</td>
+                <td>{`${Math.floor(+profit / +purchasePrice * 100)}%`}</td>
                 <td>{username}</td>
             </tr>
         )
@@ -90,6 +91,7 @@ const SoldTable = (props) => {
                         <th>Shipping Cost</th>
                         <th>Fees</th>
                         <th>Profit</th>
+                        <th>ROI</th>
                         <th>Buyer</th>
                     </tr>
                 </thead>
