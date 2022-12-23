@@ -33,16 +33,9 @@ const InventoryTable = (props) => {
             return function (a, b) {
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
                 //Strips commas and dollar sign off of numbers.
-                if (valA.includes("$")) {
-                    valA = stripSpecial(valA);
-                    valB = stripSpecial(valB);
-                }
-                function stripSpecial(value) {
-                    value = value.replace(/\$|%|,/g,"")
-
-                    console.log(value)
-                    return +value;
-                }
+                valA = valA.replace(/\$|%|,/g,"")
+                valB = valB.replace(/\$|%|,/g,"")
+                
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
             }
         }
