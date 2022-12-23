@@ -38,10 +38,7 @@ const InventoryTable = (props) => {
                     valB = stripSpecial(valB);
                 }
                 function stripSpecial(value) {
-                    value = value.replace("$", "")
-                    while (value.includes(",")) {
-                        value = value.replace(",", "")
-                    }
+                    value = value.replace(/\$|%|,/g,"")
 
                     console.log(value)
                     return +value;
@@ -66,7 +63,8 @@ const InventoryTable = (props) => {
                 <td>{currencyFormatter.format(purchasePrice)}</td>
                 <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id, sku)}
                 >Link Item</Button>}</td>
-                <td>{`${currencyFormatter.format(expectedProfit)} / ${Math.floor(+purchasePrice / +expectedProfit * 100)}%`}</td>
+                <td>{currencyFormatter.format(expectedProfit)}</td>
+                <td>{`${Math.floor(+purchasePrice / +expectedProfit * 100)}%`}</td>
             </tr>
         )
     }
@@ -116,6 +114,7 @@ const InventoryTable = (props) => {
                         <th>Purchase Price</th>
                         <th>Listed Price</th>
                         <th>Expected Profit</th>
+                        <th>ROI</th>
                     </tr>
                 </thead>
                 <tbody className={Styles.itemsList}>
