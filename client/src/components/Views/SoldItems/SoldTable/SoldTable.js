@@ -49,25 +49,14 @@ const SoldTable = (props) => {
         })
         function comparer(index) {
             return function (a, b) {
-                const specialChars = ["$", ",", "%"]
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
-                //Strips commas and dollar sign off of numbers.
-                if (specialChars.some(x => String(valA).includes(x))) {
-                    valA = stripSpecial(valA);
-                    valB = stripSpecial(valB);
-                }
                 if (String(valA).includes("/")) {
                     valA = dateToTime(valA);
                     valB = dateToTime(valB);
                 }
-
-                function stripSpecial(value) {
-                    while (specialChars.some(x => value.includes(x))) {
-                        specialChars.forEach(j => value = value.replace(j, ""))
-                    }
-
-                    return +value;
-                }
+                //Strips commas and dollar sign off of numbers.
+                valA = valA.replace(/\$|%|,/g, "")
+                valB = valB.replace(/\$|%|,/g, "")
                 function dateToTime(value) {
                     return new Date(value).getTime()
                 }
