@@ -56,7 +56,7 @@ const ItemForm = (props) => {
       <Form.Row>
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
-          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" autofocus/>
+          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" autoFocus/>
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridSku">
