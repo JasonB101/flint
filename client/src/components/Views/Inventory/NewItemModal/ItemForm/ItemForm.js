@@ -56,7 +56,7 @@ const ItemForm = (props) => {
       <Form.Row>
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
-          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" />
+          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" autofocus/>
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridSku">
@@ -97,6 +97,7 @@ const ItemForm = (props) => {
             <option>Intake Manifolds</option>
             <option>Interior Part (Other)</option>
             <option>Exterior Mirror</option>
+            <option>Fuel Injection Parts Other</option>
             <option>Interior Mirror</option>
             <option>Dash Parts</option>
             <option>Switches</option>
@@ -105,8 +106,10 @@ const ItemForm = (props) => {
             <option>Wiper Motor/Transmissions Linkage</option>
             <option>Window Motor</option>
             <option>Steering & Suspension Parts</option>
+            <option>Sun Visors</option>
             <option>Power Steering Pump</option>
             <option>Audio Amplifier</option>
+            <option>Valve Cover</option>
           </Form.Control>
         </Form.Group>
         <Form.Group md={4} as={Col} controlId="formGridCategoryId">

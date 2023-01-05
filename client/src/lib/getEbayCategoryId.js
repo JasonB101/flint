@@ -18,6 +18,8 @@ const getCategoryId = (categoryName) => {
             return 42612
         case "Exterior Mirror":
             return 33649
+        case "Fuel Injection Parts Other":
+            return 33553
         case "Interior Mirror":
             return 33699
         case "Intake Manifolds":
@@ -36,10 +38,14 @@ const getCategoryId = (categoryName) => {
             return 33706
         case "Steering & Suspension Parts":
             return 42609
+        case "Sun Visors":
+            return 46102
         case "Power Steering Pump":
             return 33588
         case "Audio Amplifier":
             return 21647
+        case "Valve Cover":
+            return 33627
         default:
             return ""
     }
