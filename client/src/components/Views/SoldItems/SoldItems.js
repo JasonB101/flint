@@ -6,15 +6,17 @@ import Toolbar from "./Toolbar/Toolbar"
 const SoldItems = (props) => {
     
     const [soldItemsSearchTerm, changeSearchTerm] = useState("");
-    const soldItems = props.items.filter(x => x.sold === true);
+    const [soldItems] = useState(props.items.filter(x => x.sold === true));
     const [itemsToShow, filterItems] = useState(soldItems);
 
     useEffect(() => {
+        console.log("useEffect")
         if (soldItemsSearchTerm === "") {
             filterItems(soldItems)
         } else {
             filterItems(soldItems.filter(x => {
-                const { title = "n/a", partNo = "n/a", sku = "n/a", buyer: {username} = "Unknown" } = x;
+                const { title, partNo, sku, buyer} = x;
+                const username = buyer ? buyer.username : "Unknown";
                 const conditionsArray = [title, partNo, sku, username];
                 return conditionsArray.some(j => j ? j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()) : false);
             }))

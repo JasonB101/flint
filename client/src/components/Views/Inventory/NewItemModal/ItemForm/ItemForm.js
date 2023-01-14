@@ -92,6 +92,7 @@ const ItemForm = (props) => {
             <option>Computer Chip (Other)</option>
             <option>Cup Holders</option>
             <option>Head Light</option>
+            <option>Headrests</option>
             <option>Tail Light</option>
             <option>Climate Control</option>
             <option>Intake Manifolds</option>
@@ -100,6 +101,7 @@ const ItemForm = (props) => {
             <option>Fuel Injection Parts Other</option>
             <option>Interior Mirror</option>
             <option>Dash Parts</option>
+            <option>Radio</option>
             <option>Switches</option>
             <option>Exterior Moulding</option>
             <option>Fuse Box</option>

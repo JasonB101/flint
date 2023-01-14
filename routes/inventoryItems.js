@@ -1,6 +1,6 @@
 const express = require("express");
 const inventoryRouter = express.Router();
-const { getInventoryItems, figureProfit } = require("../lib/inventoryMethods");
+const { getInventoryItems, figureProfit, updateUnlisted } = require("../lib/inventoryMethods");
 const { createListing } = require("../lib/ebayMethods");
 const InventoryItem = require("../models/inventoryItem");
 const User = require("../models/user");
@@ -28,10 +28,16 @@ inventoryRouter.post("/", async (req, res, next) => {
             else res.send({ success: true, item })
         });
     } else {
-       return res.status(500).send({success: false, message: "Ebay listing was not created."})
+        return res.status(500).send({ success: false, message: "Ebay listing was not created." })
     }
 
 });
+
+inventoryRouter.post("/updateUnlisted", (req, res, next) => {
+    let ebayIds = req.body.ids
+    updateUnlisted(ebayIds)
+})
+
 
 inventoryRouter.post("/massImport", (req, res, next) => {
     let inventoryItem = new InventoryItem(req.body);

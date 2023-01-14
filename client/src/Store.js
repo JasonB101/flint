@@ -86,6 +86,10 @@ const Store = (props) => {
         userAxios.get("/api/inventoryItems")
             .then(result => changeItems(result.data))
     }
+    function updateUnlisted(ids) {
+        userAxios.post("/api/inventoryItems/updateUnlisted",{ids: ids})
+            .then(result => changeItems(result.data))
+    }
     function getExpenses() {
         userAxios.get("/api/expense")
             .then(result => {
@@ -182,6 +186,7 @@ const Store = (props) => {
         });
         return newEbayListings;
     }
+    
 
     return (
 
@@ -200,7 +205,8 @@ const Store = (props) => {
             expenses,
             importItemsFromCVS,
             logout,
-            ebayListings
+            ebayListings,
+            updateUnlisted
         }} >
             {props.children}
         </storeContext.Provider >

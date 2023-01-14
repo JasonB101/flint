@@ -57,10 +57,11 @@ const SoldTable = (props) => {
                 //Strips commas and dollar sign off of numbers.
                 valA = valA.replace(/\$|%|,/g, "")
                 valB = valB.replace(/\$|%|,/g, "")
+
                 function dateToTime(value) {
-                    return new Date(value).getTime()
+                    return String(new Date(value).getTime())
                 }
-                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB.toString())
             }
         }
         function getCellValue(row, index) { return $(row).children('td').eq(index).text() }
@@ -84,7 +85,7 @@ const SoldTable = (props) => {
                         <th>Buyer</th>
                     </tr>
                 </thead>
-                <tbody className={Styles.itesmList}>
+                <tbody className={Styles.itemsList}>
                     {items}
                 </tbody>
             </Table>

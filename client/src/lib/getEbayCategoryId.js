@@ -10,6 +10,8 @@ const getCategoryId = (categoryName) => {
             return 63691;
         case "Head Light":
             return 33710
+        case "Headrests":
+            return 262200
         case "Tail Light":
             return 33716
         case "Climate Control":
@@ -36,6 +38,8 @@ const getCategoryId = (categoryName) => {
             return 61941
         case "Window Motor":
             return 33706
+        case "Radio":
+            return 174119
         case "Steering & Suspension Parts":
             return 42609
         case "Sun Visors":

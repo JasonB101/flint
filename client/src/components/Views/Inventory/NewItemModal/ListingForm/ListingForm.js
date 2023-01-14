@@ -14,7 +14,7 @@ const ListingForm = (props) => {
         acceptOfferHigh: "",
         shippingService: "USPSPriority",
         declineOfferLow: "",
-        description: "Please double check the part number you are looking for and do your own research to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
+        description: "Please double check the part number you are looking for to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
         location: "",
     })
 

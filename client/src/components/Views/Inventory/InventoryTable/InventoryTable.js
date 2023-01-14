@@ -1,28 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button } from "react-bootstrap";
 import Styles from "./InventoryTable.module.scss";
 import { Table } from "react-bootstrap";
 import getDaysSince from "../../../../lib/getDaysSince"
 import $ from "jquery"
+// import { storeContext } from "../../../../Store"
+
+
 
 const InventoryTable = (props) => {
-    const {inventoryList: inventoryItems, ebayListings} = props;
+    // const storeData = useContext(storeContext);
+    // const { updateUnlisted } = storeData
+    const { inventoryList: inventoryItems, ebayListings } = props;
     const currencyFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
     });
     // const duplicateEbayListingIds = checkForDuplicateListings(inventoryItems);
-    const unlistedItems = ebayListings.length > 0 ? checkForUnlistedItems(inventoryItems, ebayListings) : [];
+    const [unlistedItems] = useState(ebayListings.length > 0 ? checkForUnlistedItems(inventoryItems, ebayListings) : [])
+
+    
+
     const items = inventoryItems.map(x => populateRow(x));
     const { openLinkModal } = props;
 
     useEffect(() => {
         applySortingToDOM()
-    }, [inventoryItems])
+        // updateUnlisted(unlistedItems)  THIS ONLY GETS USED IF ITEMS SOLD IN THE PAST AND HAVE NO WAY OF UPDATING THEMSELVES
+    }, [inventoryItems, unlistedItems])
 
     function applySortingToDOM() {
-         //borrowed from stackoverflow added some sugar
-         $('th').click(function () {
+        //borrowed from stackoverflow added some sugar
+        $('th').click(function () {
             var table = $(this).parents('table').eq(0)
             var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
             this.asc = !this.asc
@@ -33,9 +42,9 @@ const InventoryTable = (props) => {
             return function (a, b) {
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
                 //Strips commas and dollar sign off of numbers.
-                valA = valA.replace(/\$|%|,/g,"")
-                valB = valB.replace(/\$|%|,/g,"")
-                
+                valA = valA.replace(/\$|%|,/g, "")
+                valB = valB.replace(/\$|%|,/g, "")
+
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
             }
         }
@@ -44,10 +53,10 @@ const InventoryTable = (props) => {
 
     function populateRow(itemObject) {
         const { listed, title, partNo, sku, location, datePurchased, listedPrice, purchasePrice, _id, expectedProfit, ebayId } = itemObject;
-        
+
         return (
 
-            <tr key={_id} style={unlistedItems.length > 0 ? unlistedItems.indexOf(ebayId) !== -1 ? {backgroundColor: "#ffa8a3"} : {} : {}}>
+            <tr key={_id} style={unlistedItems.length > 0 ? unlistedItems.indexOf(ebayId) !== -1 ? { backgroundColor: "#ffa8a3" } : {} : {}}>
                 <td style={{ textAlign: "left" }}>{title}</td>
                 <td>{partNo || "n/a"}</td>
                 <td>{sku || "n/a"}</td>
@@ -57,19 +66,19 @@ const InventoryTable = (props) => {
                 <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id, sku)}
                 >Link Item</Button>}</td>
                 <td>{currencyFormatter.format(expectedProfit)}</td>
-                <td>{`${Math.floor(+expectedProfit / (+purchasePrice+0.1) * 100)}%`}</td>
+                <td>{`${Math.floor(+expectedProfit / (+purchasePrice + 0.1) * 100)}%`}</td>
             </tr>
         )
     }
-    function checkForDuplicateListings(listings){
+    function checkForDuplicateListings(listings) {
         const duplicateListings = listings.reduce((saved, item, index) => {
             const lastIndex = index === listings.length - 1;
             // console.log(item)
             saved[item.ebayId] = saved[item.ebayId] ? saved[item.ebayId] + 1 : 1;
             // console.log(saved)
-            if (lastIndex){
+            if (lastIndex) {
                 const duplicates = [];
-                for (let id in saved){
+                for (let id in saved) {
                     if (saved[id] > 1) duplicates.push(id);
                 }
                 return duplicates;
@@ -80,12 +89,12 @@ const InventoryTable = (props) => {
         return duplicateListings;
     }
 
-    function checkForUnlistedItems(inventoryListings, ebayListings){
+    function checkForUnlistedItems(inventoryListings, ebayListings) {
         const unlistedIds = [];
         inventoryListings.forEach(inventoryItem => {
-            const {ebayId} = inventoryItem;
+            const { ebayId } = inventoryItem;
             const ebayItem = ebayListings.find(ebayItem => {
-                const {ItemID} = ebayItem;
+                const { ItemID } = ebayItem;
                 // console.log(ebayItem);
                 return ItemID == ebayId;
             })
@@ -117,5 +126,7 @@ const InventoryTable = (props) => {
         </div>
     );
 }
+
+
 
 export default InventoryTable;

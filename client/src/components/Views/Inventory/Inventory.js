@@ -30,6 +30,7 @@ const Inventory = (props) => {
     }
 
     useEffect(() => {
+        console.log("UseEffect")
         if (inventorySearchTerm === "") {
             filterItems(inventoryList)
         } else {

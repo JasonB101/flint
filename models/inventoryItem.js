@@ -39,7 +39,7 @@ const inventoryItemSchema = new Schema({
         default: 0
     },
     priceSold: {
-        type: String,
+        type: Number,
         default: 0
     },
     dateSold: String,

@@ -28,21 +28,18 @@ const ExpenseTable = (props) => {
         function comparer(index) {
             return function (a, b) {
                 var valA = getCellValue(a, index), valB = getCellValue(b, index)
+                if (String(valA).includes("/")) {
+                    valA = dateToTime(valA);
+                    valB = dateToTime(valB);
+                }
                 //Strips commas and dollar sign off of numbers.
-                if (valA.includes("$")) {
-                    valA = stripSpecial(valA);
-                    valB = stripSpecial(valB);
-                }
-                function stripSpecial(value) {
-                    value = value.replace("$", "")
-                    while (value.includes(",")) {
-                        value = value.replace(",", "")
-                    }
+                valA = valA.replace(/\$|%|,/g, "")
+                valB = valB.replace(/\$|%|,/g, "")
 
-                    console.log(value)
-                    return +value;
+                function dateToTime(value) {
+                    return String(new Date(value).getTime())
                 }
-                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB.toString())
             }
         }
         function getCellValue(row, index) { return $(row).children('td').eq(index).text() }
