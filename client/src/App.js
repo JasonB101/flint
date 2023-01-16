@@ -15,7 +15,7 @@ import SignIn from "./components/SignIn/SignIn"
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS } = storeData;
+  const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS } = storeData;
 
   return (
     <div className="appWrapper">

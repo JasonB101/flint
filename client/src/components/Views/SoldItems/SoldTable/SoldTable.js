@@ -1,15 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Styles from "./SoldTable.module.scss";
 import { Table } from "react-bootstrap";
 import $ from "jquery";
 
 const SoldTable = (props) => {
-    const { soldItems } = props;
+    const { soldItems, updateItem } = props;
+    const [editItem, changeEdit] = useState({
+        entryItem: "", //shippingCost needs to be the same name thats in the inventory Item MODEL
+        value: "",
+        id: ""
+    })
     const items = soldItems.map(x => populateRow(x));
 
     useEffect(() => {
         applySortingToDOM()
     }, [items])
+
+    function changeEntry(e) {
+        const { value } = e.target
+        changeEdit({ ...editItem, value: value })
+    }
+    function editEntry(id, type) {
+        changeEdit({
+            entryItem: type,
+            value: "",
+            id: id
+        })
+    }
+    function saveEntry(e) {
+        //call store to updateEntry pass
+        const itemToSave = {
+            id: editItem.id,
+            updates: {[editItem.entryItem]: editItem.value}
+        }
+        updateItem(itemToSave)
+    }
 
     function populateRow(itemObject) {
         const { title, partNo, sku, datePurchased,
@@ -25,10 +50,18 @@ const SoldTable = (props) => {
                 <td>{dateSold}</td>
                 <td>${valueToFixed(purchasePrice)}</td>
                 <td>${valueToFixed(priceSold)}</td>
-                <td>${valueToFixed(shippingCost)}</td>
+                <td className={Styles['tdEdit']}>
+                    <span style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "none" } : { display: "inline" }}
+                        className={Styles['data']}>${valueToFixed(shippingCost)}</span>
+                    <input style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "inline" } : { display: "none" }}
+                        type="text" value={editItem.value} onChange={changeEntry} autoFocus />
+                    <i onClick={(e) => editEntry(_id, "shippingCost")} className={`${Styles['edit']} material-icons`}>edit_note</i>
+                    <i onClick={saveEntry} className={`${Styles['save']} material-icons`}
+                        style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { visibility: "visible" } : { visibility: "hidden" }}>save</i>
+                </td>
                 <td>${valueToFixed(ebayFees)}</td>
                 <td>${valueToFixed(profit)}</td>
-                <td>{`${Math.floor(+profit / (+purchasePrice+0.1) * 100)}%`}</td>
+                <td>{`${Math.floor(+profit / (+purchasePrice + 0.1) * 100)}%`}</td>
                 <td>{username}</td>
             </tr>
         )

@@ -16,12 +16,42 @@
 
     }
 
+    .tdEdit .edit {
+        visibility: hidden;
+        position: absolute;
+        right: 2px;
+        top: 2px;
+        font-size: 16px;
+        color: rgb(90, 90, 90);
+        cursor: pointer;
+    }
+
+    .tdEdit .save {
+        visibility: hidden;
+        position: absolute;
+        right: 2px;
+        bottom: 2px;
+        font-size: 16px;
+        color: green;
+        cursor: pointer;
+    }
+
+    .tdEdit:hover .edit {
+        visibility: visible;
+    }
 
     td {
+        position: relative;
         text-align: center;
         vertical-align: middle !important;
         border: 1px solid rgba(0, 0, 0, 0.2);
+
+        input {
+            width: 50px;
+        }
     }
+
+
 
     th {
         position: -webkit-sticky;

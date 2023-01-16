@@ -4,9 +4,9 @@ import SoldTable from "./SoldTable/SoldTable";
 import Toolbar from "./Toolbar/Toolbar"
 
 const SoldItems = (props) => {
-    
+    const { updateItem, items } = props
     const [soldItemsSearchTerm, changeSearchTerm] = useState("");
-    const [soldItems] = useState(props.items.filter(x => x.sold === true));
+    const [soldItems] = useState(items.filter(x => x.sold === true));
     const [itemsToShow, filterItems] = useState(soldItems);
 
     useEffect(() => {
@@ -15,20 +15,20 @@ const SoldItems = (props) => {
             filterItems(soldItems)
         } else {
             filterItems(soldItems.filter(x => {
-                const { title, partNo, sku, buyer} = x;
+                const { title, partNo, sku, buyer } = x;
                 const username = buyer ? buyer.username : "Unknown";
                 const conditionsArray = [title, partNo, sku, username];
                 return conditionsArray.some(j => j ? j.toLowerCase().includes(soldItemsSearchTerm.toLowerCase()) : false);
             }))
         }
     }, [soldItemsSearchTerm, soldItems])
-    
+
 
     return (
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
                 searchTerm={soldItemsSearchTerm} />
-            <SoldTable soldItems={itemsToShow} />
+            <SoldTable updateItem={updateItem} soldItems={itemsToShow} />
         </div>
     );
 }

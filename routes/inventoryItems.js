@@ -33,6 +33,14 @@ inventoryRouter.post("/", async (req, res, next) => {
 
 });
 
+inventoryRouter.put("/update", (req, res, next) => {
+    const {id, updates} = req.body
+    InventoryItem.findOneAndUpdate({_id: id}, updates, (err, result)=>{
+        if (err) res.send({success: false, message: err.message})
+        if (result) res.send({success: true, result})
+    })
+})
+
 inventoryRouter.post("/updateUnlisted", (req, res, next) => {
     let ebayIds = req.body.ids
     updateUnlisted(ebayIds)

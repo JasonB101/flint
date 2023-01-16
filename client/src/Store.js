@@ -55,6 +55,24 @@ const Store = (props) => {
         setUser({});
     }
 
+    async function updateItem(itemInfo) {
+        userAxios.put("/api/inventoryItems/update", itemInfo)
+            .then(result => {
+                const {success} = result.data
+                if (success === true) {
+                    getInventoryItems()
+                    return true;
+                } else {
+                    alert(result.message)
+                    return false
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                return false;
+            })
+    }
+
     async function submitNewItem(form) {
         userAxios.post("/api/inventoryItems", form)
             .then(result => {
@@ -87,7 +105,7 @@ const Store = (props) => {
             .then(result => changeItems(result.data))
     }
     function updateUnlisted(ids) {
-        userAxios.post("/api/inventoryItems/updateUnlisted",{ids: ids})
+        userAxios.post("/api/inventoryItems/updateUnlisted", { ids: ids })
             .then(result => changeItems(result.data))
     }
     function getExpenses() {
@@ -145,7 +163,7 @@ const Store = (props) => {
 
     }
     function setEbayOAuthToken(authCode) {
-        userAxios.post("/api/syncebay/setebayoauthtoken", {authCode})
+        userAxios.post("/api/syncebay/setebayoauthtoken", { authCode })
             .then(results => {
                 getEbay();
             })
@@ -179,14 +197,14 @@ const Store = (props) => {
         preppedItems.forEach(x => submitMassImport(x));
     }
 
-    function sortNewListings(){
+    function sortNewListings() {
         const ebayIds = items.map(x => x.ebayId);
         const newEbayListings = ebayListings.filter(x => {
             return ebayIds.indexOf(x.ItemID) === -1
         });
         return newEbayListings;
     }
-    
+
 
     return (
 
@@ -206,7 +224,8 @@ const Store = (props) => {
             importItemsFromCVS,
             logout,
             ebayListings,
-            updateUnlisted
+            updateUnlisted,
+            updateItem
         }} >
             {props.children}
         </storeContext.Provider >
