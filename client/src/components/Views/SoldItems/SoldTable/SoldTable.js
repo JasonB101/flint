@@ -10,6 +10,13 @@ const SoldTable = (props) => {
         value: "",
         id: ""
     })
+    soldItems.sort((a, b) => {
+        const {dateSold: aDate} = a
+        const {dateSold: bDate} = b
+        const aTime = Number(new Date(String(aDate)).getTime())
+        const bTime = Number(new Date(String(bDate)).getTime())
+        return bTime - aTime
+    })
     const items = soldItems.map(x => populateRow(x));
 
     useEffect(() => {
@@ -99,7 +106,7 @@ const SoldTable = (props) => {
                 valB = valB.replace(/\$|%|,/g, "")
 
                 function dateToTime(value) {
-                    return String(new Date(value).getTime())
+                    return Number(new Date(value).getTime())
                 }
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB.toString())
             }
