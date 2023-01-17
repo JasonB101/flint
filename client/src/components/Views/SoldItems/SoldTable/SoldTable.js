@@ -27,11 +27,18 @@ const SoldTable = (props) => {
             id: id
         })
     }
-    function saveEntry(e) {
+    function saveEntry(itemDetails) {
         //call store to updateEntry pass
+        let updates = {
+            ...itemDetails,
+            [editItem.entryItem]: editItem.value
+        }
+        const {priceSold, purchasePrice, shippingCost, ebayFees} = updates
+        updates.profit = priceSold - purchasePrice - shippingCost - ebayFees
+
         const itemToSave = {
             id: editItem.id,
-            updates: {[editItem.entryItem]: editItem.value}
+            updates
         }
         updateItem(itemToSave)
     }
@@ -56,7 +63,7 @@ const SoldTable = (props) => {
                     <input style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "inline" } : { display: "none" }}
                         type="text" value={editItem.value} onChange={changeEntry} autoFocus />
                     <i onClick={(e) => editEntry(_id, "shippingCost")} className={`${Styles['edit']} material-icons`}>edit_note</i>
-                    <i onClick={saveEntry} className={`${Styles['save']} material-icons`}
+                    <i onClick={(e) => saveEntry({ purchasePrice, priceSold, shippingCost, ebayFees })} className={`${Styles['save']} material-icons`}
                         style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { visibility: "visible" } : { visibility: "hidden" }}>save</i>
                 </td>
                 <td>${valueToFixed(ebayFees)}</td>
