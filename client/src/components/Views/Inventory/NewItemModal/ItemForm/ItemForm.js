@@ -45,7 +45,7 @@ const ItemForm = (props) => {
   }
 
   function setTempData(form) {
-    if (tempDate !== form.datePurchased && localStorage.getItem("tempLocation") !== form.purchaseLocation) {
+    if (tempDate !== form.datePurchased || localStorage.getItem("tempLocation") !== form.purchaseLocation) {
       localStorage.setItem("tempDate", form.datePurchased);
       localStorage.setItem("tempLocation", form.purchaseLocation)
     }

@@ -16,6 +16,8 @@
 
     }
 
+    
+
     .tdEdit .edit {
         visibility: hidden;
         position: absolute;
@@ -34,6 +36,13 @@
         font-size: 16px;
         color: green;
         cursor: pointer;
+    }
+
+    .edit:hover {
+        font-size: 18px;
+    }
+    .save:hover {
+        font-size: 18px;
     }
 
     .tdEdit:hover .edit {
