@@ -20,7 +20,11 @@ const InventoryTable = (props) => {
     const [unlistedItems] = useState(ebayListings.length > 0 ? checkForUnlistedItems(inventoryItems, ebayListings) : [])
 
     
-
+    inventoryItems.sort((a, b) => {
+        const {sku: aSku} = a
+        const {sku: bSku} = b
+        return +bSku - +aSku
+    })
     const items = inventoryItems.map(x => populateRow(x));
     const { openLinkModal } = props;
 
