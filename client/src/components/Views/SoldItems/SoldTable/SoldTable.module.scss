@@ -49,12 +49,15 @@
         visibility: visible;
     }
 
+    tr {
+        height: 50px;
+    }
+
     td {
         position: relative;
         text-align: center;
         vertical-align: middle !important;
         border: 1px solid rgba(0, 0, 0, 0.2);
-        max-height: 50px;
         text-overflow: ellipsis;
         overflow: hidden;
 
