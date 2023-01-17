@@ -68,7 +68,7 @@ const SoldTable = (props) => {
                     {(editItem.id === _id && editItem.entryItem === "shippingCost") ?
                         <input type="text" value={editItem.value} onChange={changeEntry} autoFocus /> :
                         <span className={Styles['data']}>${valueToFixed(shippingCost)}</span>}
-                        
+
                     <i onClick={(e) => editEntry(_id, "shippingCost")} className={`${Styles['edit']} material-icons`}>edit_note</i>
                     <i onClick={(e) => saveEntry({ purchasePrice, priceSold, shippingCost, ebayFees })} className={`${Styles['save']} material-icons`}
                         style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { visibility: "visible" } : { visibility: "hidden" }}>save</i>
@@ -100,13 +100,14 @@ const SoldTable = (props) => {
                 if (String(valA).includes("/")) {
                     valA = dateToTime(valA);
                     valB = dateToTime(valB);
+                } else {
+                    valA = valA.replace(/\$|%|,/g, "")
+                    valB = valB.replace(/\$|%|,/g, "")
                 }
                 //Strips commas and dollar sign off of numbers.
-                valA = valA.replace(/\$|%|,/g, "")
-                valB = valB.replace(/\$|%|,/g, "")
 
                 function dateToTime(value) {
-                    return Number(new Date(value).getTime())
+                    return Number(new Date(String(value)).getTime())
                 }
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB.toString())
             }
