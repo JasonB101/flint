@@ -120,6 +120,7 @@ const ListingForm = (props) => {
                     <Form.Control as="select" name="conditionId" onChange={handleShippingSelect}>
                         <option>USPSPriority</option>
                         <option>USPSFirstClass</option>
+                        <option>UPSGround</option>
                     </Form.Control>
                 </Form.Group>
             </Form.Row>
