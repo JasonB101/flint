@@ -11,8 +11,8 @@ const SoldTable = (props) => {
         id: ""
     })
     soldItems.sort((a, b) => {
-        const {dateSold: aDate} = a
-        const {dateSold: bDate} = b
+        const { dateSold: aDate } = a
+        const { dateSold: bDate } = b
         const aTime = Number(new Date(String(aDate)).getTime())
         const bTime = Number(new Date(String(bDate)).getTime())
         return bTime - aTime
@@ -40,7 +40,7 @@ const SoldTable = (props) => {
             ...itemDetails,
             [editItem.entryItem]: editItem.value
         }
-        const {priceSold, purchasePrice, shippingCost, ebayFees} = updates
+        const { priceSold, purchasePrice, shippingCost, ebayFees } = updates
         updates.profit = priceSold - purchasePrice - shippingCost - ebayFees
 
         const itemToSave = {
@@ -65,10 +65,10 @@ const SoldTable = (props) => {
                 <td>${valueToFixed(purchasePrice)}</td>
                 <td>${valueToFixed(priceSold)}</td>
                 <td className={Styles['tdEdit']}>
-                    <span style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "none" } : { display: "inline" }}
-                        className={Styles['data']}>${valueToFixed(shippingCost)}</span>
-                    <input style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "inline" } : { display: "none" }}
-                        type="text" value={editItem.value} onChange={changeEntry} autoFocus />
+                    {(editItem.id === _id && editItem.entryItem === "shippingCost") ?
+                        <input type="text" value={editItem.value} onChange={changeEntry} autoFocus /> :
+                        <span className={Styles['data']}>${valueToFixed(shippingCost)}</span>}
+                        
                     <i onClick={(e) => editEntry(_id, "shippingCost")} className={`${Styles['edit']} material-icons`}>edit_note</i>
                     <i onClick={(e) => saveEntry({ purchasePrice, priceSold, shippingCost, ebayFees })} className={`${Styles['save']} material-icons`}
                         style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { visibility: "visible" } : { visibility: "hidden" }}>save</i>
