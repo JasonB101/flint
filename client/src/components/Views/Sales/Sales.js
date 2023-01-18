@@ -6,7 +6,7 @@ import { YearSalesChart, YearSalesChartByWeek, YearSalesChartByMonth } from "./S
 
 const Sales = (props) => {
     const [dateType, setDateType] = useState("week");
-    const [year, setYear] = useState(2020);
+    const [year, setYear] = useState(2023);
 
     const [profitTrue, setProfitState] = useState(true);
 
