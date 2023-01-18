@@ -19,7 +19,7 @@ const SalesHeader = ({ salesInfo }) => {
                     </span>
                 </span>
             </h5>
-            <h5>Sold
+            <h5>Sold YTD
                 <span>{totalSold}</span>
             </h5>
             <h5>Avg profit/item
