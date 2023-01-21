@@ -47,14 +47,12 @@ const Sales = (props) => {
 
 
     function getProjected(profitOrSales) {
-        console.log(profitOrSales)
         const now = new Date();
         const start = new Date(now.getFullYear(), 0, 0);
         const diff = now - start;
         const oneDay = 1000 * 60 * 60 * 24;
         const day = Math.floor(diff / oneDay);
         const average = (+profitOrSales / day).toFixed(2);
-        console.log(average)
         const difference = 366 - day;
         const projected = Number(+profitOrSales + difference * average);
         return currencyFormatter.format(projected);

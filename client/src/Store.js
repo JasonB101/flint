@@ -26,10 +26,12 @@ const Store = (props) => {
 
     useEffect(() => {
         if (user.token) {
-            getInventoryItems();
             getExpenses();
             if (user.syncedWithEbay) {
+                console.log("Made it")
                 getEbay();
+            } else {
+                getInventoryItems()
             }
         }
     }, [user])
@@ -58,7 +60,7 @@ const Store = (props) => {
     async function updateItem(itemInfo) {
         userAxios.put("/api/inventoryItems/update", itemInfo)
             .then(result => {
-                const {success} = result.data
+                const { success } = result.data
                 if (success === true) {
                     getInventoryItems()
                     return true;
@@ -162,6 +164,19 @@ const Store = (props) => {
             })
 
     }
+
+    function requestOAuthLink() {
+        const requestLink = userAxios.get("/api/oauth/requesttoken")
+            .then((result, err) => {
+                if (err) alert(err.message)
+                else {
+                    const link = result.data
+                    return link
+                }
+                return false
+            })
+    }
+
     function setEbayOAuthToken(authCode) {
         userAxios.post("/api/syncebay/setebayoauthtoken", { authCode })
             .then(results => {
@@ -184,11 +199,19 @@ const Store = (props) => {
         userAxios.get("/api/ebay/getebay")
             .then(result => {
                 const data = result.data;
-                const { ebayListings, inventoryItems } = data;
-                changeItems(inventoryItems);
-                setEbayListings(ebayListings);
+                console.log(data)
+                const { link, ebayListings = [], inventoryItems = [] } = data;
+                if (link) {
+                    console.log(link)
+                } else {
+                    changeItems(inventoryItems);
+                    setEbayListings(ebayListings);
+                }
+
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                let status = err.status
+            })
     }
 
     async function importItemsFromCVS(file) {

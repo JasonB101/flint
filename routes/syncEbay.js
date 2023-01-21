@@ -14,7 +14,7 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
     } catch (e) {
         console.log(e)
     }
-    
+
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetSessionIDRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RuName>${process.env.RU_NAME}</RuName>
@@ -84,9 +84,9 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
                     EbayTokenSession.findByIdAndRemove(ebaySessionsId, (err, result) => {
                         if (err) console.log(err)
                     })
-//Major security flaw. After ebay is synced, it returns the user object with sensitive info. Need to figure out withoutsensitiveinfo
+                    //Major security flaw. After ebay is synced, it returns the user object with sensitive info. Need to figure out withoutsensitiveinfo
                     const user = await User.findById(result._id);
-                    return res.send({ success: true, user: user});
+                    return res.send({ success: true, user: user });
                 })
             })
         } else {
@@ -101,10 +101,10 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
 })
 
 syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
-const userId = req.auth._id
-const {authCode} = req.body;
+    const userId = req.auth._id
+    const { authCode } = req.body;
 
-const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
+    const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
 
 })
 
