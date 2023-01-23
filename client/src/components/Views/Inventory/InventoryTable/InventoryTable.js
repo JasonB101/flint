@@ -70,7 +70,7 @@ const InventoryTable = (props) => {
                 <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id, sku)}
                 >Link Item</Button>}</td>
                 <td>{currencyFormatter.format(expectedProfit)}</td>
-                <td>{`${Math.floor(+expectedProfit / (+purchasePrice + 0.1) * 100)}%`}</td>
+                <td>{`${Math.floor(+expectedProfit / (listedPrice - expectedProfit) * 100)}%`}</td>
             </tr>
         )
     }
