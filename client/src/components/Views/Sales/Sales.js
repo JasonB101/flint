@@ -123,7 +123,7 @@ const Sales = (props) => {
             if (x.sold && isThisYear) {
                 salesInfo.YTDProfit += isThisYear ? x.profit : 0;
                 salesInfo.allItemsProfit += x.profit;
-                salesInfo.totalCost += (purchasePrice + ebayFees + (shippingCost ? shippingCost : 0))
+                salesInfo.totalCost += (purchasePrice + ebayFees + shippingCost)
                 salesInfo.totalSold += isThisYear ? 1 : 0;
                 salesInfo.profitPerItem = (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
                 salesInfo.roi = Math.floor(salesInfo.allItemsProfit / salesInfo.totalCost * 100)
