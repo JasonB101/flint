@@ -108,7 +108,9 @@ const Sales = (props) => {
             allItemsProfit: 0,
             profitPerItem: 0,
             totalSold: 0,
-            totalListed: 0
+            totalCost: 0,
+            totalListed: 0,
+            roi: 0
         }
 
         const expenseTotal = expenses[0] ? expenses.reduce((sum, x) => {
@@ -121,7 +123,7 @@ const Sales = (props) => {
             if (x.sold && isThisYear) {
                 salesInfo.YTDProfit += isThisYear ? x.profit : 0;
                 salesInfo.allItemsProfit += x.profit;
-                salesInfo.totalCost += (purchasePrice + ebayFees + shippingCost)
+                salesInfo.totalCost += (purchasePrice + ebayFees + (shippingCost ? shippingCost : 0))
                 salesInfo.totalSold += isThisYear ? 1 : 0;
                 salesInfo.profitPerItem = (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
                 salesInfo.roi = Math.floor(salesInfo.allItemsProfit / salesInfo.totalCost * 100)

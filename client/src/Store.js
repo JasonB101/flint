@@ -199,7 +199,7 @@ const Store = (props) => {
         userAxios.get("/api/ebay/getebay")
             .then(result => {
                 const data = result.data;
-                console.log(data)
+                // console.log(data)
                 const { link, ebayListings = [], inventoryItems = [] } = data;
                 if (link) {
                     console.log(link)
