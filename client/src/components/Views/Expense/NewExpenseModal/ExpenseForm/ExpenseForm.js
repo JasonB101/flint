@@ -31,7 +31,7 @@ const ExpenseForm = (props) => {
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridExpenseTitle">
                     <Form.Label>Expense Title</Form.Label>
-                    <Form.Control value={inputForm.title} name="title" onChange={(e) => handleChange(e)} required placeholder="" />
+                    <Form.Control value={inputForm.title} name="title" onChange={(e) => handleChange(e)} required placeholder="" autoFocus/>
                 </Form.Group>
             </Form.Row>
 
