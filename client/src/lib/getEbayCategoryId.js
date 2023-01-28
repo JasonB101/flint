@@ -44,6 +44,8 @@ const getCategoryId = (categoryName) => {
             return 42609
         case "Sun Visors":
             return 46102
+        case "Throttle Body":
+            return 33558
         case "Power Steering Pump":
             return 33588
         case "Audio Amplifier":

@@ -109,6 +109,7 @@ const ItemForm = (props) => {
             <option>Window Motor</option>
             <option>Steering & Suspension Parts</option>
             <option>Sun Visors</option>
+            <option>Throttle Body</option>
             <option>Power Steering Pump</option>
             <option>Audio Amplifier</option>
             <option>Valve Cover</option>
