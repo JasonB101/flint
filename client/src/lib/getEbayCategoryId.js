@@ -8,6 +8,8 @@ const getCategoryId = (categoryName) => {
             return 33598;
         case "Cup Holders":
             return 63691;
+        case "Console Lid":
+            return 262189;
         case "Head Light":
             return 33710
         case "Headrests":

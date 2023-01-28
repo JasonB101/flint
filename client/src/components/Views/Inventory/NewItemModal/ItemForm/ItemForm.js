@@ -91,6 +91,7 @@ const ItemForm = (props) => {
             <option>Engine Coolant Components</option>
             <option>Computer Chip (Other)</option>
             <option>Cup Holders</option>
+            <option>Console Lid</option>
             <option>Head Light</option>
             <option>Headrests</option>
             <option>Tail Light</option>
