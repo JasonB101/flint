@@ -87,32 +87,33 @@ const ItemForm = (props) => {
       <Form.Row>
         <Form.Group md={8} as={Col} controlId="formGridConditionId">
           <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
-            <option>Engine Computer ECU</option>
-            <option>Engine Coolant Components</option>
+            <option>Audio Amplifier</option>
             <option>Computer Chip (Other)</option>
             <option>Cup Holders</option>
             <option>Console Lid</option>
-            <option>Head Light</option>
-            <option>Headrests</option>
-            <option>Tail Light</option>
             <option>Climate Control</option>
-            <option>Intake Manifolds</option>
-            <option>Interior Part (Other)</option>
+            <option>Dash Parts</option>
+            <option>Door Handles</option>
+            <option>Engine Computer ECU</option>
+            <option>Engine Coolant Components</option>
+            <option>Exterior Moulding</option>
             <option>Exterior Mirror</option>
             <option>Fuel Injection Parts Other</option>
+            <option>Fuse Box</option>
+            <option>Head Light</option>
+            <option>Headrests</option>
+            <option>Intake Manifolds</option>
+            <option>Interior Part (Other)</option>
             <option>Interior Mirror</option>
-            <option>Dash Parts</option>
+            <option>Power Steering Pump</option>
             <option>Radio</option>
             <option>Switches</option>
-            <option>Exterior Moulding</option>
-            <option>Fuse Box</option>
-            <option>Wiper Motor/Transmissions Linkage</option>
-            <option>Window Motor</option>
             <option>Steering & Suspension Parts</option>
             <option>Sun Visors</option>
+            <option>Tail Light</option>
             <option>Throttle Body</option>
-            <option>Power Steering Pump</option>
-            <option>Audio Amplifier</option>
+            <option>Wiper Motor/Transmissions Linkage</option>
+            <option>Window Motor</option>
             <option>Valve Cover</option>
           </Form.Control>
         </Form.Group>

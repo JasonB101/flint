@@ -10,6 +10,8 @@ const getCategoryId = (categoryName) => {
             return 63691;
         case "Console Lid":
             return 262189;
+        case "Door Handles":
+            return 179851;
         case "Head Light":
             return 33710
         case "Headrests":
