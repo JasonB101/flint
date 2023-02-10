@@ -148,7 +148,10 @@ export class YearSalesChartByMonth extends YearSalesChart {
             title: `Average ${profitSetToTrue ? "profit" : "sales"} per month: ${getAverage(this.data[0].dataPoints)}`,
             interval: 1
         }
+        this.axisY = {
+            includeZero: true,
 
+        }
         function fillInMissingMonths(dataPoints) {
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const newDataPoints = [];
