@@ -88,6 +88,7 @@ const ItemForm = (props) => {
         <Form.Group md={8} as={Col} controlId="formGridConditionId">
           <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
             <option>Audio Amplifier</option>
+            <option>ABS Parts</option>
             <option>Computer Chip (Other)</option>
             <option>Cup Holders</option>
             <option>Console Lid</option>

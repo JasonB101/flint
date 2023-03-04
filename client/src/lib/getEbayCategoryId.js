@@ -2,6 +2,8 @@ const getCategoryId = (categoryName) => {
     switch (categoryName) {
         case "Engine Computer ECU":
             return 33596;
+        case "ABS Parts":
+            return 33560;
         case "Engine Coolant Components":
             return 46096;
         case "Computer Chip (Other)":
