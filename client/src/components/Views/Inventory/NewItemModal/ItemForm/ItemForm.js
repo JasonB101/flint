@@ -102,6 +102,7 @@ const ItemForm = (props) => {
             <option>Fuse Box</option>
             <option>Head Light</option>
             <option>Headrests</option>
+            <option>Hub Caps</option>
             <option>Intake Manifolds</option>
             <option>Interior Part (Other)</option>
             <option>Interior Mirror</option>

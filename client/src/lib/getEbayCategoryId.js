@@ -16,6 +16,8 @@ const getCategoryId = (categoryName) => {
             return 33710
         case "Headrests":
             return 262200
+        case "Hub Caps":
+            return 33744
         case "Tail Light":
             return 33716
         case "Climate Control":
