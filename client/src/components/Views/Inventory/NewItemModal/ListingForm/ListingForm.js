@@ -1,21 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
+import categories from "../../../../../lib/ebayCategoryInfo"
 
 const ListingForm = (props) => {
-    const { toggleModal, submitNewItem, itemForm } = props;
+    const { toggleModal, submitNewItem, itemForm, items } = props;
+    const { categoryId, partNo, sku } = itemForm
+    const autoFill = categories.find((x) => x.id === categoryId)
+    const { title: autoTitle, description: autoDescription } = autoFill
     const [inputForm, setInput] = useState({
-        title: `${itemForm.partNo}`,
-        mpn: itemForm.partNo,
-        sku: itemForm.sku,
+        title: `${autoTitle || ""} ${partNo}`,
+        mpn: partNo,
+        sku: sku,
         brand: "",
         listPrice: "",
         conditionId: 3000,
         conditionDescription: "",
         acceptOfferHigh: "",
-        shippingService: "USPSPriority",
         declineOfferLow: "",
-        description: "Please double check the part number you are looking for to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
+        shippingService: "USPSPriority",
+        description: `${autoDescription || ""}`,
         location: "",
+    })
+
+    useEffect(() => {
+        if (partNo !== "N/A") {
+            const existingItems = items.filter((x) => x.partNo === partNo).sort((a, b) => {
+                let aDate = a.dateSold ? a.dateSold : a.purchaseDate
+                let bDate = b.dateSold ? b.dateSold : b.purchaseDate
+                let aTime = new Date(aDate).getTime()
+                let bTime = new Date(bDate).getTime()
+                return bTime - aTime
+            })
+
+            if (existingItems.length > 0) {
+                const existing = existingItems[0]
+                const { title, brand, shippingService, listPrice } = existing
+                let acceptOfferHigh = (+listPrice - 4.99).toFixed(2)
+                let declineOfferLow = (+listPrice - 14.99).toFixed(2)
+                setInput({...inputForm, title, brand, shippingService: shippingService || "USPSPriority", listPrice, acceptOfferHigh, declineOfferLow})
+            }
+        }
+
     })
 
     const handleChange = ({ target }) => {
