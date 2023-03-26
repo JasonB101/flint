@@ -21,27 +21,27 @@ const ListingForm = (props) => {
         description: `${autoDescription || ""}`,
         location: "",
     })
-
+    //OKAY NOW I AM HERE
     useEffect(() => {
         if (partNo !== "N/A") {
             const existingItems = items.filter((x) => x.partNo === partNo).sort((a, b) => {
-                let aDate = a.dateSold ? a.dateSold : a.purchaseDate
-                let bDate = b.dateSold ? b.dateSold : b.purchaseDate
-                let aTime = new Date(aDate).getTime()
-                let bTime = new Date(bDate).getTime()
+                const { dateSold: aDateSold, datePurchased: aDatePurchased } = a
+                const { dateSold: bDateSold, datePurchased: bDatePurchased } = b
+                let aTime = Math.max(new Date(String(aDateSold ? aDateSold : 0)).getTime(), new Date(String(aDatePurchased)).getTime())
+                let bTime = Math.max(new Date(String(bDateSold ? bDateSold : 0)).getTime(), new Date(String(bDatePurchased)).getTime())
                 return bTime - aTime
             })
 
             if (existingItems.length > 0) {
                 const existing = existingItems[0]
-                const { title, brand, shippingService, listPrice } = existing
-                let acceptOfferHigh = (+listPrice - 4.99).toFixed(2)
-                let declineOfferLow = (+listPrice - 14.99).toFixed(2)
-                setInput({...inputForm, title, brand, shippingService: shippingService || "USPSPriority", listPrice, acceptOfferHigh, declineOfferLow})
+                const { title, brand = "", shippingService = "USPSPriority", listedPrice } = existing
+                let acceptOfferHigh = (+listedPrice - 4.99).toFixed(2)
+                let declineOfferLow = (+listedPrice - 14.99).toFixed(2)
+                setInput({ ...inputForm, title, brand, shippingService, listPrice: listedPrice, acceptOfferHigh, declineOfferLow })
             }
         }
 
-    })
+    }, [items, partNo])
 
     const handleChange = ({ target }) => {
         const { name, value } = target;
@@ -120,8 +120,6 @@ const ListingForm = (props) => {
                     <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
                 </Form.Group>
             </Form.Row>
-
-            <Form.Label>Category</Form.Label>
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridDescription">
                     <Form.Label>Item Description</Form.Label>

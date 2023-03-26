@@ -1,26 +1,29 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import getEbayCategoryId from "../../../../../lib/ebayCategoryInfo"
 import categories from "../../../../../lib/ebayCategoryInfo"
 
 import "react-datepicker/dist/react-datepicker.css";
 
 const ItemForm = (props) => {
-  const { toggleModal, setAndToggleForm, nextSku } = props;
+  const { toggleModal, setAndToggleForm, nextSku } = props
   const tempDate = localStorage.getItem("tempDate") || false
+  const tempCategory = +localStorage.getItem("tempCategoryId") || false
   const [purchaseDate, changePurchaseDate] = useState(tempDate ? new Date(tempDate) : new Date())
+  const sortedCategories = categories.sort((a, b) => {
+    return a.id === tempCategory ? 0 : b.id === tempCategory ? 1 : a.category < b.category ? -1 : a.category > b.category ? 1 : 0
+  })
   const [inputForm, setInput] = useState({
     partNo: "",
     sku: nextSku,
     datePurchased: "",
-    purchasePrice: "",
+    purchasePrice: localStorage.getItem("tempPurchasePrice") || "",
     purchaseLocation: localStorage.getItem("tempLocation") || "",
-    categoryId: 33596
+    categoryId: sortedCategories[0].id
   })
 
-  const categoryOptions = categories.map(x => {
-    <option value={x.id}>{x.category}</option>
+  const categoryOptions = sortedCategories.map(x => {
+    return <option key={x.id} value={x.id}>{x.category}</option>
   })
 
   const handleChange = (e) => {
@@ -50,10 +53,10 @@ const ItemForm = (props) => {
   }
 
   function setTempData(form) {
-    if (tempDate !== form.datePurchased || localStorage.getItem("tempLocation") !== form.purchaseLocation) {
-      localStorage.setItem("tempDate", form.datePurchased);
-      localStorage.setItem("tempLocation", form.purchaseLocation)
-    }
+    localStorage.setItem("tempDate", form.datePurchased);
+    localStorage.setItem("tempLocation", form.purchaseLocation)
+    localStorage.setItem("tempCategoryId", form.categoryId)
+    localStorage.setItem("tempPurchasePrice", form.purchasePrice)
   }
 
   return (
@@ -89,12 +92,14 @@ const ItemForm = (props) => {
         </Form.Group>
       </Form.Row>
 
+        <Form.Label>Category</Form.Label>
       <Form.Row>
         <Form.Group md={8} as={Col} controlId="formGridConditionId">
           <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
             {categoryOptions}
           </Form.Control>
         </Form.Group>
+
         <Form.Group md={4} as={Col} controlId="formGridCategoryId">
           <Form.Control required value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
         </Form.Group>
