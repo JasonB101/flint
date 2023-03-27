@@ -25,10 +25,10 @@ const ListingForm = (props) => {
     useEffect(() => {
         if (partNo !== "N/A") {
             const existingItems = items.filter((x) => x.partNo === partNo).sort((a, b) => {
-                const { dateSold: aDateSold, datePurchased: aDatePurchased } = a
-                const { dateSold: bDateSold, datePurchased: bDatePurchased } = b
-                let aTime = Math.max(new Date(String(aDateSold ? aDateSold : 0)).getTime(), new Date(String(aDatePurchased)).getTime())
-                let bTime = Math.max(new Date(String(bDateSold ? bDateSold : 0)).getTime(), new Date(String(bDatePurchased)).getTime())
+                const { dateSold: aDateSold, datePurchased: aDatePurchased, aListedPrice } = a
+                const { dateSold: bDateSold, datePurchased: bDatePurchased, bListedPrice } = b
+                let aTime = Math.max(new Date(String(aDateSold ? aDateSold : 0)).getTime() + aListedPrice, new Date(String(aDatePurchased)).getTime() + aListedPrice)
+                let bTime = Math.max(new Date(String(bDateSold ? bDateSold : 0)).getTime() + bListedPrice, new Date(String(bDatePurchased)).getTime() + bListedPrice)
                 return bTime - aTime
             })
 
