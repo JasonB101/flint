@@ -6,7 +6,7 @@ const ListingForm = (props) => {
     const { toggleModal, submitNewItem, itemForm, items } = props;
     const { categoryId, partNo, sku } = itemForm
     const autoFill = categories.find((x) => x.id === categoryId)
-    const { title: autoTitle = "", description: autoDescription } = autoFill
+    const { title: autoTitle = "", description: autoDescription = "" } = autoFill
     const [inputForm, setInput] = useState({
         title: `${autoTitle || ""} ${partNo}`,
         mpn: partNo,
