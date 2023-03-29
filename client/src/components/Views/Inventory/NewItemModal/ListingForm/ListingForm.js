@@ -21,7 +21,7 @@ const ListingForm = (props) => {
         description: `${autoDescription || ""}`,
         location: "",
     })
-    //OKAY NOW I AM HERE
+
     useEffect(() => {
         if (partNo !== "N/A") {
             const existingItems = items.filter((x) => x.partNo === partNo).sort((a, b) => {
