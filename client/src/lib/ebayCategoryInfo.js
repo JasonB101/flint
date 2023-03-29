@@ -104,7 +104,9 @@ const categories = [
     },
     {
         category: "Sun Visors",
-        id: 46102
+        id: 46102,
+        title: "Sun Visor Pair Driver and Passenger",
+        description: "No Rips no Tears, and no permanent stains."
     },
     {
         category: "Throttle Body",
