@@ -13,9 +13,7 @@ inventoryRouter.post("/", async (req, res, next) => {
     const user = userRaw.toObject();
     const { ebayToken, averageShippingCost } = user;
     const listingDetails = req.body;
-    console.log(listingDetails)
     const listingResponse = await createListing(ebayToken, listingDetails)
-    console.log(listingResponse)
     const inventoryItemBody = parseInventoryObject(listingResponse, listingDetails, averageShippingCost)
     if (inventoryItemBody.ebayId) {
         let inventoryItem = new InventoryItem(inventoryItemBody);
