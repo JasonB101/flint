@@ -48,6 +48,7 @@ const categories = [
     },
     {
         category: "Climate Control",
+        title: "Digital Climate Control",
         id: 33545
     },
     {
@@ -96,6 +97,7 @@ const categories = [
     },
     {
         category: "Radio",
+        title: "Radio Receiver CD Player AM FM",
         id: 174119
     },
     {
