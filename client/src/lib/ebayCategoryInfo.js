@@ -48,7 +48,7 @@ const categories = [
     },
     {
         category: "Climate Control",
-        title: "Digital Climate Control",
+        title: "Digital Climate Control Temperature",
         id: 33545
     },
     {
@@ -120,11 +120,22 @@ const categories = [
     },
     {
         category: "Audio Amplifier",
+        title: "Radio Sound Audio Amplifier Amp",
         id: 21647
     },
     {
         category: "Valve Cover",
         id: 33627
+    },
+    {
+        category: "Arm Rest",
+        id: 262201,
+        title: "Armrest Arm Rest"
+    },
+    {
+        category: "Hood Hinges / Latches",
+        id: 262156,
+        title: "Hood Hinge"
     }
 ]
 

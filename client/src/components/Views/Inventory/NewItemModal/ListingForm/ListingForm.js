@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
 import categories from "../../../../../lib/ebayCategoryInfo"
+import Label from "./Label/Label"
+import Styles from "./ListingForm.module.scss"
+import { getLabelFromTitle } from "./Label/getLabelDetails"
 
 const ListingForm = (props) => {
     const { toggleModal, submitNewItem, itemForm, items } = props;
     const { categoryId, partNo, sku } = itemForm
-    const autoFill = categories.find((x) => x.id == categoryId) || {title: "", description: ""}
+    const autoFill = categories.find((x) => x.id == categoryId) || { title: "", description: "" }
     const { title: autoTitle, description: autoDescription } = autoFill
+
     const [inputForm, setInput] = useState({
         title: `${autoTitle || ""} ${partNo}`,
         mpn: partNo,
@@ -20,9 +24,12 @@ const ListingForm = (props) => {
         shippingService: "USPSPriority",
         description: `${autoDescription || ""}`,
         location: "",
+        year: "",
+        model: ""
     })
 
     useEffect(() => {
+
         if (partNo !== "N/A") {
             const existingItems = items.filter((x) => x.partNo === partNo).sort((a, b) => {
                 const { dateSold: aDateSold, datePurchased: aDatePurchased, aListedPrice } = a
@@ -35,13 +42,17 @@ const ListingForm = (props) => {
             if (existingItems.length > 0) {
                 const existing = existingItems[0]
                 const { title, brand = "", shippingService = "USPSPriority", listedPrice } = existing
+                let labelDetails = getLabelFromTitle(title)
+                let { year, model } = labelDetails
                 let acceptOfferHigh = (+listedPrice - 4.99).toFixed(2)
                 let declineOfferLow = (+listedPrice - 14.99).toFixed(2)
-                setInput({ ...inputForm, title, brand, shippingService, listPrice: listedPrice, acceptOfferHigh, declineOfferLow })
+                setInput({ ...inputForm, title, brand, shippingService, listPrice: listedPrice, acceptOfferHigh, declineOfferLow, year, model })
             }
         }
 
+
     }, [items, partNo])
+
 
     const handleChange = ({ target }) => {
         const { name, value } = target;
@@ -52,6 +63,13 @@ const ListingForm = (props) => {
         if (name === "listPrice") {
             updateForm.acceptOfferHigh = (+value - 4.99).toFixed(2);
             updateForm.declineOfferLow = (+value - 14.99).toFixed(2);
+        }
+        if (name === "title") {
+            let labelDetails = getLabelFromTitle(value)
+            let { year, model } = labelDetails
+
+            updateForm.year = year
+            updateForm.model = model
         }
         setInput(updateForm);
     }
@@ -86,6 +104,10 @@ const ListingForm = (props) => {
             ...inputForm,
             shippingService: e.target.value
         });
+    }
+
+    function printLabel() {
+        window.frames['pdfView'].print()
     }
 
     async function saveChanges(e) {
@@ -168,9 +190,17 @@ const ListingForm = (props) => {
             </Form.Row>
 
 
-            <Modal.Footer>
+            <Modal.Footer className={Styles['footer']}>
+
+                <i onClick={printLabel} className={`${Styles['printIcon']} material-icons`}>print</i>
+                <Form.Control className={`${Styles['labelInput']} ${Styles['labelYearInput']}`} value={inputForm.year} name="year" onChange={handleChange} placeholder="Year" />
+                <Form.Control className={`${Styles['labelInput']} ${Styles['labelModelInput']}`} value={inputForm.model} name="model" onChange={handleChange} placeholder="Model" />
+
                 <Button onClick={() => toggleModal(false)} variant="secondary">Close</Button>
-                <Button type="submit" variant="primary">Save Changes</Button>
+                <Button type="submit" variant="primary">List Item</Button>
+
+
+                <Label labelInfo={{ sku: inputForm.sku, year: inputForm.year, model: inputForm.model }} />
             </Modal.Footer>
         </Form>
 
