@@ -150,6 +150,28 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
 
 })
 
+
+const exchangeCodeForTokens = async (code) => {
+    const clientId = process.env['EBAY_CLIENT'];
+    const clientSecret = process.env['EBAY_APP_SECRET'];
+    const redirectUri = process.env['OAUTH_REDIRECT_URI'];
+    try {
+        const response = await axios({
+            method: 'POST',
+            url: 'https://api.ebay.com/identity/v1/oauth2/token',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
+            },
+            data: `grant_type=authorization_code&code=${code}&redirect_uri=${redirectUri}`
+        });
+        const { access_token: accessToken, refresh_token: refreshToken } = response.data;
+        return { accessToken, refreshToken };
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 // let accessToken = null;
 
 // async function getAccessToken() {
