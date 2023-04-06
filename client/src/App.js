@@ -24,6 +24,7 @@ function App() {
       <Switch>
         <Route path="/auth/signin" component={SignIn} />
         <Route exact path="/" component={() => <Redirect to="/auth/signin" />} />
+        <ProtectedRoute path="/setOAuthTokens" component={() => <Inventory {...storeData} />} />
         <ProtectedRoute path="/inventory" component={() => <Inventory {...storeData} />} />
         <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} submitNewExpense={submitNewExpense} />} />
         <ProtectedRoute path="/reports/sales" component={() => <Sales {...storeData} />} />

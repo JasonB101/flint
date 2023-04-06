@@ -7,7 +7,7 @@ const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
 require("dotenv").config()
 
-syncRouter.get("/gettokenlink", async (req, res, next) => {
+syncRouter.get("/gettokenlink", async (req, res, next) => { //This is for AuthnAuth
     //Check to see if there is already a session open and remove it for this user.
     try {
         await EbayTokenSession.findOneAndRemove({ userId: req.auth._id })
@@ -59,7 +59,7 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
 
 })
 
-syncRouter.post("/setebaytoken", async (req, res, next) => {
+syncRouter.post("/setebaytoken", async (req, res, next) => { //This is for AuthnAuth
     //This does a post request with no data, uses the req.auth._id to get the sessionId for current user. Then does the request
     //to ebay to get the ebayToken, and then saves that ebay token in the user's collection. Need to design all this ish better. 
     const userId = req.auth._id
@@ -100,13 +100,7 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
 
 })
 
-syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
-    const userId = req.auth._id
-    const { authCode } = req.body;
 
-    const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
-
-})
 
 
 async function requestEbayToken(sessionId) {
@@ -144,6 +138,56 @@ async function ebayApplicationRequest(callName, query) {
 
 }
 
+// THIS IS WHERE OAUTH HANDLES ARE
+
+syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
+    const userId = req.auth._id
+    const { authCode } = req.body;
+
+    console.log(authCode)
+
+    // const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
+
+})
+
+// let accessToken = null;
+
+// async function getAccessToken() {
+//   if (accessToken) {
+//     return accessToken;
+//   }
+//   const refreshTokenDoc = await RefreshToken.findOne();
+//   if (!refreshTokenDoc) {
+//     throw new Error('Refresh token not found');
+//   }
+//   const response = await axios.post(tokenEndpoint, {
+//     grant_type: 'refresh_token',
+//     refresh_token: refreshTokenDoc.token,
+//     client_id: clientId,
+//     client_secret: clientSecret,
+//   });
+//   accessToken = response.data.access_token;
+//   return accessToken;
+// }
+
+// async function fetchData() {
+//   const token = await getAccessToken();
+//   try {
+//     const response = await axios.get('https://api.ebay.com/some-resource', {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+//     return response.data;
+//   } catch (error) {
+//     if (error.response.status === 401) {
+//       // Access token has expired, try to refresh it and retry the request
+//       accessToken = null;
+//       return fetchData();
+//     }
+//     throw error;
+//   }
+// }
 
 
 

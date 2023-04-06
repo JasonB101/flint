@@ -177,11 +177,15 @@ const Store = (props) => {
             })
     }
 
-    function setEbayOAuthToken(authCode) {
+    function setEbayOAuthTokens(authCode) {
         userAxios.post("/api/syncebay/setebayoauthtoken", { authCode })
             .then(results => {
-                getEbay();
+                return { success: true }
             })
+            .catch(e => {
+                return { success: false }
+            })
+                
     }
 
     function setPayPalToken() {
@@ -202,7 +206,7 @@ const Store = (props) => {
                 // console.log(data)
                 const { link, ebayListings = [], inventoryItems = [] } = data;
                 if (link) {
-                    console.log(link)
+                    window.location.href = link
                 } else {
                     changeItems(inventoryItems);
                     setEbayListings(ebayListings);
@@ -248,7 +252,8 @@ const Store = (props) => {
             logout,
             ebayListings,
             updateUnlisted,
-            updateItem
+            updateItem,
+            setEbayOAuthTokens
         }} >
             {props.children}
         </storeContext.Provider >
