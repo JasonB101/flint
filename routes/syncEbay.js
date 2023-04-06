@@ -143,6 +143,12 @@ async function ebayApplicationRequest(callName, query) {
 syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
     const userId = req.auth._id
     const { authCode } = req.body;
+    exchangeCodeForTokens(authCode)
+    .then(result => {
+        const { accessToken, refreshToken } = result
+        console.log(accessToken)
+        console.log(refreshToken)
+    })
     res.send(authCode)
     console.log(authCode)
 
@@ -153,8 +159,8 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
 
 const exchangeCodeForTokens = async (code) => {
     const clientId = process.env['EBAY_CLIENT'];
-    const clientSecret = process.env['EBAY_APP_SECRET'];
-    const redirectUri = process.env['OAUTH_REDIRECT_URI'];
+    const clientSecret = process.env['OAUTH_CLIENT_SECRET'];
+    const redirectUri = process.env['OAUTH_RU_NAME'];
     try {
         const response = await axios({
             method: 'POST',
