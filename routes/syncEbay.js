@@ -2,7 +2,6 @@ const express = require("express");
 const syncRouter = express.Router();
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
-const InventoryItem = require("../models/inventoryItem");
 const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
 require("dotenv").config()
@@ -146,6 +145,7 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
     exchangeCodeForTokens(authCode)
     .then(result => {
         const { accessToken, refreshToken } = result
+        // User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: accessToken, ebayRefreshOAuthToken: refreshToken})
         console.log(accessToken)
         console.log(refreshToken)
         res.send({success: true})

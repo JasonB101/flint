@@ -14,7 +14,7 @@ const OAuthCode = (storeData) => {
 
     async function setTokens(code) {
         let response = await setEbayOAuthTokens(code)
-        if (response.success){
+        if (response.data.success){
             alert("Success")
         } else {
             alert("Failed")
