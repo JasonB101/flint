@@ -148,8 +148,11 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
         const { accessToken, refreshToken } = result
         console.log(accessToken)
         console.log(refreshToken)
+        res.send({success: true})
     })
-    res.send(authCode)
+    .catch(e => {
+        res.send({success:false})
+    })
     console.log(authCode)
 
     // const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
