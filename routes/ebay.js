@@ -44,7 +44,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     } catch (e) {
 
         res.send({link: getOAuthLink()})
-        console.log(e)
+        console.log('Error: Sending Link')
 
     }
 
