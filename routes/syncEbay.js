@@ -143,7 +143,7 @@ async function ebayApplicationRequest(callName, query) {
 syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
     const userId = req.auth._id
     const { authCode } = req.body;
-
+    res.send(authCode)
     console.log(authCode)
 
     // const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
