@@ -27,7 +27,7 @@ const Store = (props) => {
     useEffect(() => {
         if (user.token) {
             getExpenses();
-            if (user.syncedWithEbay) {
+            if (user.syncedWithEbay && user.OAuthActive) {
                 console.log("Made it")
                 getEbay();
             } else {
@@ -178,12 +178,10 @@ const Store = (props) => {
     }
 
     async function setEbayOAuthTokens(authCode) {
-        userAxios.post("/api/syncebay/setebayoauthtoken", { authCode })
-            .then(results => {
-                const {success, message} = results.data
-                return {success, message}
-            })
-                
+        let result = await userAxios.post("/api/syncebay/setebayoauthtoken", { authCode })
+        const { success, message } = results.data
+        return { success, message }
+
     }
 
     function setPayPalToken() {
@@ -204,6 +202,7 @@ const Store = (props) => {
                 // console.log(data)
                 const { link, ebayListings = [], inventoryItems = [] } = data;
                 if (link) {
+                    localStorage.setItem("user", { ...user, OAuthActive: false })
                     window.location.href = link
                 } else {
                     changeItems(inventoryItems);
