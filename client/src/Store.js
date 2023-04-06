@@ -177,13 +177,11 @@ const Store = (props) => {
             })
     }
 
-    function setEbayOAuthTokens(authCode) {
+    async function setEbayOAuthTokens(authCode) {
         userAxios.post("/api/syncebay/setebayoauthtoken", { authCode })
             .then(results => {
-                return { success: true }
-            })
-            .catch(e => {
-                return { success: false }
+                const {success, message} = results.data
+                return {success, message}
             })
                 
     }

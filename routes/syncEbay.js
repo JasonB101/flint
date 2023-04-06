@@ -151,7 +151,7 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
         res.send({success: true})
     })
     .catch(e => {
-        res.send({success:false})
+        res.send({success:false, message: e})
     })
     console.log(authCode)
 

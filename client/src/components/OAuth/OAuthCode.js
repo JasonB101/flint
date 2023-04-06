@@ -14,10 +14,11 @@ const OAuthCode = (storeData) => {
 
     async function setTokens(code) {
         let response = await setEbayOAuthTokens(code)
-        if (response.data.success){
+        if (response.success){
             alert("Success")
+            window.location.href = "https://flintbooks.herokuapp.com/inventory"
         } else {
-            alert("Failed")
+            console.log(response.data.message)
 
         }
     }
