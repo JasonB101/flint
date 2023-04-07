@@ -49,6 +49,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
                 const newToken = await refreshAccessToken(ebayRefreshOAuthToken)
                 const {success, token} = newToken
                 if (!success) throw Error("Refresh Failed")
+                console.log("Successfully fetched Access Token")
                 User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: token}, (err, result) => {
                     if (err) console.log(err.message)
                     if (result) getEbayData()
