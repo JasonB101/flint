@@ -16,7 +16,7 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 
 ebayRouter.get("/getebay", async (req, res, next) => {
     let refreshAttempts = 0
-    let data = await getEbayData()
+    let data = await getEbayData() //This is clunky practice. But I think calling an async function and doing nothing afterward might be messing it up
 
     async function getEbayData() {
         const userObject = await getUserObject(req.auth._id);
@@ -32,7 +32,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
             const ebayListings = await getEbayListings(ebayAuthToken, userId);
 
             let inventoryItems = await getInventoryItems(userId);
-            //verifiedCorrectInfo is an action function, doesn't return anything usable atm
+
             const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(inventoryItems, ebayListings, averageShippingCost);
 
             if (verifiedCorrectInfo) {
@@ -43,7 +43,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
                 ebayListings,
                 inventoryItems,
             }
-
+            console.log("This is right before the send")
             res.send(response);
         } catch (e) {
             console.log("Access Token Expired")
@@ -65,7 +65,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
 
         }
 
-
+        return false
     }
 
 
