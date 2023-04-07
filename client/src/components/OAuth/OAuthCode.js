@@ -15,7 +15,7 @@ const OAuthCode = (storeData) => {
     async function setTokens(code) {
         let response = await setEbayOAuthTokens(code)
         if (response.success){
-            localStorage.setItem("user", {...user, OAuthActive: true})
+            localStorage.setItem("user", JSON.stringify({...user, OAuthActive: true}))
             window.location.href = "https://flintbooks.herokuapp.com/inventory"
         } else {
             console.log(response.data.message)
