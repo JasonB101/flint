@@ -26,10 +26,15 @@ ebayRouter.get("/getebay", async (req, res, next) => {
             let shippingTransactions = await getShippingTransactions(ebayOAuthToken)
             if (shippingTransactions.failedOAuth) throw new Error('Need to Update OAuth')
             shippingTransactions = shippingTransactions.transactions
-            const shippingUpdates = await updateAllZeroShippingCost(userId, shippingTransactions);
-            const completedSales = await getCompletedSales(ebayAuthToken);
+            const [shippingUpdates, completedSales, ebayListings] = await Promise.all([
+                updateAllZeroShippingCost(userId, shippingTransactions),
+                getCompletedSales(ebayAuthToken),
+                getEbayListings(ebayAuthToken, userId)
+            ])
+            // const shippingUpdates = await updateAllZeroShippingCost(userId, shippingTransactions);
+            // const completedSales = await getCompletedSales(ebayAuthToken);
             const newSoldItems = await updateInventoryWithSales(userId, completedSales, shippingTransactions);
-            const ebayListings = await getEbayListings(ebayAuthToken, userId);
+            // const ebayListings = await getEbayListings(ebayAuthToken, userId);
 
             let inventoryItems = await getInventoryItems(userId);
 
