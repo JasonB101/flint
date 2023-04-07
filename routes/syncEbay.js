@@ -145,10 +145,17 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
     exchangeCodeForTokens(authCode)
     .then(result => {
         const { accessToken, refreshToken } = result
-        User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: accessToken, ebayRefreshOAuthToken: refreshToken})
+        User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: accessToken, ebayRefreshOAuthToken: refreshToken}, (err, result) => {
+            if (err) {
+                console.log(err)
+                res.send({success: false, message: err.message})
+            } else {
+                res.send({success: true})
+            }
+        })
         // console.log(accessToken)
         // console.log(refreshToken)
-        res.send({success: true})
+        
     })
     .catch(e => {
         res.send({success:false, message: e})
