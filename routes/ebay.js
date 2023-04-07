@@ -15,12 +15,13 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged.
 
 ebayRouter.get("/getebay", async (req, res, next) => {
-    const userObject = await getUserObject(req.auth._id);
-    const { _id: userId, averageShippingCost, ebayToken: ebayAuthToken, ebayOAuthToken = "0", ebayRefreshOAuthToken } = userObject;
+
     getEbayData()
 
-    async function getEbayData(){
-
+    async function getEbayData() {
+        const userObject = await getUserObject(req.auth._id);
+        const { _id: userId, averageShippingCost, ebayToken: ebayAuthToken, ebayOAuthToken = "0", ebayRefreshOAuthToken } = userObject;
+        
         try {
             let shippingTransactions = await getShippingTransactions(ebayOAuthToken)
             if (shippingTransactions.failedOAuth) throw new Error('Need to Update OAuth')
@@ -29,11 +30,11 @@ ebayRouter.get("/getebay", async (req, res, next) => {
             const completedSales = await getCompletedSales(ebayAuthToken);
             const newSoldItems = await updateInventoryWithSales(userId, completedSales, shippingTransactions);
             const ebayListings = await getEbayListings(ebayAuthToken, userId);
-    
+
             let inventoryItems = await getInventoryItems(userId);
             //verifiedCorrectInfo is an action function, doesn't return anything usable atm
             const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(inventoryItems, ebayListings, averageShippingCost);
-    
+
             if (verifiedCorrectInfo) {
                 updateSellerAvgShipping(userId);
                 inventoryItems = await getInventoryItems(userId);
@@ -42,25 +43,25 @@ ebayRouter.get("/getebay", async (req, res, next) => {
                 ebayListings,
                 inventoryItems,
             }
-    
+
             res.send(response);
         } catch (e) {
             console.log("Access Token Expired")
             try {
                 const newToken = await refreshAccessToken(ebayRefreshOAuthToken)
-                const {success, token} = newToken
+                const { success, token } = newToken
                 if (!success) throw Error("Refresh Failed")
                 console.log("Successfully fetched Access Token")
-                User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: token}, (err, result) => {
+                User.findOneAndUpdate({ _id: userId }, { ebayOAuthToken: token }, (err, result) => {
                     if (err) console.log(err.message)
                     if (result) getEbayData()
                 })
-            } catch(e) {
-                res.send({link: getOAuthLink()})
-                console.log(e.message,'Refresh OAUTH Error: Sending Link')
+            } catch (e) {
+                res.send({ link: getOAuthLink() })
+                console.log(e.message, 'Refresh OAUTH Error: Sending Link')
 
             }
-    
+
         }
 
 
