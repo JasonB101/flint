@@ -55,7 +55,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
                 console.log("Successfully fetched Access Token")
                 User.findOneAndUpdate({ _id: userId }, { ebayOAuthToken: token }, (err, result) => {
                     if (err) console.log(err.message)
-                    if (result && refreshAttempts < 1) getEbayData()
+                    if (result && refreshAttempts < 2) getEbayData()
                 })
             } catch (e) {
                 res.send({ link: getOAuthLink() })
