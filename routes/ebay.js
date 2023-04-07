@@ -15,7 +15,7 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged.
 
 ebayRouter.get("/getebay", async (req, res, next) => {
-
+    let refreshAttempts = 0
     getEbayData()
 
     async function getEbayData() {
@@ -48,13 +48,14 @@ ebayRouter.get("/getebay", async (req, res, next) => {
         } catch (e) {
             console.log("Access Token Expired")
             try {
+                refreshAttempts++
                 const newToken = await refreshAccessToken(ebayRefreshOAuthToken)
                 const { success, token } = newToken
                 if (!success) throw Error("Refresh Failed")
                 console.log("Successfully fetched Access Token")
                 User.findOneAndUpdate({ _id: userId }, { ebayOAuthToken: token }, (err, result) => {
                     if (err) console.log(err.message)
-                    if (result) getEbayData()
+                    if (result && refreshAttempts < 1) getEbayData()
                 })
             } catch (e) {
                 res.send({ link: getOAuthLink() })
