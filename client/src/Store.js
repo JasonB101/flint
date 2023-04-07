@@ -202,7 +202,7 @@ const Store = (props) => {
                 // console.log(data)
                 const { link, ebayListings = [], inventoryItems = [] } = data;
                 if (link) {
-                    localStorage.setItem("user", { ...user, OAuthActive: false })
+                    localStorage.setItem("user", JSON.stringify({ ...user, OAuthActive: false }))
                     window.location.href = link
                 } else {
                     changeItems(inventoryItems);
