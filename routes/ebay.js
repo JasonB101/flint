@@ -45,6 +45,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     
             res.send(response);
         } catch (e) {
+            console.log("Access Token Expired")
             try {
                 const newToken = await refreshAccessToken(ebayRefreshOAuthToken)
                 const {success, token} = newToken
