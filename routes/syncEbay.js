@@ -4,7 +4,7 @@ const axios = require('axios');
 const parseString = require('xml2js').parseString;
 const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
-const exchangeCodeForTokens = require("../lib/oAuth")
+const {exchangeCodeForTokens} = require("../lib/oAuth")
 require("dotenv").config()
 
 syncRouter.get("/gettokenlink", async (req, res, next) => { //This is for AuthnAuth

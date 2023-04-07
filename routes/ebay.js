@@ -12,7 +12,7 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 //Sort array based on the purchase date. Update the first item in the array, on the next iteration that item will now be
 //set as "Sold" ;) Goodluck, ima play a video game :P Need to think about how to filter between transactions that have been recorded
 //already. There may be more in inventory and the same part is counted more than once. Save the transaction ID to the item
-//so when you retrieve transactions to merge, you filter the list by which transactions have not been merged. (I am your father)
+//so when you retrieve transactions to merge, you filter the list by which transactions have not been merged.
 
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userObject = await getUserObject(req.auth._id);
