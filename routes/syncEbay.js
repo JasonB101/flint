@@ -4,6 +4,7 @@ const axios = require('axios');
 const parseString = require('xml2js').parseString;
 const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
+const exchangeCodeForTokens = require("../lib/oAuth")
 require("dotenv").config()
 
 syncRouter.get("/gettokenlink", async (req, res, next) => { //This is for AuthnAuth
@@ -160,75 +161,6 @@ syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
     .catch(e => {
         res.send({success:false, message: e})
     })
-    console.log(authCode)
-
-    // const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
-
 })
-
-
-const exchangeCodeForTokens = async (code) => {
-    const clientId = process.env['EBAY_CLIENT'];
-    const clientSecret = process.env['OAUTH_CLIENT_SECRET'];
-    const redirectUri = process.env['OAUTH_RU_NAME'];
-    try {
-        const response = await axios({
-            method: 'POST',
-            url: 'https://api.ebay.com/identity/v1/oauth2/token',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`
-            },
-            data: `grant_type=authorization_code&code=${code}&redirect_uri=${redirectUri}`
-        });
-        const { access_token: accessToken, refresh_token: refreshToken } = response.data;
-        return { accessToken, refreshToken };
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-// let accessToken = null;
-
-// async function getAccessToken() {
-//   if (accessToken) {
-//     return accessToken;
-//   }
-//   const refreshTokenDoc = await RefreshToken.findOne();
-//   if (!refreshTokenDoc) {
-//     throw new Error('Refresh token not found');
-//   }
-//   const response = await axios.post(tokenEndpoint, {
-//     grant_type: 'refresh_token',
-//     refresh_token: refreshTokenDoc.token,
-//     client_id: clientId,
-//     client_secret: clientSecret,
-//   });
-//   accessToken = response.data.access_token;
-//   return accessToken;
-// }
-
-// async function fetchData() {
-//   const token = await getAccessToken();
-//   try {
-//     const response = await axios.get('https://api.ebay.com/some-resource', {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     return response.data;
-//   } catch (error) {
-//     if (error.response.status === 401) {
-//       // Access token has expired, try to refresh it and retry the request
-//       accessToken = null;
-//       return fetchData();
-//     }
-//     throw error;
-//   }
-// }
-
-
-
-
 
 module.exports = syncRouter

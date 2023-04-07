@@ -4,7 +4,7 @@ const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
 const { updateSellerAvgShipping } = require("../lib/userMethods")
 const { getEbayListings, getCompletedSales, getShippingTransactions } = require("../lib/ebayMethods")
-const { getOAuthLink } = require("../lib/oAuth")
+const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, figureProfit, verifyCorrectPricesInInventoryItems } = require("../lib/inventoryMethods")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
@@ -16,35 +16,51 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userObject = await getUserObject(req.auth._id);
-    const { _id: userId, averageShippingCost, ebayToken: ebayAuthToken, ebayOAuthToken = "0" } = userObject;
+    const { _id: userId, averageShippingCost, ebayToken: ebayAuthToken, ebayOAuthToken = "0", ebayRefreshOAuthToken } = userObject;
+    getEbayData()
 
-    try {
-        let shippingTransactions = await getShippingTransactions(ebayOAuthToken)
-        if (shippingTransactions.failedOAuth) throw new Error('Need to Update OAuth')
-        shippingTransactions = shippingTransactions.transactions
-        const shippingUpdates = await updateAllZeroShippingCost(userId, shippingTransactions);
-        const completedSales = await getCompletedSales(ebayAuthToken);
-        const newSoldItems = await updateInventoryWithSales(userId, completedSales, shippingTransactions);
-        const ebayListings = await getEbayListings(ebayAuthToken, userId);
+    async function getEbayData(){
 
-        let inventoryItems = await getInventoryItems(userId);
-        //verifiedCorrectInfo is an action function, doesn't return anything usable atm
-        const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(inventoryItems, ebayListings, averageShippingCost);
+        try {
+            let shippingTransactions = await getShippingTransactions(ebayOAuthToken)
+            if (shippingTransactions.failedOAuth) throw new Error('Need to Update OAuth')
+            shippingTransactions = shippingTransactions.transactions
+            const shippingUpdates = await updateAllZeroShippingCost(userId, shippingTransactions);
+            const completedSales = await getCompletedSales(ebayAuthToken);
+            const newSoldItems = await updateInventoryWithSales(userId, completedSales, shippingTransactions);
+            const ebayListings = await getEbayListings(ebayAuthToken, userId);
+    
+            let inventoryItems = await getInventoryItems(userId);
+            //verifiedCorrectInfo is an action function, doesn't return anything usable atm
+            const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(inventoryItems, ebayListings, averageShippingCost);
+    
+            if (verifiedCorrectInfo) {
+                updateSellerAvgShipping(userId);
+                inventoryItems = await getInventoryItems(userId);
+            }
+            const response = {
+                ebayListings,
+                inventoryItems,
+            }
+    
+            res.send(response);
+        } catch (e) {
+            try {
+                const newToken = await refreshAccessToken(ebayRefreshOAuthToken)
+                const {success, token} = newToken
+                if (!success) throw Error("Refresh Failed")
+                User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: token}, (err, result) => {
+                    if (err) console.log(err.message)
+                    if (result) getEbayData()
+                })
+            } catch(e) {
+                res.send({link: getOAuthLink()})
+                console.log(e.message,'Refresh OAUTH Error: Sending Link')
 
-        if (verifiedCorrectInfo) {
-            updateSellerAvgShipping(userId);
-            inventoryItems = await getInventoryItems(userId);
+            }
+    
         }
-        const response = {
-            ebayListings,
-            inventoryItems,
-        }
 
-        res.send(response);
-    } catch (e) {
-
-        res.send({link: getOAuthLink()})
-        console.log('OAUTH Error: Sending Link')
 
     }
 
