@@ -196,7 +196,7 @@ const Store = (props) => {
     }
 
     function getEbay() {
-        userAxios.get("/api/ebay/getebay")
+        userAxios.get("/api/ebay/getebay", { timeout: 20000 })
             .then(result => {
                 const data = result.data;
                 // console.log(data)
