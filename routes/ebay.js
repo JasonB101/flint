@@ -16,7 +16,7 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 
 ebayRouter.get("/getebay", async (req, res, next) => {
     let refreshAttempts = 0
-    getEbayData()
+    let data = await getEbayData()
 
     async function getEbayData() {
         const userObject = await getUserObject(req.auth._id);
