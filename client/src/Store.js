@@ -196,22 +196,42 @@ const Store = (props) => {
     }
 
     function getEbay() {
-        userAxios.get("/api/ebay/getebay", { timeout: 20000 })
+        userAxios.get("/api/ebay/getebay", { timeout: 30000 })
             .then(result => {
                 const data = result.data;
-                // console.log(data)
-                const { link, ebayListings = [], inventoryItems = [] } = data;
-                if (link) {
-                    localStorage.setItem("user", JSON.stringify({ ...user, OAuthActive: false }))
-                    window.location.href = link
-                } else {
-                    changeItems(inventoryItems);
-                    setEbayListings(ebayListings);
-                }
-
+                const { ebayListings = [], inventoryItems = [] } = data;
+                changeItems(inventoryItems);
+                setEbayListings(ebayListings);
             })
             .catch(err => {
-                let status = err.status
+                if (err.response && err.response.status === 401) {
+                    userAxios.post('/api/ebay/refreshOToken')
+                        .then(result => {
+                            localStorage.setItem("user", JSON.stringify({ ...user, OAuthActive: true }))
+                            return userAxios.get("/api/ebay/getebay", { timeout: 30000 })
+                                .then(result => {
+                                    const data = result.data;
+                                    const { ebayListings = [], inventoryItems = [] } = data;
+                                    changeItems(inventoryItems);
+                                    setEbayListings(ebayListings);
+                                })
+                                .catch(err => {
+                                    console.log(err.message)
+                                    localStorage.setItem("user", JSON.stringify({ ...user, OAuthActive: false }))
+                                })
+                                ;
+                        })
+                        .catch(err => {
+                            const data = err.response.data;
+                            const { link } = data;
+                            if (link) {
+                                localStorage.setItem("user", JSON.stringify({ ...user, OAuthActive: false }))
+                                window.location.href = link
+                            } else {
+                                console.log(err)
+                            }
+                        })
+                }
             })
     }
 
