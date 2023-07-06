@@ -78,7 +78,7 @@ ebayRouter.post("/refreshOToken", async (req, res, next) => {
 })
 
 ebayRouter.put("/linkItem/:id", async (req, res, next) => {
-    const { ItemID, BuyItNowPrice } = req.body;
+    const { ItemID, BuyItNowPrice, SKU } = req.body;
     const { _id: userId, averageShippingCost } = req.user;
     console.log(req.body)
     const item = await InventoryItem.findById(req.params.id);

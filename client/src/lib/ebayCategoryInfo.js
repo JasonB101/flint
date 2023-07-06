@@ -56,13 +56,17 @@ const categories = [
         id: 42612
     },
     {
+        category: "Interior Light",
+        id: 33712
+    },
+    {
         category: "Exterior Mirror",
         id: 33649
     },
     {
         category: "Fuel Injection Parts Other",
         id: 33553
-    },  
+    },
     {
         category: "Interior Mirror",
         id: 33699

@@ -96,11 +96,11 @@ const InventoryTable = (props) => {
     function checkForUnlistedItems(inventoryListings, ebayListings) {
         const unlistedIds = [];
         inventoryListings.forEach(inventoryItem => {
-            const { ebayId } = inventoryItem;
+            const { ebayId, sku } = inventoryItem;
             const ebayItem = ebayListings.find(ebayItem => {
-                const { ItemID } = ebayItem;
+                const { ItemID, SKU } = ebayItem;
                 // console.log(ebayItem);
-                return ItemID == ebayId;
+                return SKU == sku;
             })
             if (!ebayItem) unlistedIds.push(ebayId);
         })
