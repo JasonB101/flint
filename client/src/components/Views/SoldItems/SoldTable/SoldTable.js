@@ -10,6 +10,13 @@ const SoldTable = (props) => {
         value: "",
         id: ""
     })
+    soldItems.sort((a, b) => {
+        const { dateSold: aDate } = a
+        const { dateSold: bDate } = b
+        const aTime = Number(new Date(String(aDate)).getTime())
+        const bTime = Number(new Date(String(bDate)).getTime())
+        return bTime - aTime
+    })
     const items = soldItems.map(x => populateRow(x));
 
     useEffect(() => {
@@ -27,11 +34,18 @@ const SoldTable = (props) => {
             id: id
         })
     }
-    function saveEntry(e) {
+    function saveEntry(itemDetails) {
         //call store to updateEntry pass
+        let updates = {
+            ...itemDetails,
+            [editItem.entryItem]: editItem.value
+        }
+        const { priceSold, purchasePrice, shippingCost, ebayFees } = updates
+        updates.profit = priceSold - purchasePrice - shippingCost - ebayFees
+
         const itemToSave = {
             id: editItem.id,
-            updates: {[editItem.entryItem]: editItem.value}
+            updates
         }
         updateItem(itemToSave)
     }
@@ -51,17 +65,17 @@ const SoldTable = (props) => {
                 <td>${valueToFixed(purchasePrice)}</td>
                 <td>${valueToFixed(priceSold)}</td>
                 <td className={Styles['tdEdit']}>
-                    <span style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "none" } : { display: "inline" }}
-                        className={Styles['data']}>${valueToFixed(shippingCost)}</span>
-                    <input style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { display: "inline" } : { display: "none" }}
-                        type="text" value={editItem.value} onChange={changeEntry} autoFocus />
+                    {(editItem.id === _id && editItem.entryItem === "shippingCost") ?
+                        <input type="text" value={editItem.value} onChange={changeEntry} autoFocus /> :
+                        <span className={Styles['data']}>${valueToFixed(shippingCost)}</span>}
+
                     <i onClick={(e) => editEntry(_id, "shippingCost")} className={`${Styles['edit']} material-icons`}>edit_note</i>
-                    <i onClick={saveEntry} className={`${Styles['save']} material-icons`}
+                    <i onClick={(e) => saveEntry({ purchasePrice, priceSold, shippingCost, ebayFees })} className={`${Styles['save']} material-icons`}
                         style={(editItem.id === _id && editItem.entryItem === "shippingCost") ? { visibility: "visible" } : { visibility: "hidden" }}>save</i>
                 </td>
                 <td>${valueToFixed(ebayFees)}</td>
                 <td>${valueToFixed(profit)}</td>
-                <td>{`${Math.floor(+profit / (+purchasePrice + 0.1) * 100)}%`}</td>
+                <td>{`${Math.floor(+profit / (+purchasePrice + ebayFees + shippingCost) * 100)}%`}</td>
                 <td>{username}</td>
             </tr>
         )
@@ -86,13 +100,14 @@ const SoldTable = (props) => {
                 if (String(valA).includes("/")) {
                     valA = dateToTime(valA);
                     valB = dateToTime(valB);
+                } else {
+                    valA = valA.replace(/\$|%|,/g, "")
+                    valB = valB.replace(/\$|%|,/g, "")
                 }
                 //Strips commas and dollar sign off of numbers.
-                valA = valA.replace(/\$|%|,/g, "")
-                valB = valB.replace(/\$|%|,/g, "")
 
                 function dateToTime(value) {
-                    return String(new Date(value).getTime())
+                    return Number(new Date(String(value)).getTime())
                 }
                 return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB.toString())
             }

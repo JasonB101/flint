@@ -2,19 +2,19 @@ const express = require("express");
 const syncRouter = express.Router();
 const axios = require('axios');
 const parseString = require('xml2js').parseString;
-const InventoryItem = require("../models/inventoryItem");
 const User = require("../models/user");
 const EbayTokenSession = require("../models/ebayTokenSession");
+const {exchangeCodeForTokens} = require("../lib/oAuth")
 require("dotenv").config()
 
-syncRouter.get("/gettokenlink", async (req, res, next) => {
+syncRouter.get("/gettokenlink", async (req, res, next) => { //This is for AuthnAuth
     //Check to see if there is already a session open and remove it for this user.
     try {
         await EbayTokenSession.findOneAndRemove({ userId: req.auth._id })
     } catch (e) {
         console.log(e)
     }
-    
+
     const queryString = `<?xml version="1.0" encoding="utf-8"?>
     <GetSessionIDRequest xmlns="urn:ebay:apis:eBLBaseComponents">
       <RuName>${process.env.RU_NAME}</RuName>
@@ -59,7 +59,7 @@ syncRouter.get("/gettokenlink", async (req, res, next) => {
 
 })
 
-syncRouter.post("/setebaytoken", async (req, res, next) => {
+syncRouter.post("/setebaytoken", async (req, res, next) => { //This is for AuthnAuth
     //This does a post request with no data, uses the req.auth._id to get the sessionId for current user. Then does the request
     //to ebay to get the ebayToken, and then saves that ebay token in the user's collection. Need to design all this ish better. 
     const userId = req.auth._id
@@ -84,9 +84,9 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
                     EbayTokenSession.findByIdAndRemove(ebaySessionsId, (err, result) => {
                         if (err) console.log(err)
                     })
-//Major security flaw. After ebay is synced, it returns the user object with sensitive info. Need to figure out withoutsensitiveinfo
+                    //Major security flaw. After ebay is synced, it returns the user object with sensitive info. Need to figure out withoutsensitiveinfo
                     const user = await User.findById(result._id);
-                    return res.send({ success: true, user: user});
+                    return res.send({ success: true, user: user });
                 })
             })
         } else {
@@ -100,13 +100,7 @@ syncRouter.post("/setebaytoken", async (req, res, next) => {
 
 })
 
-syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
-const userId = req.auth._id
-const {authCode} = req.body;
 
-const TokenResponse = await axios.post("https://api.ebay.com/identity/v1/oauth2/token")
-
-})
 
 
 async function requestEbayToken(sessionId) {
@@ -144,9 +138,29 @@ async function ebayApplicationRequest(callName, query) {
 
 }
 
+// THIS IS WHERE OAUTH HANDLES ARE
 
-
-
-
+syncRouter.post("/setebayoauthtoken", async (req, res, next) => {
+    const userId = req.auth._id
+    const { authCode } = req.body;
+    exchangeCodeForTokens(authCode)
+    .then(result => {
+        const { accessToken, refreshToken } = result
+        User.findOneAndUpdate({_id: userId}, {ebayOAuthToken: accessToken, ebayRefreshOAuthToken: refreshToken}, (err, result) => {
+            if (err) {
+                console.log(err)
+                res.send({success: false, message: err.message})
+            } else {
+                res.send({success: true})
+            }
+        })
+        // console.log(accessToken)
+        // console.log(refreshToken)
+        
+    })
+    .catch(e => {
+        res.send({success:false, message: e})
+    })
+})
 
 module.exports = syncRouter

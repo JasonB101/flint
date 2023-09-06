@@ -12,6 +12,7 @@ import VerifyPayPalToken from "./components/ServiceComponents/VerifyPayPalToken"
 import SoldItems from './components/Views/SoldItems/SoldItems';
 import Expense from "./components/Views/Expense/Expense"
 import SignIn from "./components/SignIn/SignIn"
+import OAuthCode from './components/OAuth/OAuthCode';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
       <Switch>
         <Route path="/auth/signin" component={SignIn} />
         <Route exact path="/" component={() => <Redirect to="/auth/signin" />} />
+        <ProtectedRoute path="/setOAuthTokens" component={() => <OAuthCode {...storeData} />} />
         <ProtectedRoute path="/inventory" component={() => <Inventory {...storeData} />} />
         <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} submitNewExpense={submitNewExpense} />} />
         <ProtectedRoute path="/reports/sales" component={() => <Sales {...storeData} />} />

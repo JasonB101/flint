@@ -28,11 +28,14 @@ export class YearSalesChart extends ChartOptions {
         this.data = [{
             type: "column",
             toolTipContent: " {x}: ${y}",
-            dataPoints: getYearDataPoints(soldItems)
+            dataPoints: getYearDataPoints(soldItems),
         }]
         this.axisX = {
             title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(fillInMissingDays(this.data[0].dataPoints))}`,
-            interval: 7
+            interval: 7,
+            xValueType: "date",
+            xValueFormatString: "MM/dd"
+
         }
 
 
@@ -80,7 +83,7 @@ export class YearSalesChartByWeek extends YearSalesChart {
             type: "column",
             toolTipContent: " {label}: ${y}",
             dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems))
-                .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
+            // .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
         }]
 
         this.axisX = {
@@ -97,12 +100,20 @@ export class YearSalesChartByWeek extends YearSalesChart {
                     return false;
                 }
             });
+            filteredItems.sort((a, b) => {
+                let valA = a.dateSold
+                let valB = b.dateSold
+                function dateToTime(value) {
+                    return Number(new Date(String(value)).getTime())
+                }
+                return dateToTime(valA) - dateToTime(valB)
+            })
 
             const dataPoints = filteredItems.reduce((dataPoints, item) => {
                 const dateSold = standardDate(item.dateSold);
                 const price = profitSetToTrue ? +item.profit : +item.priceSold;
                 const week = new Date(dateSold).getWeek()
-                const month = new Date(dateSold).toLocaleString('default', { month: 'long' });
+                const month = new Date(dateSold).toLocaleString('default', { month: 'short' });
 
                 const itemFoundIndex = dataPoints.findIndex(x => x.label.split(" ")[0] === String(week));
                 if (itemFoundIndex !== -1) {
@@ -137,7 +148,10 @@ export class YearSalesChartByMonth extends YearSalesChart {
             title: `Average ${profitSetToTrue ? "profit" : "sales"} per month: ${getAverage(this.data[0].dataPoints)}`,
             interval: 1
         }
+        this.axisY = {
+            includeZero: true,
 
+        }
         function fillInMissingMonths(dataPoints) {
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const newDataPoints = [];
@@ -145,13 +159,13 @@ export class YearSalesChartByMonth extends YearSalesChart {
                 if (highestMonth < months.indexOf(dp.label)) return months.indexOf(dp.label);
                 return highestMonth;
             }, 0)
-        
+
             for (let i = 0; i <= maxMonth; i++) {
                 const foundIndex = dataPoints.findIndex(x => x.label === months[i])
                 if (foundIndex !== -1) {
                     newDataPoints.push(dataPoints[foundIndex])
                 } else {
-                    newDataPoints.push({label: months[i], y: 0})
+                    newDataPoints.push({ label: months[i], y: 0 })
                 }
             }
 
@@ -222,7 +236,7 @@ function fillInMissingDays(dataArray) {
 
 function getDay(date) {
     // console.log(typeof(date))
-    if (typeof(date) === "string") date = new Date(date);
+    if (typeof (date) === "string") date = new Date(date);
     // console.log(date)
     const start = new Date(date.getFullYear(), 0, 0);
     const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
@@ -233,7 +247,7 @@ function getDay(date) {
 function fillInMissingWeeks(dataArray) {
     const allWeeks = [];
     const sorted = dataArray.sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]);
-    if (sorted.length > 1 && sorted[0].label.split(" ")[1] !== 1) {
+    if (sorted.length > 1 && sorted[0].label.split(" ")[0] !== "W1") {
         sorted.unshift({ label: "Week 1 ", y: 0 });
     }
     sorted.forEach((dataPoint, index) => {

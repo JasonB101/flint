@@ -1,22 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
+import categories from "../../../../../lib/ebayCategoryInfo"
+import Label from "./Label/Label"
+import Styles from "./ListingForm.module.scss"
+import { getLabelFromTitle } from "./Label/getLabelDetails"
 
 const ListingForm = (props) => {
-    const { toggleModal, submitNewItem, itemForm } = props;
+    const { toggleModal, submitNewItem, itemForm, items } = props;
+    const { categoryId, partNo, sku } = itemForm
+    const autoFill = categories.find((x) => x.id == categoryId) || { title: "", description: "" }
+    const { title: autoTitle, description: autoDescription } = autoFill
+
     const [inputForm, setInput] = useState({
-        title: `${itemForm.partNo}`,
-        mpn: itemForm.partNo,
-        sku: itemForm.sku,
+        title: `${autoTitle || ""} ${partNo}`,
+        mpn: partNo,
+        sku: sku,
         brand: "",
         listPrice: "",
         conditionId: 3000,
         conditionDescription: "",
         acceptOfferHigh: "",
-        shippingService: "USPSPriority",
         declineOfferLow: "",
-        description: "Please double check the part number you are looking for to be sure this part is compatible with your vehicle. Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
+        shippingService: "USPSPriority",
+        description: `${autoDescription || ""}`,
         location: "",
+        year: "",
+        model: ""
     })
+
+    useEffect(() => {
+
+        if (partNo !== "N/A") {
+            const existingItems = items.filter((x) => x.partNo === partNo).sort((a, b) => {
+                const { dateSold: aDateSold, datePurchased: aDatePurchased, aListedPrice } = a
+                const { dateSold: bDateSold, datePurchased: bDatePurchased, bListedPrice } = b
+                let aTime = Math.max(new Date(String(aDateSold ? aDateSold : 0)).getTime() + aListedPrice, new Date(String(aDatePurchased)).getTime() + aListedPrice)
+                let bTime = Math.max(new Date(String(bDateSold ? bDateSold : 0)).getTime() + bListedPrice, new Date(String(bDatePurchased)).getTime() + bListedPrice)
+                return bTime - aTime
+            })
+
+            if (existingItems.length > 0) {
+                const existing = existingItems[0]
+                const { title, brand = "", shippingService = "USPSPriority", listedPrice } = existing
+                let labelDetails = getLabelFromTitle(title)
+                let { year, model } = labelDetails
+                let acceptOfferHigh = (+listedPrice - 4.99).toFixed(2)
+                let declineOfferLow = (+listedPrice - 14.99).toFixed(2)
+                setInput({ ...inputForm, title, brand, shippingService, listPrice: listedPrice, acceptOfferHigh, declineOfferLow, year, model })
+            }
+        }
+
+
+    }, [items, partNo])
+
 
     const handleChange = ({ target }) => {
         const { name, value } = target;
@@ -27,6 +63,13 @@ const ListingForm = (props) => {
         if (name === "listPrice") {
             updateForm.acceptOfferHigh = (+value - 4.99).toFixed(2);
             updateForm.declineOfferLow = (+value - 14.99).toFixed(2);
+        }
+        if (name === "title") {
+            let labelDetails = getLabelFromTitle(value)
+            let { year, model } = labelDetails
+
+            updateForm.year = year
+            updateForm.model = model
         }
         setInput(updateForm);
     }
@@ -63,6 +106,10 @@ const ListingForm = (props) => {
         });
     }
 
+    function printLabel() {
+        window.frames['pdfView'].print()
+    }
+
     async function saveChanges(e) {
         e.preventDefault();
         let ebayForm = inputForm;
@@ -95,8 +142,6 @@ const ListingForm = (props) => {
                     <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
                 </Form.Group>
             </Form.Row>
-
-            <Form.Label>Category</Form.Label>
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridDescription">
                     <Form.Label>Item Description</Form.Label>
@@ -120,6 +165,7 @@ const ListingForm = (props) => {
                     <Form.Control as="select" name="conditionId" onChange={handleShippingSelect}>
                         <option>USPSPriority</option>
                         <option>USPSFirstClass</option>
+                        <option>UPSGround</option>
                     </Form.Control>
                 </Form.Group>
             </Form.Row>
@@ -144,9 +190,17 @@ const ListingForm = (props) => {
             </Form.Row>
 
 
-            <Modal.Footer>
+            <Modal.Footer className={Styles['footer']}>
+
+                <i onClick={printLabel} className={`${Styles['printIcon']} material-icons`}>print</i>
+                <Form.Control className={`${Styles['labelInput']} ${Styles['labelYearInput']}`} value={inputForm.year} name="year" onChange={handleChange} placeholder="Year" />
+                <Form.Control className={`${Styles['labelInput']} ${Styles['labelModelInput']}`} value={inputForm.model} name="model" onChange={handleChange} placeholder="Model" />
+
                 <Button onClick={() => toggleModal(false)} variant="secondary">Close</Button>
-                <Button type="submit" variant="primary">Save Changes</Button>
+                <Button type="submit" variant="primary">List Item</Button>
+
+
+                <Label labelInfo={{ sku: inputForm.sku, year: inputForm.year, model: inputForm.model }} />
             </Modal.Footer>
         </Form>
 

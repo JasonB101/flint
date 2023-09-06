@@ -12,6 +12,7 @@ const inventoryItemSchema = new Schema({
         type: Boolean,
         default: false
     },
+    brand: String,
     ebayId: {
         type: String,
         default: ""
@@ -47,6 +48,7 @@ const inventoryItemSchema = new Schema({
         type: Number,
         default: 0
     },
+    shippingService: String,
     ebayFees: Number,
     payPalFees: Number,
     profit: Number,
@@ -65,11 +67,14 @@ const inventoryItemSchema = new Schema({
         //active
         //waste
     },
+    listingDate: String,
+    relistDate: String,
     imgUrl: String,
     trackingNumber: String,
     orderId: String,
     buyer: {
         type: Schema.Types.ObjectId,
+        //need to only collect username
         ref: 'Buyer'
     },
     userId: {

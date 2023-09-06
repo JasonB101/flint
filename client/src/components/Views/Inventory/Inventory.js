@@ -30,7 +30,6 @@ const Inventory = (props) => {
     }
 
     useEffect(() => {
-        console.log("UseEffect")
         if (inventorySearchTerm === "") {
             filterItems(inventoryList)
         } else {
@@ -53,7 +52,7 @@ const Inventory = (props) => {
                 linkItem={linkItem}
                 newListings={newListings}
                 setInventoryId={setInventoryId} />}
-            {showNewItemModal && <NewItemModal nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} />}
+            {showNewItemModal && <NewItemModal items={items} nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} />}
         </div>
     );
 }

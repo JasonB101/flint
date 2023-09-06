@@ -14,7 +14,6 @@ inventoryRouter.post("/", async (req, res, next) => {
     const { ebayToken, averageShippingCost } = user;
     const listingDetails = req.body;
     const listingResponse = await createListing(ebayToken, listingDetails)
-    // console.log(listingResponse)
     const inventoryItemBody = parseInventoryObject(listingResponse, listingDetails, averageShippingCost)
     if (inventoryItemBody.ebayId) {
         let inventoryItem = new InventoryItem(inventoryItemBody);
@@ -92,7 +91,7 @@ inventoryRouter.delete("/:id", (req, res, next) => {
 
 function parseInventoryObject(listingResponse, listingDetails, averageShipping) {
     const { title, partNo, sku, listPrice: listedPrice, location,
-        datePurchased, purchasePrice, purchaseLocation, categoryId } = listingDetails;
+        datePurchased, purchasePrice, purchaseLocation, categoryId, brand, shippingService } = listingDetails;
     const { AddFixedPriceItemResponse: { ItemID: ebayId } } = listingResponse;
     //may have to suck the listing fees out of this object someday as well
     const inventoryItemBody = {
@@ -100,6 +99,8 @@ function parseInventoryObject(listingResponse, listingDetails, averageShipping) 
         purchaseLocation,
         categoryId,
         ebayId,
+        brand,
+        shippingService,
         listed: true,
         expectedProfit: figureProfit(listedPrice, purchasePrice, averageShipping),
 

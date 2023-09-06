@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import { Modal, Form, Button, Col } from "react-bootstrap";
 import DatePicker from "react-datepicker";
-import getEbayCategoryId from "../../../../../lib/getEbayCategoryId"
+import categories from "../../../../../lib/ebayCategoryInfo"
 
 import "react-datepicker/dist/react-datepicker.css";
 
 const ItemForm = (props) => {
-  const { toggleModal, setAndToggleForm, nextSku } = props;
+  const { toggleModal, setAndToggleForm, nextSku } = props
   const tempDate = localStorage.getItem("tempDate") || false
+  const tempCategory = +localStorage.getItem("tempCategoryId") || false
   const [purchaseDate, changePurchaseDate] = useState(tempDate ? new Date(tempDate) : new Date())
+  const sortedCategories = categories.sort((a, b) => {
+    return a.id === tempCategory ? 0 : b.id === tempCategory ? 1 : a.category < b.category ? -1 : a.category > b.category ? 1 : 0
+  })
   const [inputForm, setInput] = useState({
     partNo: "",
     sku: nextSku,
-    datePurchased:  "",
-    purchasePrice: "",
+    datePurchased: "",
+    purchasePrice: localStorage.getItem("tempPurchasePrice") || "",
     purchaseLocation: localStorage.getItem("tempLocation") || "",
-    categoryId: 33596
+    categoryId: sortedCategories[0].id
+  })
+
+  const categoryOptions = sortedCategories.map(x => {
+    return <option key={x.id} value={x.id}>{x.category}</option>
   })
 
   const handleChange = (e) => {
@@ -28,7 +36,7 @@ const ItemForm = (props) => {
   const handleCategorySelect = (e) => {
     setInput({
       ...inputForm,
-      categoryId: getEbayCategoryId(e.target.value)
+      categoryId: e.target.value
     });
   }
 
@@ -45,10 +53,10 @@ const ItemForm = (props) => {
   }
 
   function setTempData(form) {
-    if (tempDate !== form.datePurchased && localStorage.getItem("tempLocation") !== form.purchaseLocation) {
-      localStorage.setItem("tempDate", form.datePurchased);
-      localStorage.setItem("tempLocation", form.purchaseLocation)
-    }
+    localStorage.setItem("tempDate", form.datePurchased);
+    localStorage.setItem("tempLocation", form.purchaseLocation)
+    localStorage.setItem("tempCategoryId", form.categoryId)
+    localStorage.setItem("tempPurchasePrice", form.purchasePrice)
   }
 
   return (
@@ -56,7 +64,7 @@ const ItemForm = (props) => {
       <Form.Row>
         <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Label>Part No</Form.Label>
-          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" autoFocus/>
+          <Form.Control value={inputForm.partNo} name="partNo" onChange={handleChange} placeholder="" autoFocus />
         </Form.Group>
 
         <Form.Group as={Col} controlId="formGridSku">
@@ -84,36 +92,14 @@ const ItemForm = (props) => {
         </Form.Group>
       </Form.Row>
 
+        <Form.Label>Category</Form.Label>
       <Form.Row>
         <Form.Group md={8} as={Col} controlId="formGridConditionId">
           <Form.Control as="select" name="conditionId" onChange={handleCategorySelect}>
-            <option>Engine Computer ECU</option>
-            <option>Engine Coolant Components</option>
-            <option>Computer Chip (Other)</option>
-            <option>Cup Holders</option>
-            <option>Head Light</option>
-            <option>Headrests</option>
-            <option>Tail Light</option>
-            <option>Climate Control</option>
-            <option>Intake Manifolds</option>
-            <option>Interior Part (Other)</option>
-            <option>Exterior Mirror</option>
-            <option>Fuel Injection Parts Other</option>
-            <option>Interior Mirror</option>
-            <option>Dash Parts</option>
-            <option>Radio</option>
-            <option>Switches</option>
-            <option>Exterior Moulding</option>
-            <option>Fuse Box</option>
-            <option>Wiper Motor/Transmissions Linkage</option>
-            <option>Window Motor</option>
-            <option>Steering & Suspension Parts</option>
-            <option>Sun Visors</option>
-            <option>Power Steering Pump</option>
-            <option>Audio Amplifier</option>
-            <option>Valve Cover</option>
+            {categoryOptions}
           </Form.Control>
         </Form.Group>
+
         <Form.Group md={4} as={Col} controlId="formGridCategoryId">
           <Form.Control required value={inputForm.categoryId} name="categoryId" onChange={handleChange} placeholder="Category ID" />
         </Form.Group>

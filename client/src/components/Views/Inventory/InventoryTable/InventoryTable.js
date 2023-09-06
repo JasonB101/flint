@@ -20,7 +20,11 @@ const InventoryTable = (props) => {
     const [unlistedItems] = useState(ebayListings.length > 0 ? checkForUnlistedItems(inventoryItems, ebayListings) : [])
 
     
-
+    inventoryItems.sort((a, b) => {
+        const {sku: aSku} = a
+        const {sku: bSku} = b
+        return +bSku - +aSku
+    })
     const items = inventoryItems.map(x => populateRow(x));
     const { openLinkModal } = props;
 
@@ -66,7 +70,7 @@ const InventoryTable = (props) => {
                 <td className={Styles.buttonWrapper} >{listed ? currencyFormatter.format(listedPrice) : <Button onClick={() => openLinkModal(_id, sku)}
                 >Link Item</Button>}</td>
                 <td>{currencyFormatter.format(expectedProfit)}</td>
-                <td>{`${Math.floor(+expectedProfit / (+purchasePrice + 0.1) * 100)}%`}</td>
+                <td>{`${Math.floor(+expectedProfit / (listedPrice - expectedProfit) * 100)}%`}</td>
             </tr>
         )
     }
@@ -92,11 +96,11 @@ const InventoryTable = (props) => {
     function checkForUnlistedItems(inventoryListings, ebayListings) {
         const unlistedIds = [];
         inventoryListings.forEach(inventoryItem => {
-            const { ebayId } = inventoryItem;
+            const { ebayId, sku } = inventoryItem;
             const ebayItem = ebayListings.find(ebayItem => {
-                const { ItemID } = ebayItem;
+                const { ItemID, SKU } = ebayItem;
                 // console.log(ebayItem);
-                return ItemID == ebayId;
+                return SKU == sku;
             })
             if (!ebayItem) unlistedIds.push(ebayId);
         })

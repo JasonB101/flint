@@ -5,7 +5,7 @@ import Styles from "./NewItemModal.module.scss";
 import ListingForm from "./ListingForm/ListingForm";
 
 const NewItemModal = (props) => {
-    const {toggleModal, submitNewItem, nextSku} = props;
+    const {toggleModal, submitNewItem, nextSku, items} = props;
     const [newItemForm, setNewItemForm] = useState({})
     const [showItemForm, toggleForm] = useState(true)
 
@@ -24,7 +24,7 @@ const NewItemModal = (props) => {
                 <Modal.Body>
                     <div className={Styles.formWrapper}>
                     {showItemForm && <ItemForm nextSku={nextSku} setAndToggleForm={setAndToggleForm} toggleModal={toggleModal}/>}
-                    {!showItemForm && <ListingForm itemForm={newItemForm} toggleModal={toggleModal} submitNewItem={submitNewItem}/>}
+                    {!showItemForm && <ListingForm items={items} itemForm={newItemForm} toggleModal={toggleModal} submitNewItem={submitNewItem}/>}
                     </div>
                     
                 </Modal.Body>

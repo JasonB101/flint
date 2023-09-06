@@ -6,7 +6,7 @@ import { YearSalesChart, YearSalesChartByWeek, YearSalesChartByMonth } from "./S
 
 const Sales = (props) => {
     const [dateType, setDateType] = useState("week");
-    const [year, setYear] = useState(2020);
+    const [year, setYear] = useState(2023);
 
     const [profitTrue, setProfitState] = useState(true);
 
@@ -35,18 +35,25 @@ const Sales = (props) => {
         currency: 'USD',
     });
 
-    const sales = soldItems.reduce((sales, item) => sales + Number(item.priceSold), 0).toFixed(2)
-    const profit = soldItems.reduce((sales, item) => sales + Number(item.profit), 0).toFixed(2)
+    const sales = soldItems.reduce((sales, item) => {
+        let isThisYear = (new Date(item.dateSold).getFullYear() === year)
+        return sales += isThisYear ? Number(item.priceSold) : 0
+    }, 0)
+
+    const profit = soldItems.reduce((profit, item) => {
+        let isThisYear = (new Date(item.dateSold).getFullYear() === year)
+        return profit += isThisYear ? Number(item.profit) : 0
+    }, 0)
 
 
     function getProjected(profitOrSales) {
         const now = new Date();
         const start = new Date(now.getFullYear(), 0, 0);
-        const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+        const diff = now - start;
         const oneDay = 1000 * 60 * 60 * 24;
         const day = Math.floor(diff / oneDay);
         const average = (+profitOrSales / day).toFixed(2);
-        const difference = 365 - day;
+        const difference = 366 - day;
         const projected = Number(+profitOrSales + difference * average);
         return currencyFormatter.format(projected);
     }
@@ -64,16 +71,25 @@ const Sales = (props) => {
                 </div>
                 <SalesChart options={options()} />
                 <br></br>
+                <h4>{`Inventory Cost: ${currencyFormatter.format(salesInfo.inventoryCost)}`}</h4>
                 <h4>{`Annual Sales: ${currencyFormatter.format(
-                    soldItems.reduce((sales, item) =>
-                        (sales += Number(item.priceSold)), 0)
-                        .toFixed(2))
+                    soldItems.reduce((sales, item) => {
+                        if (new Date(item.dateSold).getFullYear() === year) {
+                            return (sales += Number(item.priceSold))
+                        } else {
+                            return sales
+                        }
+                    }, 0).toFixed(2))
                     }`}
                 </h4>
                 <h4>{`Annual Net Sales: ${currencyFormatter.format(
-                    soldItems.reduce((sales, item) =>
-                        (sales += Number(item.profit)), 0)
-                        .toFixed(2))
+                    soldItems.reduce((sales, item) => {
+                        if (new Date(item.dateSold).getFullYear() === year) {
+                            return (sales += Number(item.profit))
+                        } else {
+                            return sales
+                        }
+                    }, 0).toFixed(2))
                     }`}
                 </h4>
                 <br></br>
@@ -93,29 +109,41 @@ const Sales = (props) => {
             allItemsProfit: 0,
             profitPerItem: 0,
             totalSold: 0,
-            totalListed: 0
+            totalCost: 0,
+            totalListed: 0,
+            roi: 0,
+            inventoryCost: 0
         }
 
-        const expenseTotal = expenses[0] ? expenses.reduce((sum, x) => sum += x.amount, 0) : 0
+        const expenseTotal = expenses[0] ? expenses.reduce((sum, x) => {
+            let isThisYear = (new Date(x.dateSold).getFullYear() === year)
+            return sum += isThisYear ? x.amount : 0
+        }, 0) : 0
         const info = items.reduce((salesInfo, x) => {
-            if (x.sold) {
-                salesInfo.YTDProfit += x.profit;
+            const {purchasePrice, ebayFees, shippingCost} = x
+            let isThisYear = (new Date(x.dateSold).getFullYear() === year)
+            if (x.sold && isThisYear) {
+                salesInfo.YTDProfit += isThisYear ? x.profit : 0;
                 salesInfo.allItemsProfit += x.profit;
-                salesInfo.totalSold++;
+                salesInfo.totalCost += (purchasePrice + ebayFees + shippingCost)
+                salesInfo.totalSold += isThisYear ? 1 : 0;
                 salesInfo.profitPerItem = (salesInfo.allItemsProfit / salesInfo.totalSold).toFixed(2);
+                salesInfo.roi = Math.floor(salesInfo.allItemsProfit / salesInfo.totalCost * 100)
+
             } else {
                 if (x.listed) {
                     salesInfo.totalListed++;
+                    salesInfo.inventoryCost += x.purchasePrice
                     salesInfo.activeSales[0] += x.listedPrice;
                     salesInfo.activeSales[1] += x.expectedProfit;
                 }
-                salesInfo.YTDProfit -= x.purchasePrice + (x.shippingCost ? x.shippingCost : 0);
+                salesInfo.YTDProfit -= isThisYear ? x.purchasePrice + (x.shippingCost ? x.shippingCost : 0) : 0;
             }
 
 
             return salesInfo;
         }, salesObj);
-        info.YTDProfit = info.YTDProfit - expenseTotal;
+        info.YTDProfit = info.YTDProfit - expenseTotal - info.inventoryCost;
         return info
     }
 }
