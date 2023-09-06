@@ -13,6 +13,7 @@ import SoldItems from './components/Views/SoldItems/SoldItems';
 import Expense from "./components/Views/Expense/Expense"
 import SignIn from "./components/SignIn/SignIn"
 
+
 function App() {
   const storeData = useContext(storeContext);
   const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS } = storeData;
