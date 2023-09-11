@@ -10,6 +10,7 @@ import SideBar from './components/SideBar/SideBar';
 import { storeContext } from "./Store"
 import VerifyPayPalToken from "./components/ServiceComponents/VerifyPayPalToken"
 import SoldItems from './components/Views/SoldItems/SoldItems';
+import Milestones from './components/Views/Milestones/Milestones';
 import Expense from "./components/Views/Expense/Expense"
 import SignIn from "./components/SignIn/SignIn"
 import OAuthCode from './components/OAuth/OAuthCode';
@@ -31,6 +32,7 @@ function App() {
         <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} submitNewExpense={submitNewExpense} />} />
         <ProtectedRoute path="/reports/sales" component={() => <Sales {...storeData} />} />
         <ProtectedRoute path="/reports/solditems" component={() => <SoldItems {...storeData} />} />
+        <ProtectedRoute path="/reports/milestones" component={() => <Milestones {...storeData} />} />
         <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
         <ProtectedRoute path="/verifyPayPalToken" component={() => <VerifyPayPalToken setPayPalToken={setPayPalToken}/>} />
 
