@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Styles from "./Milestones.module.scss";
 import CreateReport from "./CreateReport";
+import DisplayCongrats from "../../Notifications/DisplayCongrats/DisplayCongrats"
 
 const Milestones = (props) => {
     const {items} = props
@@ -132,6 +133,7 @@ const Milestones = (props) => {
           </ul>
         </div>
       </div>
+      <DisplayCongrats/>
     </div>
       );
       
