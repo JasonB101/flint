@@ -4,7 +4,7 @@ import CreateReport from "./CreateReport";
 import DisplayCongrats from "../../Notifications/DisplayCongrats/DisplayCongrats"
 
 const Milestones = (props) => {
-    const {items} = props
+    const {items, checkNewScores} = props
     const report = CreateReport(items, true, 2023) //Manually set to this year
     const [prepObject, changePrepObject] = useState({
         day:{
@@ -46,6 +46,11 @@ const Milestones = (props) => {
                 })
             }
         }
+
+  if (tempObject.day.sold.sold) {
+    checkNewScores(tempObject);
+  }
+               console.log(JSON.stringify(tempObject))
         changePrepObject(tempObject)
 
     }, [])

@@ -17,6 +17,7 @@ const ListingForm = (props) => {
         sku: sku,
         brand: "",
         listPrice: "",
+        dateListed: new Date().toLocaleDateString(),
         conditionId: 3000,
         conditionDescription: "",
         acceptOfferHigh: "",

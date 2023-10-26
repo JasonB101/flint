@@ -4,11 +4,18 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
     currency: 'USD',
 });
 
+const customColors = [
+    'blue',
+    'red',
+    'black',
+    // Add more colors as needed
+  ]
+
 class ChartOptions {
     constructor(title) {
         this.animationEnabled = true;
         this.exportEnabled = true;
-        this.theme = "light1" // "light1", "dark1", "dark2";
+        this.theme = "light2" // "light1", "dark1", "dark2";
         this.title = {
             text: title
         };
@@ -29,6 +36,7 @@ export class YearSalesChart extends ChartOptions {
             type: "column",
             toolTipContent: " {x}: ${y}",
             dataPoints: getYearDataPoints(soldItems),
+            backgroundColor: customColors
         }]
         this.axisX = {
             title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(fillInMissingDays(this.data[0].dataPoints))}`,
@@ -82,7 +90,7 @@ export class YearSalesChartByWeek extends YearSalesChart {
         this.data = [{
             type: "column",
             toolTipContent: " {label}: ${y}",
-            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems))
+            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems)),
             // .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
         }]
 
@@ -141,7 +149,8 @@ export class YearSalesChartByMonth extends YearSalesChart {
             type: "column",
             toolTipContent: " {label}: ${y}",
             dataPoints: fillInMissingMonths(getYearDataPointsByMonth(soldItems))
-                .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
+                .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]),
+            // color: customColors[ Math.floor(Math.random() * customColors.length)]
         }]
 
         this.axisX = {
@@ -165,7 +174,7 @@ export class YearSalesChartByMonth extends YearSalesChart {
                 if (foundIndex !== -1) {
                     newDataPoints.push(dataPoints[foundIndex])
                 } else {
-                    newDataPoints.push({ label: months[i], y: 0 })
+                    newDataPoints.push({ label: months[i], y: 0, color: customColors[ Math.floor(Math.random() * customColors.length)] })
                 }
             }
 

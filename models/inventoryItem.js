@@ -67,8 +67,8 @@ const inventoryItemSchema = new Schema({
         //active
         //waste
     },
-    listingDate: String,
-    relistDate: String,
+    dateListed: String,
+    dateReListed: String,
     imgUrl: String,
     trackingNumber: String,
     orderId: String,

@@ -21,6 +21,7 @@ app.use("/api/expense", require("./routes/expense"))
 app.use("/api/syncebay", require("./routes/syncEbay"))
 app.use("/api/syncpaypal", require("./routes/syncPayPal"))
 app.use("/api/ebay", require("./routes/ebay"))
+app.use("/api/milestones", require("./routes/milestones"))
 app.use("/auth", require("./routes/auth"))
 
 // Connect to colection
