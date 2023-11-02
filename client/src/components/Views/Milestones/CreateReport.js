@@ -35,7 +35,7 @@ const CreateReport = (items, isProfit, yearToView) => {
 
         if (!report.day[formattedDate]) {
             report.day[formattedDate] = {
-                // listed: 0,
+                listed: 0,
                 sold: 0,
                 sales: 0,
                 pulled: 0,
@@ -44,7 +44,7 @@ const CreateReport = (items, isProfit, yearToView) => {
         }
         if (!report.week[weekKey]) {
             report.week[weekKey] = {
-                // listed: 0,
+                listed: 0,
                 sold: 0,
                 sales: 0,
                 pulled: 0,
@@ -53,7 +53,7 @@ const CreateReport = (items, isProfit, yearToView) => {
         }
         if (!report.month[monthKey]) {
             report.month[monthKey] = {
-                // listed: 0,
+                listed: 0,
                 sold: 0,
                 sales: 0,
                 pulled: 0,
@@ -115,7 +115,7 @@ const filterReport = (report) => {
 
             // Create a dictionary to store the winning entries for each property
             const winningEntries = {
-                // listed: [],
+                listed: [],
                 sold: [],
                 sales: [],
                 pulled: [],
