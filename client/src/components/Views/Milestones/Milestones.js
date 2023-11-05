@@ -72,7 +72,7 @@ const Milestones = (props) => {
               <span>{prepObject.day.sold.dateTitle}</span>
             </li>
             <li className={Styles['list-item']}>
-              <span>Sales: <strong>{formatCurrency(prepObject.day.sales.sales)}</strong></span>
+              <span>Profit: <strong>{formatCurrency(prepObject.day.sales.sales)}</strong></span>
               <span>{prepObject.day.sales.dateTitle}</span>
             </li>
             <li className={Styles['list-item']}>
@@ -98,7 +98,7 @@ const Milestones = (props) => {
               <span>{prepObject.week.sold.dateTitle}</span>
             </li>
             <li className={Styles['list-item']}>
-              <span>Sales: <strong>{formatCurrency(prepObject.week.sales.sales)}</strong></span>
+              <span>Profit: <strong>{formatCurrency(prepObject.week.sales.sales)}</strong></span>
               <span>{prepObject.week.sales.dateTitle}</span>
             </li>
             <li className={Styles['list-item']}>
@@ -124,7 +124,7 @@ const Milestones = (props) => {
               <span>{prepObject.month.sold.dateTitle}</span>
             </li>
             <li className={Styles['list-item']}>
-              <span>Sales: <strong>{formatCurrency(prepObject.month.sales.sales)}</strong></span>
+              <span>Profit: <strong>{formatCurrency(prepObject.month.sales.sales)}</strong></span>
               <span>{prepObject.month.sales.dateTitle}</span>
             </li>
             <li className={Styles['list-item']}>
