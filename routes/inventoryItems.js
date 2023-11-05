@@ -90,7 +90,7 @@ inventoryRouter.delete("/:id", (req, res, next) => {
 })
 
 function parseInventoryObject(listingResponse, listingDetails, averageShipping) {
-    const { title, partNo, sku, listPrice: listedPrice, location,
+    const { title, partNo, sku, listPrice: listedPrice, dateListed, location,
         datePurchased, purchasePrice, purchaseLocation, categoryId, brand, shippingService } = listingDetails;
     const { AddFixedPriceItemResponse: { ItemID: ebayId } } = listingResponse;
     //may have to suck the listing fees out of this object someday as well
@@ -98,6 +98,7 @@ function parseInventoryObject(listingResponse, listingDetails, averageShipping) 
         title, partNo, sku, listedPrice, location, datePurchased, purchasePrice,
         purchaseLocation,
         categoryId,
+        dateListed,
         ebayId,
         brand,
         shippingService,
