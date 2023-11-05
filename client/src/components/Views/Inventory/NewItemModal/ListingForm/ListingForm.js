@@ -114,10 +114,16 @@ const ListingForm = (props) => {
     async function saveChanges(e) {
         e.preventDefault();
         let ebayForm = inputForm;
-        const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm });
-        if (successfullyListed === true) {
-            toggleModal(false)
+        try {
+            const successfullyListed = await submitNewItem({ ...ebayForm, ...itemForm });
+            if (successfullyListed === true) {
+                toggleModal(false)
+            }
+
+        } catch (e){
+            alert(e.message)
         }
+       
     }
 
     return (

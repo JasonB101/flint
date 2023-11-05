@@ -8,7 +8,7 @@ const User = require("../models/user");
 
 
 inventoryRouter.post("/", async (req, res, next) => {
-    // console.log(req.body)
+    console.log(req.body)
     const userRaw = await User.findOne({ _id: req.auth._id })
     const user = userRaw.toObject();
     const { ebayToken, averageShippingCost } = user;
