@@ -58,27 +58,27 @@ const Store = (props) => {
     }
 
     async function checkNewScores(newScores) {
-        console.log("Checking New Scores")
-        try {
-          // Call the backend API to initiate checking of new scores and pass the newScores data
-          const response = await userAxios.post("/api/milestones/updateMilestones", newScores) 
+        console.log("Checking New Scores is Disabled")
+        // try {
+        //   // Call the backend API to initiate checking of new scores and pass the newScores data
+        //   const response = await userAxios.post("/api/milestones/updateMilestones", newScores) 
       
-          const { success } = response.data
+        //   const { success } = response.data
       
-          if (success === true) {
-            // Handle success, e.g., display a success message
-            console.log("New scores checked successfully")
-            return true
-          } else {
-            // Handle failure, e.g., display an error message
-            console.error("Checking new scores failed:", response.data.message)
-            return false
-          }
-        } catch (error) {
-          // Handle error, e.g., display an error message or log the error
-          console.error("Error checking new scores:", error)
-          return false
-        }
+        //   if (success === true) {
+        //     // Handle success, e.g., display a success message
+        //     console.log("New scores checked successfully")
+        //     return true
+        //   } else {
+        //     // Handle failure, e.g., display an error message
+        //     console.error("Checking new scores failed:", response.data.message)
+        //     return false
+        //   }
+        // } catch (error) {
+        //   // Handle error, e.g., display an error message or log the error
+        //   console.error("Error checking new scores:", error)
+        //   return false
+        // }
       }
       
 
