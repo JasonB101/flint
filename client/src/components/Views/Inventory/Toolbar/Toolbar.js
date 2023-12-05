@@ -12,7 +12,7 @@ const Toolbar = (props) => {
                 value={searchTerm}
                 placeholder={"Search Inventory"} />
             <div className="spacer"></div>
-            <Button onClick={() => toggleModal(true)}>Add New Item</Button>
+            <Button onClick={() => toggleModal(true)}>New Item</Button>
         </div>
     );
 }

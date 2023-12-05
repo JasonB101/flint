@@ -138,7 +138,7 @@ const Milestones = (props) => {
           </ul>
         </div>
       </div>
-      <DisplayCongrats/>
+      {/* <DisplayCongrats/> */}
     </div>
       );
       
