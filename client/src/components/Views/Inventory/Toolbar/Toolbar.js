@@ -23,7 +23,7 @@ const Toolbar = (props) => {
        <h5>Listed
                 <span>{totalListed}</span>
             </h5>
-            <h5>Active Listings
+            <h5>Listings Value
                 <span>{`${currencyFormatter.format(activeListings[0].toFixed(2))} /`}
                     <span style={{ color: "green", display: "inline" }}>{currencyFormatter.format(activeListings[1].toFixed(2))}
                     </span>
