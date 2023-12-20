@@ -5,9 +5,11 @@ import Label from "./Label/Label"
 import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 
+const ebayFeePercent = 0.1
+
 const ListingForm = (props) => {
-    const { toggleModal, submitNewItem, itemForm, items } = props;
-    const { categoryId, partNo, sku } = itemForm
+    const { toggleModal, submitNewItem, itemForm, items, averageShippingCost } = props;
+    const { categoryId, partNo, sku, purchasePrice } = itemForm
     const autoFill = categories.find((x) => x.id == categoryId) || { title: "", description: "" }
     const { title: autoTitle, description: autoDescription } = autoFill
 
@@ -54,6 +56,7 @@ const ListingForm = (props) => {
 
     }, [items, partNo])
 
+    const expectedProfit = figureProfit(inputForm.listPrice, purchasePrice, averageShippingCost)
 
     const handleChange = ({ target }) => {
         const { name, value } = target;
@@ -148,6 +151,7 @@ const ListingForm = (props) => {
 
                     <Form.Control value={inputForm.declineOfferLow} name="declineOfferLow" onChange={handleChange} placeholder="Declined Offer" />
                 </Form.Group>
+                <Form.Label className={Styles["expected-profit-label"]}>{`$${expectedProfit}`}</Form.Label>
             </Form.Row>
             <Form.Row>
                 <Form.Group as={Col} controlId="formGridDescription">
@@ -212,6 +216,13 @@ const ListingForm = (props) => {
         </Form>
 
     );
+}
+
+function figureProfit(listedPrice, purchasePrice, averageShippingCost) {
+    //Need to find a way to determine what tier the user is on, and how much their eBay fees are.
+    const ebayFee = listedPrice * ebayFeePercent
+    //Need to get purchasePrice
+    return +(listedPrice - ebayFee - averageShippingCost - purchasePrice).toFixed(2);
 }
 
 export default ListingForm;

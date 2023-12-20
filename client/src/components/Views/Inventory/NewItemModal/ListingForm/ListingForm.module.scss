@@ -1,23 +1,26 @@
-
-
-.labelYearInput{
-    width: 50px !important;
-    text-align: center;
-
+.labelYearInput {
+  width: 50px !important;
+  text-align: center;
 }
-.labelModelInput{
-    width: 100px !important;
-    margin-right: 40px !important;
-    text-align: center;
-
+.labelModelInput {
+  width: 100px !important;
+  margin-right: 40px !important;
+  text-align: center;
 }
-.printIcon{
-    font-size: 30px;
-    color: #2d63af;
-    cursor: pointer;
-    padding-right: 5px;
+.printIcon {
+  font-size: 30px;
+  color: #2d63af;
+  cursor: pointer;
+  padding-right: 5px;
 }
 
 .footer {
-    padding-bottom: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.expected-profit-label {
+  color: green;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 3px;
 }

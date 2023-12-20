@@ -7,7 +7,7 @@ import Toolbar from "./Toolbar/Toolbar"
 
 const Inventory = (props) => {
 
-    const { items, ebayListings, submitNewItem, newListings, linkItem } = props;
+    const { items, ebayListings, submitNewItem, newListings, linkItem, user: {averageShippingCost} } = props;
     const [inventoryList] = useState(items.filter(x => x.status === "active"))
     const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
@@ -53,7 +53,7 @@ const Inventory = (props) => {
                 linkItem={linkItem}
                 newListings={newListings}
                 setInventoryId={setInventoryId} />}
-            {showNewItemModal && <NewItemModal items={items} nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} />}
+            {showNewItemModal && <NewItemModal items={items} nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} averageShippingCost={averageShippingCost} />}
         </div>
     );
 }
