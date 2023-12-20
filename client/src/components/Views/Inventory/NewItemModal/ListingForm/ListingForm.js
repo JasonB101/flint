@@ -37,19 +37,16 @@ const ListingForm = (props) => {
 
   useEffect(() => {
     if (partNo !== "N/A") {
-      const existingItems = items
+        const existingItems = items
         .filter((x) => x.partNo === partNo)
         .sort((a, b) => {
           const getTimeWithListedPrice = (item) => {
-            const dateSold = new Date(item.dateSold ?? 0).getTime()
-            const datePurchased = new Date(item.datePurchased).getTime()
-            return Math.max(
-              dateSold + item.listedPrice,
-              datePurchased + item.listedPrice
-            )
-          }
-
-          return Math.max(getTimeWithListedPrice(b), getTimeWithListedPrice(a))
+            const dateSold = new Date(item.dateSold ?? 0).getTime();
+            const datePurchased = new Date(item.datePurchased).getTime();
+            return Math.max(dateSold + item.listedPrice, datePurchased + item.listedPrice);
+          };
+      
+          return getTimeWithListedPrice(b) - getTimeWithListedPrice(a); // Compare in descending order
         })
 
       if (existingItems.length > 0) {
@@ -64,8 +61,8 @@ const ListingForm = (props) => {
         let { year, model } = labelDetails
         let acceptOfferHigh = (+listedPrice - 4.99).toFixed(2)
         let declineOfferLow = (+listedPrice - 14.99).toFixed(2)
-        setInput({
-          ...inputForm,
+        setInput((prevInputForm) => ({
+          ...prevInputForm,
           title,
           brand,
           shippingService,
@@ -74,7 +71,7 @@ const ListingForm = (props) => {
           declineOfferLow,
           year,
           model,
-        })
+        }))
       }
     }
   }, [items, partNo])
