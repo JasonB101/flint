@@ -23,7 +23,7 @@ const NewItemModal = (props) => {
 
                 <Modal.Body>
                     <div className={Styles.formWrapper}>
-                    {showItemForm && <ItemForm nextSku={nextSku} setAndToggleForm={setAndToggleForm} toggleModal={toggleModal}/>}
+                    {showItemForm && <ItemForm items={items} nextSku={nextSku} setAndToggleForm={setAndToggleForm} toggleModal={toggleModal}/>}
                     {!showItemForm && <ListingForm items={items} itemForm={newItemForm} toggleModal={toggleModal} submitNewItem={submitNewItem}/>}
                     </div>
                     
