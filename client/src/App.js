@@ -3,6 +3,8 @@ import { Switch, Route, Redirect } from "react-router-dom"
 import ProtectedRoute from "./components/ServiceComponents/ProtectedRoute"
 import Inventory from "./components/Views/Inventory/Inventory"
 import Sales from "./components/Views/Sales/Sales"
+import Sourcing from "./components/Views/Sourcing/Sourcing"
+import Listing from "./components/Views/Listing/Listing"
 import VerifyUserToken from "./components/ServiceComponents/VerifyUserToken"
 import './global.scss';
 import Header from "./components/Header/Header"
@@ -31,6 +33,8 @@ function App() {
         <ProtectedRoute path="/inventory" component={() => <Inventory {...storeData} />} />
         <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} submitNewExpense={submitNewExpense} />} />
         <ProtectedRoute path="/reports/sales" component={() => <Sales {...storeData} />} />
+        <ProtectedRoute path="/reports/sourcing" component={() => <Sourcing {...storeData} />} />
+        <ProtectedRoute path="/reports/listing" component={() => <Listing {...storeData} />} />
         <ProtectedRoute path="/reports/solditems" component={() => <SoldItems {...storeData} />} />
         <ProtectedRoute path="/reports/milestones" component={() => <Milestones {...storeData} />} />
         <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
