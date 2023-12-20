@@ -71,7 +71,6 @@ const Sales = (props) => {
                 </div>
                 <SalesChart options={options()} />
                 <br></br>
-                <h4>{`Inventory Cost: ${currencyFormatter.format(salesInfo.inventoryCost)}`}</h4>
                 <h4>{`Annual Sales: ${currencyFormatter.format(
                     soldItems.reduce((sales, item) => {
                         if (new Date(item.dateSold).getFullYear() === year) {
@@ -104,13 +103,11 @@ const Sales = (props) => {
 
     function assembleSalesInfo(items) {
         const salesObj = {
-            activeSales: [0, 0],
             YTDProfit: 0,
             allItemsProfit: 0,
             profitPerItem: 0,
             totalSold: 0,
             totalCost: 0,
-            totalListed: 0,
             roi: 0,
             inventoryCost: 0
         }
@@ -132,10 +129,7 @@ const Sales = (props) => {
 
             } else {
                 if (x.listed) {
-                    salesInfo.totalListed++;
                     salesInfo.inventoryCost += x.purchasePrice
-                    salesInfo.activeSales[0] += x.listedPrice;
-                    salesInfo.activeSales[1] += x.expectedProfit;
                 }
                 salesInfo.YTDProfit -= isThisYear ? x.purchasePrice + (x.shippingCost ? x.shippingCost : 0) : 0;
             }

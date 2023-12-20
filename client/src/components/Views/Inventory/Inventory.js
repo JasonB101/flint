@@ -46,7 +46,8 @@ const Inventory = (props) => {
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
                 searchTerm={inventorySearchTerm}
-                toggleModal={toggleNewItemModal} />
+                toggleModal={toggleNewItemModal}
+                items={items} />
             <InventoryTable openLinkModal={openLinkModal} ebayListings={ebayListings} inventoryList={itemsToShow} />
             {inventoryId && <LinkItemModal inventoryId={inventoryId}
                 linkItem={linkItem}

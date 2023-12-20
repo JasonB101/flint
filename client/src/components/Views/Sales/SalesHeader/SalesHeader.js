@@ -7,18 +7,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 const SalesHeader = ({ salesInfo }) => {
-    const { activeSales, YTDProfit, profitPerItem, totalListed, totalSold, roi } = salesInfo
+    const { YTDProfit, profitPerItem, totalSold, roi } = salesInfo
     return (
         <div className={Styles.wrapper}>
-            <h5>Listed
-                <span>{totalListed}</span>
-            </h5>
-            <h5>Active Listings
-                <span>{`${currencyFormatter.format(activeSales[0].toFixed(2))} /`}
-                    <span style={{ color: "green", display: "inline" }}>{currencyFormatter.format(activeSales[1].toFixed(2))}
-                    </span>
-                </span>
-            </h5>
+            
             <h5>Sold YTD
                 <span>{totalSold}</span>
             </h5>

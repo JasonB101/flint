@@ -1,20 +1,65 @@
-import React from "react";
+import React from "react"
 import { Button } from "react-bootstrap"
-import Styles from "./Toolbar.module.scss";
+import Styles from "./Toolbar.module.scss"
+
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});
 
 const Toolbar = (props) => {
-    const { toggleModal, searchTerm, changeSearchTerm } = props;
+  const { toggleModal, searchTerm, changeSearchTerm, items } = props
+  const listingDetails = assembleListingInfo(items)
+  const {totalListed, activeListings, inventoryCost} = listingDetails
 
-    return (
-        <div className={Styles.wrapper}>
-            <input onChange={(e) => changeSearchTerm(e.target.value)}
-                type="text"
-                value={searchTerm}
-                placeholder={"Search Inventory"} />
-            <div className="spacer"></div>
-            <Button onClick={() => toggleModal(true)}>New Item</Button>
-        </div>
-    );
+  return (
+    <div className={Styles.wrapper}>
+      <input
+        onChange={(e) => changeSearchTerm(e.target.value)}
+        type="text"
+        value={searchTerm}
+        placeholder={"Search Inventory"}
+      />
+       <h5>Listed
+                <span>{totalListed}</span>
+            </h5>
+            <h5>Active Listings
+                <span>{`${currencyFormatter.format(activeListings[0].toFixed(2))} /`}
+                    <span style={{ color: "green", display: "inline" }}>{currencyFormatter.format(activeListings[1].toFixed(2))}
+                    </span>
+                </span>
+            </h5>
+       <h5>Inventory Cost
+                <span>{currencyFormatter.format(inventoryCost)}</span>
+            </h5>
+            
+      <div className="spacer"></div>
+      <Button onClick={() => toggleModal(true)}>New Item</Button>
+    </div>
+  )
+
+  
 }
 
-export default Toolbar;
+function assembleListingInfo(items) {
+    const salesObj = {
+      activeListings: [0, 0],
+      totalListed: 0,
+      inventoryCost: 0,
+    }
+
+    const info = items.reduce((listingInfo, x) => {
+      const { listedPrice, expectedProfit, purchasePrice } = x
+      if (x.listed) {
+        listingInfo.totalListed++
+        listingInfo.inventoryCost += purchasePrice
+        listingInfo.activeListings[0] += listedPrice
+        listingInfo.activeListings[1] += expectedProfit
+      }
+    
+      return listingInfo
+    }, salesObj)
+    return info
+  }
+
+export default Toolbar
