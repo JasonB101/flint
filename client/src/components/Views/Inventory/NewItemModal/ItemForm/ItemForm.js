@@ -60,7 +60,7 @@ const ItemForm = (props) => {
     setInput({
       ...inputForm,
       suggestedPartNums,
-      [name]: value.toUpperCase(),
+      [name]: value.toUpperCase().trim(),
     })
   }
 
