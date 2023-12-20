@@ -14,17 +14,17 @@ const ItemForm = (props) => {
   const [purchaseDate, changePurchaseDate] = useState(
     tempDate ? new Date(tempDate) : new Date()
   )
-  const sortedCategories = categories.sort((a, b) => {
-    return a.id === tempCategory
-      ? 0
-      : b.id === tempCategory
-      ? 1
-      : a.category < b.category
-      ? -1
-      : a.category > b.category
-      ? 1
-      : 0
+
+  const sortedCategories = [...categories].sort((a, b) => {
+    if (a.id === tempCategory) {
+      return -1
+    } else if (b.id === tempCategory) {
+      return 1
+    } else {
+      return a.category.localeCompare(b.category)
+    }
   })
+
   const [inputForm, setInput] = useState({
     partNo: "",
     sku: nextSku,
@@ -105,7 +105,9 @@ const ItemForm = (props) => {
             value={inputForm.partNo}
             name="partNo"
             onChange={handleChange}
-            onBlur={() => setInput(prevForm => ({...prevForm, suggestedPartNums: []}))}
+            onBlur={() =>
+              setInput((prevForm) => ({ ...prevForm, suggestedPartNums: [] }))
+            }
             autoComplete="off" // Ensure browser autocomplete is turned off
             placeholder=""
             autoFocus
