@@ -1,8 +1,15 @@
 
 export function getLabelFromTitle(title) {
-    let firstCharIndex = title.match('[a-zA-Z]').index
     let model = ""
     let year = ""
+    let firstChar = title.match('[a-zA-Z]')
+    if (!firstChar){
+        return {
+            year,
+            model
+        }
+    }
+    let firstCharIndex = firstChar.index
 
     let modelString = title.substr(firstCharIndex).trim()
     let modelArray = modelString.split(" ")
