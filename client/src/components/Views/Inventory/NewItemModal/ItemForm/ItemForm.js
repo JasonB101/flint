@@ -9,6 +9,16 @@ import "react-datepicker/dist/react-datepicker.css"
 const ItemForm = (props) => {
   const { items, toggleModal, setAndToggleForm, nextSku } = props
   const existingPartNumbers = items.map((item) => item.partNo.trim())
+  const sourcingLocations = [
+    "OGDEN TAP",
+    "OGDEN PAP",
+    "SLC TAP",
+    "SLC PNP",
+    "SLC PNS",
+    "OREM PAP",
+    "SPRINGVILLE PNS",
+    "EBAY",
+  ]
   const tempDate = localStorage.getItem("tempDate") || false
   const tempCategory = +localStorage.getItem("tempCategoryId") || false
   const [purchaseDate, changePurchaseDate] = useState(
@@ -33,6 +43,7 @@ const ItemForm = (props) => {
     purchaseLocation: localStorage.getItem("tempLocation") || "",
     categoryId: sortedCategories[0].id,
     suggestedPartNums: [],
+    suggestedLocations: [],
   })
 
   const categoryOptions = sortedCategories.map((x) => {
@@ -46,6 +57,7 @@ const ItemForm = (props) => {
   const handleChange = (e) => {
     const { name, value } = e.target
     let suggestedPartNums = []
+    let suggestedLocations = []
     if (name === "partNo" && value != "") {
       suggestedPartNums = [
         ...new Set(
@@ -57,9 +69,19 @@ const ItemForm = (props) => {
         ),
       ]
     }
+    if (name === "purchaseLocation") {
+      suggestedLocations = [
+        ...new Set(
+          sourcingLocations.filter((location) =>
+            value === "" ? location : location.toLowerCase().startsWith(value.toLowerCase())
+          )
+        ),
+      ]
+    }
     setInput({
       ...inputForm,
       suggestedPartNums,
+      suggestedLocations,
       [name]: value.toUpperCase().trim(),
     })
   }
@@ -75,6 +97,16 @@ const ItemForm = (props) => {
     // Set the input value to the clicked suggestion
     setInput((prevForm) => {
       return { ...prevForm, partNo: suggestion, suggestedPartNums: [] }
+    })
+  }
+  const handleSuggestedLocationClick = (suggestion) => {
+    // Set the input value to the clicked suggestion
+    setInput((prevForm) => {
+      return {
+        ...prevForm,
+        purchaseLocation: suggestion,
+        suggestedLocations: [],
+      }
     })
   }
 
@@ -145,8 +177,24 @@ const ItemForm = (props) => {
             name="purchaseLocation"
             required
             onChange={handleChange}
+            onBlur={() =>
+              setInput((prevForm) => ({ ...prevForm, suggestedLocations: [] }))
+            }
+            autoComplete="off" // Ensure browser autocomplete is turned off
             placeholder=""
           />
+          {inputForm.suggestedLocations.length > 0 && (
+            <ul className={Styles["suggestions-list"]}>
+              {inputForm.suggestedLocations.map((suggestion, index) => (
+                <li
+                  key={index}
+                  onMouseDown={() => handleSuggestedLocationClick(suggestion)}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
         </Form.Group>
       </Form.Row>
 
