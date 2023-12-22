@@ -4,12 +4,19 @@ import categories from "../../../../../lib/ebayCategoryInfo"
 import Label from "./Label/Label"
 import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
+import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
 
 const ebayFeePercent = 0.1
 
 const ListingForm = (props) => {
-  const { toggleModal, submitNewItem, itemForm, items, averageShippingCost } =
-    props
+  const {
+    toggleModal,
+    submitNewItem,
+    itemForm,
+    items,
+    averageShippingCost,
+    getActiveListings,
+  } = props
   const { categoryId, partNo, sku, purchasePrice } = itemForm
   const autoFill = categories.find((x) => x.id == categoryId) || {
     title: "",
@@ -35,18 +42,26 @@ const ListingForm = (props) => {
     model: "",
   })
 
+  const [activeListingsData, changeActiveListingsData] = useState({
+    showModal: false,
+    activeListings: [],
+  })
+
   useEffect(() => {
     if (partNo !== "N/A") {
-        const existingItems = items
+      const existingItems = items
         .filter((x) => x.partNo === partNo)
         .sort((a, b) => {
           const getTimeWithListedPrice = (item) => {
-            const dateSold = new Date(item.dateSold ?? 0).getTime();
-            const datePurchased = new Date(item.datePurchased).getTime();
-            return Math.max(dateSold + item.listedPrice, datePurchased + item.listedPrice);
-          };
-      
-          return getTimeWithListedPrice(b) - getTimeWithListedPrice(a); // Compare in descending order
+            const dateSold = new Date(item.dateSold ?? 0).getTime()
+            const datePurchased = new Date(item.datePurchased).getTime()
+            return Math.max(
+              dateSold + item.listedPrice,
+              datePurchased + item.listedPrice
+            )
+          }
+
+          return getTimeWithListedPrice(b) - getTimeWithListedPrice(a) // Compare in descending order
         })
 
       if (existingItems.length > 0) {
@@ -82,6 +97,43 @@ const ListingForm = (props) => {
     averageShippingCost
   )
 
+  useEffect(() => {
+    // Fetch active listings when the component mounts and when partNo changes
+    const fetchActiveListings = async () => {
+        try {
+            const activeListingsData = await getActiveListings(partNo)
+            changeActiveListingsData((prevActiveListings) => {
+                return {
+                    ...prevActiveListings,
+                    activeListings: activeListingsData,
+                }
+            })
+        } catch (error) {
+            console.error("Error fetching active listings:", error.message)
+        }
+    }
+    if (partNo !== "N/A") {
+      
+      fetchActiveListings()
+    }
+  }, [partNo, getActiveListings])
+
+  const openActiveListingsModal = () => {
+    changeActiveListingsData((prev) => {
+      return {
+        ...prev,
+        showModal: true,
+      }
+    })
+  }
+  const closeActiveListingsModal = () => {
+    changeActiveListingsData((prev) => {
+      return {
+        ...prev,
+        showModal: false,
+      }
+    })
+  }
   const handleChange = ({ target }) => {
     const { name, value } = target
     const updateForm = {
@@ -202,6 +254,13 @@ const ListingForm = (props) => {
         >{`$${expectedProfit}`}</Form.Label>
       </Form.Row>
       <Form.Row>
+        <Form.Group as={Col} className="text-center">
+          <Button variant="primary" onClick={openActiveListingsModal}>
+            Active Listings
+          </Button>
+        </Form.Group>
+      </Form.Row>
+      <Form.Row>
         <Form.Group as={Col} controlId="formGridDescription">
           <Form.Label>Item Description</Form.Label>
           <Form.Control
@@ -315,6 +374,12 @@ const ListingForm = (props) => {
           }}
         />
       </Modal.Footer>
+      {activeListingsData.showModal && (
+        <ActiveListingsModal
+          closeActiveListingsModal={closeActiveListingsModal}
+          activeListings={activeListingsData.activeListings}
+        />
+      )}
     </Form>
   )
 }

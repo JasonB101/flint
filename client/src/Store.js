@@ -111,6 +111,17 @@ const Store = (props) => {
                 return false
             })
     }
+
+    async function getActiveListings(keyword) {
+        try {
+          const result = await userAxios.get(`/api/ebay/getactivelistings?keyword=${keyword}`);
+          return result.data;
+        } catch (error) {
+          console.error('Error fetching active listings:', error);
+          throw error; // Re-throw the error to handle it in the calling code if needed
+        }
+      }
+
     function submitMassImport(form) {
         userAxios.post("/api/inventoryItems//massImport", form)
             .then(result => {
@@ -296,7 +307,8 @@ const Store = (props) => {
             updateUnlisted,
             updateItem,
             setEbayOAuthTokens,
-            checkNewScores
+            checkNewScores,
+            getActiveListings
         }} >
             {props.children}
         </storeContext.Provider >

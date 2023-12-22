@@ -2,6 +2,7 @@ const express = require("express");
 const ebayRouter = express.Router();
 const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
+const findEbayListings = require('../lib/ebayMethods/findEbayListings')
 const { updateSellerAvgShipping } = require("../lib/userMethods")
 const { getEbayListings, getCompletedSales, getShippingTransactions } = require("../lib/ebayMethods")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
@@ -13,7 +14,23 @@ const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, 
 //set as "Sold" ;) Goodluck, ima play a video game :P Need to think about how to filter between transactions that have been recorded
 //already. There may be more in inventory and the same part is counted more than once. Save the transaction ID to the item
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged.
-
+ebayRouter.get('/getactivelistings', async (req, res, next) => {
+    try {
+      const { keyword } = req.query;
+  
+      if (!keyword) {
+        return res.status(400).json({ error: 'Missing keyword parameter' });
+      }
+  
+      const simplifiedItems = await findEbayListings(keyword);
+  
+      res.json(simplifiedItems);
+    } catch (error) {
+      console.error('Error in /getactivelistings route:', error.message);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  })
+  
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userObject = await getUserObject(req.auth._id);
     const { _id: userId, averageShippingCost, ebayToken: ebayAuthToken, ebayOAuthToken = "0", ebayRefreshOAuthToken } = userObject;
