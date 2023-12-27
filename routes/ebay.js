@@ -30,7 +30,7 @@ ebayRouter.get('/getactivelistings', async (req, res, next) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   })
-  
+
 ebayRouter.get("/getebay", async (req, res, next) => {
     const userObject = await getUserObject(req.auth._id);
     const { _id: userId, averageShippingCost, ebayToken: ebayAuthToken, ebayOAuthToken = "0", ebayRefreshOAuthToken } = userObject;
@@ -66,7 +66,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
         console.log("This is right before the send")
         res.send(response);
     } catch (e) {
-        console.log("Access Token Expired")
+        console.log(e, "Access Token Expired")
         res.status(401).send({success: false, message: "Access Token Expired"})
 
     }

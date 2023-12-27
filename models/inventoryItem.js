@@ -72,11 +72,7 @@ const inventoryItemSchema = new Schema({
     imgUrl: String,
     trackingNumber: String,
     orderId: String,
-    buyer: {
-        type: Schema.Types.ObjectId,
-        //need to only collect username
-        ref: 'Buyer'
-    },
+    buyer: String,
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',

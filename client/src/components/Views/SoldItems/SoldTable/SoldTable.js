@@ -54,7 +54,7 @@ const SoldTable = (props) => {
         const { title, partNo, sku, datePurchased,
             dateSold, purchasePrice, priceSold, shippingCost,
             ebayFees, profit, _id, buyer } = itemObject;
-        const username = buyer ? buyer.username : "Unknown";
+        const username = buyer ? buyer: "Unknown";
         return (
             <tr key={_id}>
                 <td style={{ textAlign: "left" }}>{title}</td>
