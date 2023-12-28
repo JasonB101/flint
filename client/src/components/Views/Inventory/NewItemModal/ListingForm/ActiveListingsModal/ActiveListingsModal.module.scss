@@ -1,87 +1,90 @@
 .modal {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 101;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  
-  .modalContent {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 10px;
-    border: 1px solid #888;
-    max-width: 400px; /* Adjusted to a max-width for responsiveness */
-    width: 100%; /* Full width on smaller screens */
-    border-radius: 8px;
-    max-height: 300px;
-    overflow-y: scroll;
-  }
-  .modalContent::-webkit-scrollbar {
-    width: 5px; /* Width of the scrollbar */
-  }
-  
-  .modalContent::-webkit-scrollbar-thumb {
-    background-color: transparent; /* Make the scrollbar thumb transparent */
-  }
-  
-  .modalContent:hover::-webkit-scrollbar-thumb {
-    background-color: #aaa; /* Change the scrollbar thumb color on hover */
-  }
-  
-  .modalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .modalHeader h2 {
-    margin: 0;
-  }
-  
-  .closeModal {
-    cursor: pointer;
-    font-size: 20px;
-    color: #aaa;
-  }
-  
-  .closeModal:hover,
-  .closeModal:focus {
-    color: black;
-  }
-  
-  .modalBody {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .itemContainer {
-    display: flex;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .imageContainer img {
-    width: 150px;
-    height: auto;
-  }
-  
-  .detailsContainer {
-    padding: 3px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 101;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.2);
+}
 
-    p {
-        margin: 2px;
-    }
+.modalContent {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 10px;
+  border: 1px solid #888;
+  max-width: 400px; /* Adjusted to a max-width for responsiveness */
+  width: 100%; /* Full width on smaller screens */
+  border-radius: 8px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+.modalContent::-webkit-scrollbar {
+  width: 5px; /* Width of the scrollbar */
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Make the scrollbar thumb transparent */
+}
+
+.modalContent:hover::-webkit-scrollbar-thumb {
+  background-color: #aaa; /* Change the scrollbar thumb color on hover */
+}
+.listingInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  //   border-bottom: 1px solid #ddd;
+}
+
+.modalHeader h2 {
+  margin: 0;
+}
+
+.closeModal {
+  cursor: pointer;
+  font-size: 30px;
+  margin: -10px 0px -5px 5px;
+  color: #aaa;
+}
+
+.closeModal:hover,
+.closeModal:focus {
+  color: black;
+}
+
+.modalBody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.itemContainer {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.imageContainer img {
+  width: 150px;
+  height: auto;
+}
+
+.detailsContainer {
+  padding: 3px;
+
+  p {
+    margin: 2px;
   }
+}
