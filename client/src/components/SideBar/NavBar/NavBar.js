@@ -76,6 +76,14 @@ const NavBar = (props) => {
         Expenses
       </NavLink>
       <Menu id="reports" {...navMenu.reports} />
+      <NavLink
+        to="/parthunter"
+        activeStyle={{
+          backgroundColor: "#353a42",
+        }}
+      >
+        Part Hunter
+      </NavLink>
     </div>
   )
 }

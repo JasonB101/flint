@@ -15,7 +15,7 @@ const Toolbar = (props) => {
   return (
     <div className={Styles.wrapper}>
       <input
-        onChange={(e) => changeSearchTerm(e.target.value.trim())}
+        onChange={(e) => changeSearchTerm(e.target.value)}
         type="text"
         value={searchTerm}
         placeholder={"Search Inventory"}

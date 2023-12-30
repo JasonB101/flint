@@ -15,6 +15,7 @@ import SoldItems from './components/Views/SoldItems/SoldItems';
 import Milestones from './components/Views/Milestones/Milestones';
 import Expense from "./components/Views/Expense/Expense"
 import SignIn from "./components/SignIn/SignIn"
+import PartHunter from "./components//Views/PartHunter/PartHunter"
 import OAuthCode from './components/OAuth/OAuthCode';
 
 
@@ -37,6 +38,7 @@ function App() {
         <ProtectedRoute path="/reports/listing" component={() => <Listing {...storeData} />} />
         <ProtectedRoute path="/reports/solditems" component={() => <SoldItems {...storeData} />} />
         <ProtectedRoute path="/reports/milestones" component={() => <Milestones {...storeData} />} />
+        <ProtectedRoute path="/parthunter" component={() => <PartHunter {...storeData} />} />
         <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
         <ProtectedRoute path="/verifyPayPalToken" component={() => <VerifyPayPalToken setPayPalToken={setPayPalToken}/>} />
 
