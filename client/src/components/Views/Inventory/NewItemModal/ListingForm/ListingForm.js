@@ -138,7 +138,7 @@ const ListingForm = (props) => {
     const { name, value } = target
     const updateForm = {
       ...inputForm,
-      [name]: value.trim(),
+      [name]: value.trimLeft(),
     }
     if (name === "listPrice") {
       updateForm.acceptOfferHigh = (+value - 4.99).toFixed(2)
