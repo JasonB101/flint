@@ -15,7 +15,7 @@ const PartHunter = (props) => {
 
   const handleSearch = async () => {
     const activeListings = await getActiveListings(searchTerm)
-    setListings(activeListings)
+    setListings(activeListings.filter(x => x.condition ? x.condition.toLowerCase() === "used" : false))
   }
 
   const handleRemoveItem = (itemId) => {
