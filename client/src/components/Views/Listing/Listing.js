@@ -6,7 +6,7 @@ import { YearListingChart, YearListingChartByWeek, YearListingChartByMonth } fro
 
 const Listing = (props) => {
     const [dateType, setDateType] = useState("week");
-    const [year, setYear] = useState(2023);
+    const [year, setYear] = useState(2024);
 
     //dateType is day week year
     const { items } = props;
