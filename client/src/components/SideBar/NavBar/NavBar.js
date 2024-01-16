@@ -82,7 +82,7 @@ const NavBar = (props) => {
           backgroundColor: "#353a42",
         }}
       >
-        Part Hunter
+        Keyword Hunter
       </NavLink>
     </div>
   )

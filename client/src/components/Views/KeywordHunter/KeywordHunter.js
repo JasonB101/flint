@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
-import Styles from "./PartHunter.module.scss"
+import Styles from "./KeywordHunter.module.scss"
 import { useParams } from "react-router-dom"
+import Toolbar from "./Toolbar/Toolbar"
 
 const PartHunter = (props) => {
   const { getActiveListings } = props
@@ -15,7 +16,11 @@ const PartHunter = (props) => {
 
   const handleSearch = async () => {
     const activeListings = await getActiveListings(searchTerm)
-    setListings(activeListings.filter(x => x.condition ? x.condition.toLowerCase() === "used" : false))
+    setListings(
+      activeListings.filter((x) =>
+        x.condition ? x.condition.toLowerCase() === "used" : false
+      )
+    )
   }
 
   const handleRemoveItem = (itemId) => {
@@ -90,7 +95,10 @@ const PartHunter = (props) => {
 
   let content = (
     <div className={Styles.wrapper}>
-      <h1>Part Hunter</h1>
+      <h1>Keyword Hunter</h1>
+      <div className={Styles["toolBar"]}>
+        <Toolbar />
+      </div>
       <div className={Styles.searchContainer}>
         <input
           onChange={(e) => changeSearchTerm(e.target.value)}

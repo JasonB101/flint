@@ -15,7 +15,7 @@ import SoldItems from './components/Views/SoldItems/SoldItems';
 import Milestones from './components/Views/Milestones/Milestones';
 import Expense from "./components/Views/Expense/Expense"
 import SignIn from "./components/SignIn/SignIn"
-import PartHunter from "./components//Views/PartHunter/PartHunter"
+import PartHunter from "./components/Views/KeywordHunter/KeywordHunter"
 import OAuthCode from './components/OAuth/OAuthCode';
 
 
