@@ -52,6 +52,7 @@ const inventoryItemSchema = new Schema({
     ebayFees: Number,
     payPalFees: Number,
     profit: Number,
+    roi: Number,
     shipped: {
         type: Boolean,
         default: false
