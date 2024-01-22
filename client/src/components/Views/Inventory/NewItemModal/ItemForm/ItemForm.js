@@ -82,7 +82,7 @@ const ItemForm = (props) => {
       ...inputForm,
       suggestedPartNums,
       suggestedLocations,
-      [name]: value.toUpperCase().trim(),
+      [name]: value.toUpperCase().trimStart(),
     })
   }
 
