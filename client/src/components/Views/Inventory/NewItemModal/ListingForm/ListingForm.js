@@ -71,6 +71,7 @@ const ListingForm = (props) => {
           brand = "",
           shippingService = "USPSPriority",
           listedPrice,
+          location = ""
         } = existing
         let labelDetails = getLabelFromTitle(title)
         let { year, model } = labelDetails
@@ -84,6 +85,7 @@ const ListingForm = (props) => {
           listPrice: listedPrice,
           acceptOfferHigh,
           declineOfferLow,
+          location,
           year,
           model,
         }))
