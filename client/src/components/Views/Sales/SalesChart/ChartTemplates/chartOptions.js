@@ -98,6 +98,9 @@ export class YearSalesChartByWeek extends YearSalesChart {
             title: `Average ${profitSetToTrue ? "profit" : "sales"} per week: ${getAverage(this.data[0].dataPoints)}`,
             interval: 1
         }
+        this.axisY = {
+            includeZero: true,
+        }
 
         function getYearDataPointsByWeek(soldItems) {
             const filteredItems = soldItems.filter(item => {
