@@ -7,6 +7,12 @@ const categories = [
         title: "Engine Computer ECU ECM PCM"
     },
     {
+        category: "Transmission TCU",
+        id: 262259,
+        description: "Some TCU’s (Transmission Control Module) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s TCU may need before purchasing this TCU.",
+        title: "Transmission Control Module TCU TCM"
+    },
+    {
         category: "ABS Parts",
         id: 33560
     },
