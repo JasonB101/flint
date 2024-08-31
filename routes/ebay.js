@@ -4,9 +4,10 @@ const User = require("../models/user");
 const InventoryItem = require("../models/inventoryItem");
 const findEbayListings = require('../lib/ebayMethods/findEbayListings')
 const { updateSellerAvgShipping } = require("../lib/userMethods")
-const { getEbayListings, getCompletedSales, getShippingTransactions } = require("../lib/ebayMethods")
+const { getEbayListings, getShippingTransactions } = require("../lib/ebayMethods")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const { updateInventoryWithSales, getInventoryItems, updateAllZeroShippingCost, figureProfit, verifyCorrectPricesInInventoryItems } = require("../lib/inventoryMethods")
+const getCompletedSales = require('../lib/ebayMethods/getCompletedSales')
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -43,13 +44,11 @@ ebayRouter.get("/getebay", async (req, res, next) => {
         console.log("Got Transactions, making changes.")
         const [shippingUpdates, completedSales, ebayListings] = await Promise.all([
             updateAllZeroShippingCost(userId, shippingTransactions),
-            getCompletedSales(ebayAuthToken),
+            getCompletedSales(ebayOAuthToken),
             getEbayListings(ebayAuthToken, userId)
         ])
-        // const shippingUpdates = await updateAllZeroShippingCost(userId, shippingTransactions);
-        // const completedSales = await getCompletedSales(ebayAuthToken);
+        
         const newSoldItems = await updateInventoryWithSales(userId, completedSales, shippingTransactions);
-        // const ebayListings = await getEbayListings(ebayAuthToken, userId);
 
         let inventoryItems = await getInventoryItems(userId);
 
