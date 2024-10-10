@@ -70,6 +70,10 @@ const categories = [
         id: 33649
     },
     {
+        category: "Floor Mats",
+        id: 33697
+    },
+    {
         category: "Fuel Injection Parts Other",
         id: 33553
     },

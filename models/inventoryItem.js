@@ -68,6 +68,7 @@ const inventoryItemSchema = new Schema({
         //active
         //waste
     },
+    description: String,
     dateListed: String,
     dateReListed: String,
     imgUrl: String,
