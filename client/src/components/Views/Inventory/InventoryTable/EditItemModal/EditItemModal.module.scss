@@ -1,57 +1,95 @@
 .editItemModalWrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  .modalContent {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
+  z-index: 1000;
+}
+
+
+.modalContent {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 800px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
 
   h2 {
-    margin: 0 0 20px;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .formGroup {
-    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
 
     label {
-      display: block;
+      font-weight: bold;
       margin-bottom: 5px;
     }
 
-    input {
-      width: 100%;
+    input, textarea {
       padding: 8px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 5px;
+    }
+    select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .categoryId{
+      width: 130px !important;
+    }
+  }
+  
+
+  /* Ensures inputs in the same row are displayed side-by-side */
+  .formRow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .formGroup {
+      flex: 1; /* Ensures inputs take equal width */
     }
   }
 
   .buttonGroup {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 10px;
 
     button {
-      padding: 10px 15px;
+      padding: 8px 16px;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
       cursor: pointer;
 
-      &:first-child {
-        background-color: #f44336;
+      &:first-of-type {
+        background-color: #ccc;
+      }
+
+      &:last-of-type {
+        background-color: #007bff;
         color: white;
       }
 
-      &:last-child {
-        background-color: #4caf50;
-        color: white;
+      &:hover {
+        opacity: 0.9;
       }
     }
   }

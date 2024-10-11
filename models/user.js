@@ -66,6 +66,7 @@ userSchema.methods.withoutSensitiveInfo = function () {
     delete user.lname
     delete user.ebayToken
     delete user.payPalToken
+    delete user.ebayOAuthToken
     return user
 }
 

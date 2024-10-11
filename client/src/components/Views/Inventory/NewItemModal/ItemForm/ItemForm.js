@@ -73,7 +73,9 @@ const ItemForm = (props) => {
       suggestedLocations = [
         ...new Set(
           sourcingLocations.filter((location) =>
-            value === "" ? location : location.toLowerCase().startsWith(value.toLowerCase())
+            value === ""
+              ? location
+              : location.toLowerCase().startsWith(value.toLowerCase())
           )
         ),
       ]
@@ -226,8 +228,18 @@ const ItemForm = (props) => {
             as="select"
             name="conditionId"
             onChange={handleCategorySelect}
+            value={
+              categories.some((category) => category.id == inputForm.categoryId)
+                ? inputForm.categoryId
+                : ""
+            }
           >
-            {categoryOptions}
+            {[
+              <option value="" disabled>
+                Select a Category
+              </option>,
+              ...categoryOptions,
+            ]}
           </Form.Control>
         </Form.Group>
 

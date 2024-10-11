@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
 import Styles from "./ItemOptions.module.scss"
-import EditItemModal from "../EditItemModal/EditItemModal"
 
 const ItemOptions = ({setEditItem, itemObject}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -35,6 +34,10 @@ const ItemOptions = ({setEditItem, itemObject}) => {
     setAction(actionType)
     // Logic based on action type
     switch (actionType) {
+      case "copy":
+        //logic
+        console.log("Copy clicked")
+        break
       case "edit":
         setEditItem(itemObject)
         console.log("Revise clicked")
@@ -60,6 +63,7 @@ const ItemOptions = ({setEditItem, itemObject}) => {
       </i>
       {isModalOpen && (
         <div ref={modalRef} className={Styles["optionsModal"]}>
+          <p onClick={() => handleAction("copy")}>Copy</p>
           <p onClick={() => handleAction("edit")}>Edit</p>
           <p onClick={() => handleAction("relist")}>Relist</p>
           <p onClick={() => handleAction("waste")}>Waste</p>

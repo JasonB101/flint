@@ -29,7 +29,7 @@ const ListingForm = (props) => {
     mpn: partNo,
     sku: sku,
     brand: "",
-    listPrice: "",
+    listedPrice: "",
     dateListed: new Date().toLocaleDateString(),
     conditionId: 3000,
     conditionDescription: "",
@@ -82,7 +82,7 @@ const ListingForm = (props) => {
           title,
           brand,
           shippingService,
-          listPrice: listedPrice,
+          listedPrice: listedPrice,
           acceptOfferHigh,
           declineOfferLow,
           location,
@@ -94,7 +94,7 @@ const ListingForm = (props) => {
   }, [items, partNo])
 
   const expectedProfit = figureProfit(
-    inputForm.listPrice,
+    inputForm.listedPrice,
     purchasePrice,
     averageShippingCost
   )
@@ -142,9 +142,9 @@ const ListingForm = (props) => {
       ...inputForm,
       [name]: value.trimLeft(),
     }
-    if (name === "listPrice") {
-      updateForm.acceptOfferHigh = (+value - 4.99).toFixed(2)
-      updateForm.declineOfferLow = (+value - 14.99).toFixed(2)
+    if (name === "listedPrice") {
+      updateForm.acceptOfferHigh = (+value - 9.99).toFixed(2)
+      updateForm.declineOfferLow = (+value - 19.99).toFixed(2)
     }
     if (name === "title") {
       let labelDetails = getLabelFromTitle(value)
@@ -225,11 +225,11 @@ const ListingForm = (props) => {
       </Form.Row>
       <Form.Label>Money</Form.Label>
       <Form.Row>
-        <Form.Group as={Col} controlId="formGridListPrice">
+        <Form.Group as={Col} controlId="formGridListedPrice">
           <Form.Control
             required
-            value={inputForm.listPrice}
-            name="listPrice"
+            value={inputForm.listedPrice}
+            name="listedPrice"
             onChange={handleChange}
             placeholder="List Price"
           />

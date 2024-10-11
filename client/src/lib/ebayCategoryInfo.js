@@ -74,7 +74,7 @@ const categories = [
         id: 33697
     },
     {
-        category: "Fuel Injection Parts Other",
+        category: "Fuel Injection Parts",
         id: 33553
     },
     {
@@ -102,7 +102,7 @@ const categories = [
         id: 262221
     },
     {
-        category: "Wiper Motor/Transmissions Linkage",
+        category: "Wiper Motor",
         id: 61941
     },
     {
