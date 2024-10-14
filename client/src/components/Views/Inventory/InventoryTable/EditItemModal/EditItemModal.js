@@ -3,13 +3,15 @@ import Styles from "./EditItemModal.module.scss"
 import categories from "../../../../../lib/ebayCategoryInfo"
 
 const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
+
   const [inputs, setInputs] = useState({
+    itemId: itemObject['_id'],
     title: itemObject.title || "",
     partNo: itemObject.partNo || "",
     sku: itemObject.sku || "",
     brand: itemObject.brand || "",
     location: itemObject.location || "",
-    datePurchased: itemObject.datePurchased || "",
+    datePurchased: convertDateFormat(itemObject.datePurchased) || "",
     categoryId: itemObject.categoryId || "",
     purchaseLocation: itemObject.purchaseLocation || "",
     purchasePrice: itemObject.purchasePrice || "",
@@ -30,20 +32,23 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
 
   const handleChange = (e) => {
     let { name, value } = e.target
+    console.log(value)
     let updateForm = {...inputs}
     if (name === "partNo") value = value.toUpperCase()
-    if (name === "datePurchased") value = convertBackDateFormat(value)
+    if (name === "purchasePrice") value = +value
     if (name === "category") name = "categoryId"
     if (name === "listedPrice") {
       value = +value
       updateForm.acceptOfferHigh = +(value - 9.99).toFixed(2)
       updateForm.declineOfferLow = +(value - 19.99).toFixed(2)
     }
+    if (name === "acceptOfferHigh" || name === "declineOfferLow") value = +value
 
-    setInputs({...updateForm, [name]: value,})
+    setInputs({...updateForm, [name]: value})
   }
   const handleSubmit = (e) => {
     e.preventDefault()
+    inputs.datePurchased = convertBackDateFormat(inputs.datePurchased)
     onSubmit(inputs)
     onClose()
   }
@@ -141,7 +146,7 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
             </div>
             <div className={Styles.formGroup}>
               <label
-                style={getLabelStyle("datePurchased")}
+                style={{color: inputs.datePurchased !== convertDateFormat(itemObject.datePurchased) ? "#007bff" : "inherit"}}
                 htmlFor="datePurchased"
               >
                 DATE PURCHASED
@@ -150,7 +155,7 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
                 type="date"
                 id="datePurchased"
                 name="datePurchased"
-                value={convertDateFormat(inputs.datePurchased)}
+                value={inputs.datePurchased}
                 onChange={handleChange}
               />
             </div>
@@ -190,7 +195,7 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
                 onChange={handleChange}
               >
                 {[
-                  <option value="" disabled>
+                  <option key="1" value="" disabled>
                     Select a Category
                   </option>,
                   ...categoryOptions,
@@ -220,9 +225,9 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
                 value={inputs.conditionId}
                 onChange={handleChange}
               >
-                <option value="3000">Used</option>
-                <option value="7000">For Parts</option>
-                <option value="1000">New</option>
+                <option key= "used" value="3000">Used</option>
+                <option key = "for parts" value="7000">For Parts</option>
+                <option key = "new" value="1000">New</option>
               </select>
             </div>
             <div className={Styles.formGroup}>
@@ -352,10 +357,7 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
 
 function convertDateFormat(dateString) {
   const [month, day, year] = dateString.split("/") // Split the input string
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
-    2,
-    "0"
-  )}` // Format as YYYY-MM-DD
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2,"0")}` // Format as YYYY-MM-DD
 }
 function convertBackDateFormat(dateString) {
   const [year, month, day] = dateString.split("-") // Split the input string

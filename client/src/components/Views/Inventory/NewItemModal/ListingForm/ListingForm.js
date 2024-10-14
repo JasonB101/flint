@@ -6,7 +6,7 @@ import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
 
-const ebayFeePercent = 0.1
+const ebayFeePercent = 0.1 //This can change, I could figure the perctange by using a sold item, and save that percentage into the user object, if it ever changes then update it
 
 const ListingForm = (props) => {
   const {

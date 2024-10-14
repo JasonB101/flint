@@ -40,6 +40,10 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    ebayFeePercent: {
+        type: Number,
+        default: 0.1
+    },
     notifications: Array,
     ebayToken: String,
     ebayOAuthToken: String,

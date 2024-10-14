@@ -11,7 +11,7 @@ import EditItemModal from "./EditItemModal/EditItemModal"
 const InventoryTable = (props) => {
   // const storeData = useContext(storeContext);
   // const { updateUnlisted } = storeData
-  const { inventoryList: inventoryItems, ebayListings } = props
+  const { inventoryList: inventoryItems, ebayListings, editInventoryItem } = props
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -116,9 +116,6 @@ const InventoryTable = (props) => {
           )}
         </td>
         <td>{currencyFormatter.format(expectedProfit)}</td>
-        <td>{`${Math.floor(
-          (+expectedProfit / (listedPrice - expectedProfit)) * 100
-        )}%`}</td>
       </tr>
     )
   }
@@ -168,12 +165,11 @@ const InventoryTable = (props) => {
             <th>Purchase Price</th>
             <th>Listed Price</th>
             <th>Expected Profit</th>
-            <th>ROI</th>
           </tr>
         </thead>
         <tbody className={Styles.itemsList}>{items}</tbody>
       </Table>
-      {editItem && <EditItemModal onClose={()=> setEditItem(null)} onSubmit={()=>{}} itemObject={editItem}/>}
+      {editItem && <EditItemModal onClose={()=> setEditItem(null)} onSubmit={(itemObject)=>{editInventoryItem(itemObject)}} itemObject={editItem}/>}
     </div>
   )
 }

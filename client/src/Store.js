@@ -142,6 +142,17 @@ const Store = (props) => {
         userAxios.get("/api/inventoryItems")
             .then(result => changeItems(result.data))
     }
+    function editInventoryItem(itemObject) {
+        userAxios.put("/api/inventoryItems/editInventoryItem", itemObject)
+            .then(result => {
+               const updatedItems = items.map(item => item._id === itemObject.itemId ? {...item, ...itemObject} : item)
+               changeItems(updatedItems)
+            }).catch(err => {
+                alert("An error has occured during the update")
+                console.log(err.message)
+            })
+               
+    }
     function updateUnlisted(ids) {
         userAxios.post("/api/inventoryItems/updateUnlisted", { ids: ids })
             .then(result => changeItems(result.data))
@@ -294,6 +305,7 @@ const Store = (props) => {
             submitNewItem,
             submitNewExpense,
             newListings,
+            editInventoryItem,
             linkItem,
             syncWithEbay,
             syncWithPayPal,
