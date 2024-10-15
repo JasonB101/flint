@@ -34,6 +34,11 @@ const ItemOptions = ({setEditItem, itemObject}) => {
     setAction(actionType)
     // Logic based on action type
     switch (actionType) {
+      case "view":
+        //logic
+        console.log("View clicked")
+        window.open(`https://www.ebay.com/itm/${itemObject.ebayId}`, '_blank')
+        break
       case "copy":
         //logic
         console.log("Copy clicked")
@@ -63,6 +68,7 @@ const ItemOptions = ({setEditItem, itemObject}) => {
       </i>
       {isModalOpen && (
         <div ref={modalRef} className={Styles["optionsModal"]}>
+          <p onClick={() => handleAction("view")}>View</p>
           <p onClick={() => handleAction("copy")}>Copy</p>
           <p onClick={() => handleAction("edit")}>Edit</p>
           <p onClick={() => handleAction("relist")}>Relist</p>

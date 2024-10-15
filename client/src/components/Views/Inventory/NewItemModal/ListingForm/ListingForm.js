@@ -26,7 +26,7 @@ const ListingForm = (props) => {
 
   const [inputForm, setInput] = useState({
     title: `${autoTitle || ""} ${partNo}`,
-    mpn: partNo,
+    partNo,
     sku: sku,
     brand: "",
     listedPrice: "",
@@ -286,10 +286,10 @@ const ListingForm = (props) => {
             placeholder="Brand"
           />
         </Form.Group>
-        <Form.Group as={Col} controlId="formGridMpn">
+        <Form.Group as={Col} controlId="formGridPartNo">
           <Form.Control
-            value={inputForm.mpn}
-            name="mpn"
+            value={inputForm.partNo}
+            name="partNo"
             onChange={handleChange}
             placeholder="Part Number"
           />

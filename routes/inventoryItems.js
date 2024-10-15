@@ -9,6 +9,7 @@ const { createListing } = require("../lib/ebayMethods")
 const InventoryItem = require("../models/inventoryItem")
 const User = require("../models/user")
 const inventoryItemChange = require("../lib/editItemMethods/inventoryItemChange")
+const listingChange = require("../lib/editItemMethods/listingChange")
 
 inventoryRouter.post("/", async (req, res, next) => {
   console.log(req.body)
@@ -44,9 +45,7 @@ inventoryRouter.post("/", async (req, res, next) => {
 
 inventoryRouter.put("/editInventoryItem", async (req, res, next) => {
   const user = await getUserObject(req.auth._id)
-  const {
-    _id: userId,
-  } = user
+  const { _id: userId } = user
   const item = req.body
   const itemId = item.itemId
 
@@ -62,7 +61,7 @@ inventoryRouter.put("/editInventoryItem", async (req, res, next) => {
 
   const listingChanges = [
     "title",
-    "partNo",
+    "partNo", //MPN in ebay's api
     "sku",
     "brand",
     "categoryId",
@@ -81,19 +80,23 @@ inventoryRouter.put("/editInventoryItem", async (req, res, next) => {
     "purchaseLocation",
     "purchasePrice",
   ].filter((key) => originalItem[key] !== item[key])
-
+  let itemUpdatedSuccessfully = {
+    success: false,
+    message: "This is what the return looks like",
+  }
   if (listingChanges.length === 0) {
     console.log("Inventory Change")
-    inventoryItemChange(
+    itemUpdatedSuccessfully = await inventoryItemChange(
       item,
       inventoryChanges,
       user
     )
   } else {
     console.log("Listing Change")
+    itemUpdatedSuccessfully = await listingChange(item, [...listingChanges, ...inventoryChanges], user)
   }
 
-  return res.status(200).send(item)
+  return itemUpdatedSuccessfully.success ? res.status(200).send(itemUpdatedSuccessfully) : res.status(500).send(itemUpdatedSuccessfully)
 })
 
 inventoryRouter.put("/update", (req, res, next) => {
@@ -160,6 +163,11 @@ function parseInventoryObject(
     partNo,
     sku,
     listedPrice,
+    acceptOfferHigh,
+    declineOfferLow,
+    description,
+    conditionId,
+    conditionDescription,
     dateListed,
     location,
     datePurchased,

@@ -6,6 +6,7 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
 
   const [inputs, setInputs] = useState({
     itemId: itemObject['_id'],
+    ebayId: itemObject['ebayId'],
     title: itemObject.title || "",
     partNo: itemObject.partNo || "",
     sku: itemObject.sku || "",
@@ -23,26 +24,24 @@ const EditItemModal = ({ onSubmit, onClose, itemObject }) => {
     acceptOfferHigh:
       itemObject.acceptOfferHigh === 0
         ? +(itemObject.listedPrice - 9.99).toFixed(2)
-        : 0,
+        : itemObject.acceptOfferHigh,
     declineOfferLow:
       itemObject.declineOfferLow === 0
         ? +(itemObject.listedPrice - 19.99).toFixed(2)
-        : 0,
+        : itemObject.declineOfferLow,
   })
 
   const handleChange = (e) => {
     let { name, value } = e.target
-    console.log(value)
     let updateForm = {...inputs}
     if (name === "partNo") value = value.toUpperCase()
-    if (name === "purchasePrice") value = +value
     if (name === "category") name = "categoryId"
     if (name === "listedPrice") {
       value = +value
       updateForm.acceptOfferHigh = +(value - 9.99).toFixed(2)
       updateForm.declineOfferLow = +(value - 19.99).toFixed(2)
     }
-    if (name === "acceptOfferHigh" || name === "declineOfferLow") value = +value
+    if (name === "acceptOfferHigh" || name === "declineOfferLow" || name === "purchasePrice") value = +value
 
     setInputs({...updateForm, [name]: value})
   }
