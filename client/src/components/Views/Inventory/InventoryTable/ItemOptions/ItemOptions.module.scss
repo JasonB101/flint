@@ -2,8 +2,8 @@
   position: relative;
   .optionsModal {
     position: absolute; // Make it absolute
-    top: 0; // Align the top with the parent
-    left: 100%;
+    top: 75%; // Align it to the bottom of the parent
+    left: 10px; // Align it to the left of the parent
     background-color: white; // Modal background color
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Shadow for depth
     padding: 0 5px; // Padding

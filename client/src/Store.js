@@ -3,7 +3,7 @@ import axios from "axios"
 import prepItemsForImport from "./lib/massImportPrep"
 import readFile from "./lib/readAndParseCVS"
 const authAxios = axios.create()
-const userAxios = axios.create()
+const userAxios = axios.create({timeout: 60000})
 export const storeContext = createContext({})
 
 userAxios.interceptors.request.use((config) => {

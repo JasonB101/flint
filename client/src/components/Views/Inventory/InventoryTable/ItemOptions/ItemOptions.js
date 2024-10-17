@@ -68,9 +68,9 @@ const ItemOptions = ({setEditItem, itemObject}) => {
       </i>
       {isModalOpen && (
         <div ref={modalRef} className={Styles["optionsModal"]}>
+          <p onClick={() => handleAction("edit")}>Edit</p>
           <p onClick={() => handleAction("view")}>View</p>
           <p onClick={() => handleAction("copy")}>Copy</p>
-          <p onClick={() => handleAction("edit")}>Edit</p>
           <p onClick={() => handleAction("relist")}>Relist</p>
           <p onClick={() => handleAction("waste")}>Waste</p>
         </div>
