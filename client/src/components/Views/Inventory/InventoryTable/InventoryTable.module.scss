@@ -2,11 +2,12 @@
   position: relative;
   padding-bottom: 5px;
   border-top: 1px solid rgb(206, 204, 204);
-  overflow: auto;
 
   &::-webkit-scrollbar {
     display: none;
   }
+
+  
 
   th::before {
     content: "";
@@ -73,4 +74,9 @@
       vertical-align: middle !important;
     }
   }
+}
+
+.itemsList{
+  overflow: visible !important;
+
 }
