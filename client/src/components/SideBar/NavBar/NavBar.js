@@ -46,6 +46,28 @@ const NavBar = (props) => {
         </NavLink>,
       ],
     },
+    tools: {
+      title: "Tools",
+      subMenu: [
+        <NavLink
+          key="churn"
+          to="/churn"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Churn<div className="spacer"></div>
+        </NavLink>, 
+        <NavLink
+          to="/parthunter"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Keyword Hunter
+        </NavLink>
+      ],
+    },
   }
 
   return (
@@ -76,14 +98,7 @@ const NavBar = (props) => {
         Expenses
       </NavLink>
       <Menu id="reports" {...navMenu.reports} />
-      <NavLink
-        to="/parthunter"
-        activeStyle={{
-          backgroundColor: "#353a42",
-        }}
-      >
-        Keyword Hunter
-      </NavLink>
+      <Menu id="tools" {...navMenu.tools} /> {/* Add Tools menu */}
     </div>
   )
 }

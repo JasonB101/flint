@@ -25,13 +25,7 @@ const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
 //already. There may be more in inventory and the same part is counted more than once. Save the transaction ID to the item
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged.
 
-ebayRouter.use((req, res, next) => {
-  req.setTimeout(60000, () => {
-    console.log('Request timed out!');
-    res.status(408).send('Request timed out');
-  });
-  next();
-})
+
 
 ebayRouter.get("/getactivelistings", async (req, res, next) => {
   try {

@@ -24,6 +24,14 @@ app.use("/api/ebay", require("./routes/ebay"))
 app.use("/api/milestones", require("./routes/milestones"))
 app.use("/auth", require("./routes/auth"))
 
+app.use((req, res, next) => {
+    req.setTimeout(60000, () => {
+      console.log('Request timed out!');
+      res.status(408).send('Request timed out');
+    });
+    next();
+  })
+
 // Connect to colection
 mongoose.set('strictQuery', false)
 mongoose.connect(process.env.MONGO_ATLAS_CLUSTER1,{
