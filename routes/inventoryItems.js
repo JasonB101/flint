@@ -15,9 +15,9 @@ inventoryRouter.post("/", async (req, res, next) => {
   console.log(req.body)
   const userRaw = await User.findOne({ _id: req.auth._id })
   const user = userRaw.toObject()
-  const { ebayToken, averageShippingCost } = user
+  const { ebayToken, averageShippingCost, userDescriptionTemplate } = user
   const listingDetails = req.body
-  const listingResponse = await createListing(ebayToken, listingDetails)
+  const listingResponse = await createListing(ebayToken, listingDetails, userDescriptionTemplate)
   const inventoryItemBody = parseInventoryObject(
     listingResponse,
     listingDetails,

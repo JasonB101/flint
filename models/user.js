@@ -30,7 +30,7 @@ const userSchema = new Schema({
     },
     averageShippingCost: {
         type: Number,
-        default: 10
+        default: 14
     },
     syncedWithEbay: {
         type: Boolean,
@@ -44,6 +44,7 @@ const userSchema = new Schema({
         type: Number,
         default: 0.1
     },
+    userDescriptionTemplate: String,
     notifications: Array,
     ebayToken: String,
     ebayOAuthToken: String,
