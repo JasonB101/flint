@@ -81,6 +81,7 @@ const InventoryTable = (props) => {
       datePurchased,
       listedPrice,
       purchasePrice,
+      watchers,
       _id,
       expectedProfit,
       ebayId,
@@ -107,6 +108,7 @@ const InventoryTable = (props) => {
         <td>{sku || "n/a"}</td>
         <td>{location || "n/a"}</td>
         <td>{getDaysSince(datePurchased)}</td>
+        <td>{watchers}</td>
         <td>{currencyFormatter.format(purchasePrice)}</td>
         <td className={Styles.buttonWrapper}>
           {listed ? (
@@ -162,6 +164,7 @@ const InventoryTable = (props) => {
             <th>SKU</th>
             <th>Location</th>
             <th>Days in Inventory</th>
+            <th>Watchers</th>
             <th>Purchase Price</th>
             <th>Listed Price</th>
             <th>Expected Profit</th>

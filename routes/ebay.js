@@ -115,7 +115,7 @@ ebayRouter.post("/refreshOToken", async (req, res, next) => {
     )
     res.status(200).send({ success: true })
   } catch (e) {
-    res.send({ link: getOAuthLink() })
+    res.status(401).send({ link: getOAuthLink() })
     console.log(e.message, "Refresh OAUTH Error: Sending Link")
   }
 })

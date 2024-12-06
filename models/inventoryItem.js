@@ -41,6 +41,10 @@ const inventoryItemSchema = new Schema({
     type: String,
     required: true,
   },
+  watchers: {
+    type: Number,
+    default: 0
+  },
   purchasePrice: {
     type: Number,
     required: true,
