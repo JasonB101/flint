@@ -144,6 +144,7 @@ const Store = (props) => {
     userAxios
       .get("/api/inventoryItems")
       .then((result) => changeItems(result.data))
+      .catch((err) => console.log("Get Inventory Failed", err.message))
   }
   function editInventoryItem(itemObject) {
     userAxios
@@ -168,6 +169,7 @@ const Store = (props) => {
     userAxios.get("/api/expense").then((result) => {
       setExpenses(result.data)
     })
+    .catch((err) => console.log("Get Expenses Failed", err.message))
   }
 
   function linkItem(inventoryId, listingInfo) {
