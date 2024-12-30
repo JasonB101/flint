@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Styles from "./SoldTable.module.scss";
 import { Table } from "react-bootstrap";
 import $ from "jquery";
+import getDaysBetween from "../../../../lib/getDaysBetween";
 
 const SoldTable = (props) => {
     const { soldItems, updateItem } = props;
@@ -62,6 +63,7 @@ const SoldTable = (props) => {
                 <td>{sku}</td>
                 <td>{datePurchased}</td>
                 <td>{dateSold}</td>
+                <td>{getDaysBetween(datePurchased, dateSold)}</td>
                 <td>${valueToFixed(purchasePrice)}</td>
                 <td>${valueToFixed(priceSold)}</td>
                 <td className={Styles['tdEdit']}>
@@ -124,6 +126,7 @@ const SoldTable = (props) => {
                         <th>SKU</th>
                         <th>Date Purchased</th>
                         <th>Date Sold</th>
+                        <th>Days Held</th>
                         <th>Purchase Price</th>
                         <th>Price Sold</th>
                         <th>Shipping Cost</th>

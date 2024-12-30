@@ -21,7 +21,7 @@ import OAuthCode from './components/OAuth/OAuthCode';
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS } = storeData;
+  const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS, logout } = storeData;
 
   return (
     <div className="appWrapper">
