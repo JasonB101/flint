@@ -140,6 +140,18 @@ const Store = (props) => {
       .catch((err) => console.log(err))
   }
 
+  function deleteExpense(expenseId) {
+    userAxios
+      .delete(`/api/expense/${expenseId}`)
+      .then((result) => {
+        const updatedExpenses = expenses.filter(
+          (expense) => expense._id !== expenseId
+        )
+        setExpenses(updatedExpenses)
+      })
+      .catch((err) => console.log(err))
+  }
+
   function getInventoryItems() {
     userAxios
       .get("/api/inventoryItems")
@@ -322,6 +334,7 @@ const Store = (props) => {
         items,
         submitNewItem,
         submitNewExpense,
+        deleteExpense,
         newListings,
         editInventoryItem,
         linkItem,

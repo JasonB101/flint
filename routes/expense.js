@@ -33,4 +33,22 @@ expenseRouter.get("/", (req, res, next) => {
         return res.send([])
     });
 })
+
+expenseRouter.delete("/:id", (req, res, next) => {
+    const userId = req.auth._id;
+    Expense.findOneAndDelete({ _id: req.params.id, userId: userId }, (err, expense) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send({success: false});
+      }
+      if (!expense) {
+        return res.status(404).send({
+          success: false,
+          message: "Expense not found or does not belong to this user",
+        });
+      }
+      return res.send({ success: true });
+    });
+  });
+
 module.exports = expenseRouter;

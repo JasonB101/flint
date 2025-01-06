@@ -66,7 +66,10 @@ const inventoryItemSchema = new Schema({
     default: "",
   },
   dateListed: String,
-  dateReListed: String,
+  dateReListed: {
+    type: String,
+    default: ""
+  },
   imgUrl: String,
   expectedProfit: {
     type: Number,

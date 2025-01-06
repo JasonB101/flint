@@ -5,7 +5,7 @@ const {
   figureProfit,
   updateUnlisted,
 } = require("../lib/inventoryMethods")
-const { createListing } = require("../lib/ebayMethods")
+const { createListing } = require("../lib/ebayApi")
 const InventoryItem = require("../models/inventoryItem")
 const User = require("../models/user")
 const inventoryItemChange = require("../lib/editItemMethods/inventoryItemChange")
@@ -17,7 +17,11 @@ inventoryRouter.post("/", async (req, res, next) => {
   const user = userRaw.toObject()
   const { ebayToken, averageShippingCost, userDescriptionTemplate } = user
   const listingDetails = req.body
-  const listingResponse = await createListing(ebayToken, listingDetails, userDescriptionTemplate)
+  const listingResponse = await createListing(
+    ebayToken,
+    listingDetails,
+    userDescriptionTemplate
+  )
   const inventoryItemBody = parseInventoryObject(
     listingResponse,
     listingDetails,
@@ -93,10 +97,16 @@ inventoryRouter.put("/editInventoryItem", async (req, res, next) => {
     )
   } else {
     console.log("Listing Change")
-    itemUpdatedSuccessfully = await listingChange(item, [...listingChanges, ...inventoryChanges], user)
+    itemUpdatedSuccessfully = await listingChange(
+      item,
+      [...listingChanges, ...inventoryChanges],
+      user
+    )
   }
 
-  return itemUpdatedSuccessfully.success ? res.status(200).send(itemUpdatedSuccessfully) : res.status(500).send(itemUpdatedSuccessfully)
+  return itemUpdatedSuccessfully.success
+    ? res.status(200).send(itemUpdatedSuccessfully)
+    : res.status(500).send(itemUpdatedSuccessfully)
 })
 
 inventoryRouter.put("/update", (req, res, next) => {
@@ -132,6 +142,19 @@ inventoryRouter.get("/", async (req, res, next) => {
   } catch (e) {
     console.log(e)
     return res.status(500).send({ success: false, message: "Server Error" })
+  }
+})
+inventoryRouter.post("/relist/:id", async (req, res, next) => {
+  const user = await getUserObject(req.auth._id)
+  const { _id: userId } = user
+  const itemId = req.params.id
+
+  try {
+
+    //call the relist function, I need to make so I can feed many into it as well.
+  } catch (e) {
+    console.log(e)
+    return res.status(500).send({ success: false, message: e.message })
   }
 })
 

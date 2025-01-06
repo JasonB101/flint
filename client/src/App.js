@@ -21,7 +21,7 @@ import OAuthCode from './components/OAuth/OAuthCode';
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS, logout } = storeData;
+  const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS, logout, deleteExpense } = storeData;
 
   return (
     <div className="appWrapper">
@@ -32,7 +32,7 @@ function App() {
         <Route exact path="/" component={() => <Redirect to="/auth/signin" />} />
         <ProtectedRoute path="/setOAuthTokens" component={() => <OAuthCode {...storeData} />} />
         <ProtectedRoute path="/inventory" component={() => <Inventory {...storeData} />} />
-        <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} submitNewExpense={submitNewExpense} />} />
+        <ProtectedRoute path="/expenses" component={() => <Expense expenses={expenses} deleteExpense={deleteExpense} submitNewExpense={submitNewExpense} />} />
         <ProtectedRoute path="/reports/sales" component={() => <Sales {...storeData} />} />
         <ProtectedRoute path="/reports/sourcing" component={() => <Sourcing {...storeData} />} />
         <ProtectedRoute path="/reports/listing" component={() => <Listing {...storeData} />} />

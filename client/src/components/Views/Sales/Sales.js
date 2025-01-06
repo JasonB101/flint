@@ -140,11 +140,13 @@ const Sales = (props) => {
 
     const expenseTotal = expenses[0]
       ? expenses.reduce((sum, x) => {
-          const isThisYear = new Date(x.dateSold).getFullYear() === year
-          return !isThisYear ? sum + x.amount : sum
+          const isThisYear = new Date(x.date).getFullYear() === year
+          return isThisYear ? sum + x.amount : sum
         }, 0)
       : 0
     console.log(expenseTotal)
+
+
     const info = items.reduce((salesInfo, x) => {
       const { purchasePrice, ebayFees, shippingCost } = x
       let isThisYear = new Date(x.dateSold).getFullYear() === year
@@ -160,7 +162,7 @@ const Sales = (props) => {
           (salesInfo.allItemsProfit / salesInfo.totalCost) * 100
         )
       } else {
-        if (x.listed) {
+        if (x.listed && isThisYear) {
           salesInfo.inventoryCost += x.purchasePrice
         }
         salesInfo.YTDProfit -= isThisYear

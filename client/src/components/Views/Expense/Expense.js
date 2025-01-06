@@ -5,7 +5,7 @@ import Toolbar from "./ToolBar/Toolbar";
 import NewExpenseModal from "./NewExpenseModal/NewExpenseModal"
 
 const Expense = (props) => {
-    const {submitNewExpense} = props;
+    const {submitNewExpense, deleteExpense} = props;
     const [searchTerm, changeSearchTerm] = useState("");
     const [modalOpen, toggleModal] = useState(false);
     const [expenses, changeExpenses] = useState(props.expenses);
@@ -27,7 +27,7 @@ const Expense = (props) => {
     return (
         <div className={Styles.wrapper}>
             <Toolbar {...{ searchTerm, changeSearchTerm, toggleModal }} />
-            <ExpenseTable expenses={itemsToShow}/>
+            <ExpenseTable expenses={itemsToShow} deleteExpense={deleteExpense}/>
             {modalOpen && <NewExpenseModal {...{toggleModal, submitNewExpense}} />}
         </div>
     );

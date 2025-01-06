@@ -7,7 +7,7 @@ const { updateSellerAvgShipping } = require("../lib/userMethods")
 const {
   getEbayListings,
   getShippingTransactions,
-} = require("../lib/ebayMethods")
+} = require("../lib/ebayApi")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const {
   updateInventoryWithSales,

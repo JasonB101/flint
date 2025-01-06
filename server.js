@@ -1,11 +1,11 @@
 const express = require("express")
 const app = express()
 const morgan = require("morgan")
-const mongoose = require("mongoose")
 require("dotenv").config()
 const PORT = process.env.PORT || 3825
 const path = require("path")
 const {expressjwt: expressJWT} = require("express-jwt")
+const connectDB = require("./config/db")
 
 app.use(express.json())
 app.use(morgan('dev'))
@@ -33,14 +33,7 @@ app.use((req, res, next) => {
   })
 
 // Connect to colection
-mongoose.set('strictQuery', false)
-mongoose.connect(process.env.MONGO_ATLAS_CLUSTER1,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}, ((err) => {
-    if (err) throw (err)
-    console.log("Connected to MongoDB")
-}))
+connectDB()
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "client", "build", "index.html"));

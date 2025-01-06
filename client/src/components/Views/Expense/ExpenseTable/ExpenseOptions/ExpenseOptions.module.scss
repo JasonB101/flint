@@ -1,0 +1,28 @@
+.expenseOptionsWrapper {
+  position: relative;
+  .optionsModal {
+    position: absolute; // Make it absolute
+    top: 75%; // Align it to the bottom of the parent
+    left: 10px; // Align it to the left of the parent
+    background-color: white; // Modal background color
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Shadow for depth
+    padding: 0 5px; // Padding
+    z-index: 1000; // Keep it on top of other content
+    border-radius: 3px;
+    p {
+      font-size: 16px;
+      cursor: pointer;
+      line-height: 1;
+      margin: 12px 2px;
+      &:hover {
+        color: #007bff;
+      }
+    }
+  }
+  i {
+    text-align: center;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+  }
+}

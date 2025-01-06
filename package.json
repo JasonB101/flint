@@ -4,7 +4,7 @@
   "description": "",
   "main": "pricelist.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server.js",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
   },
@@ -30,5 +30,8 @@
     "request": "^2.88.0",
     "xml2js": "^0.4.23",
     "xml2json": "^0.12.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
