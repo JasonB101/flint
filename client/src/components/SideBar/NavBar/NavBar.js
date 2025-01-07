@@ -59,6 +59,7 @@ const NavBar = (props) => {
           Churn<div className="spacer"></div>
         </NavLink>, 
         <NavLink
+        key="parthunter"
           to="/parthunter"
           activeStyle={{
             backgroundColor: "#353a42",

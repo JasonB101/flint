@@ -10,7 +10,6 @@ import './global.scss';
 import Header from "./components/Header/Header"
 import SideBar from './components/SideBar/SideBar';
 import { storeContext } from "./Store"
-import VerifyPayPalToken from "./components/ServiceComponents/VerifyPayPalToken"
 import SoldItems from './components/Views/SoldItems/SoldItems';
 import Milestones from './components/Views/Milestones/Milestones';
 import Expense from "./components/Views/Expense/Expense"
@@ -21,12 +20,12 @@ import OAuthCode from './components/OAuth/OAuthCode';
 
 function App() {
   const storeData = useContext(storeContext);
-  const { syncWithEbay, updateItem, setPayPalToken, syncWithPayPal, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS, logout, deleteExpense } = storeData;
+  const { syncWithEbay, updateItem, user, setEbayToken, login, expenses, submitNewExpense, importItemsFromCVS, logout, deleteExpense } = storeData;
 
   return (
     <div className="appWrapper">
       <Header />
-      <SideBar importItemsFromCVS={importItemsFromCVS} login={login} syncWithPayPal={syncWithPayPal} syncWithEbay={syncWithEbay} user={user}/>
+      <SideBar importItemsFromCVS={importItemsFromCVS} login={login} syncWithEbay={syncWithEbay} user={user}/>
       <Switch>
         <Route path="/auth/signin" component={SignIn} />
         <Route exact path="/" component={() => <Redirect to="/auth/signin" />} />
@@ -40,8 +39,6 @@ function App() {
         <ProtectedRoute path="/reports/milestones" component={() => <Milestones {...storeData} />} />
         <ProtectedRoute path="/parthunter" component={() => <PartHunter {...storeData} />} />
         <ProtectedRoute path="/verifyUserToken" component={() => <VerifyUserToken setEbayToken={setEbayToken}/>} />
-        <ProtectedRoute path="/verifyPayPalToken" component={() => <VerifyPayPalToken setPayPalToken={setPayPalToken}/>} />
-
       </Switch>
     </div>
   );

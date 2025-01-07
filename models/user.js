@@ -36,10 +36,6 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
-    syncedWithPayPal: {
-        type: Boolean,
-        default: false
-    },
     ebayFeePercent: {
         type: Number,
         default: 0.1
@@ -50,8 +46,6 @@ const userSchema = new Schema({
     ebayOAuthToken: String,
     ebayRefreshOAuthToken: String,
     OAuthActive: Boolean,
-    payPalToken: String,
-
 })
 
 userSchema.pre("save", function (next) {
@@ -70,8 +64,8 @@ userSchema.methods.withoutSensitiveInfo = function () {
     delete user.email
     delete user.lname
     delete user.ebayToken
-    delete user.payPalToken
     delete user.ebayOAuthToken
+    delete user.ebayRefreshOAuthToken
     return user
 }
 

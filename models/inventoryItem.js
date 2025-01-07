@@ -90,7 +90,6 @@ const inventoryItemSchema = new Schema({
   },
   ebayFees: Number,
   additionalCosts: Number, //Return cost, 1st time shipping cost etc
-  payPalFees: Number,
   profit: Number,
   roi: Number,
   shipped: {

@@ -8,7 +8,7 @@ import NavBar from "./NavBar/NavBar";
 
 const SideBar = (props) => {
 
-    const { syncWithEbay, syncWithPayPal, user, importItemsFromCVS } = props;
+    const { syncWithEbay, user, importItemsFromCVS } = props;
 
     return (
         <div className={Styles.wrapper}>

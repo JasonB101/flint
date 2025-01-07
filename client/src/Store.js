@@ -1,58 +1,37 @@
-import React, { createContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useState, useEffect } from "react"
 import axios from "axios"
 import prepItemsForImport from "./lib/massImportPrep"
 import readFile from "./lib/readAndParseCVS"
-const authAxios = axios.create()
+import { AuthContext } from './AuthContext'
+const userToken = localStorage.getItem("token") || false
+
 const userAxios = axios.create({ timeout: 60000 })
 export const storeContext = createContext({})
 
 userAxios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token")
-  config.headers.Authorization = `Bearer ${token}`
+  config.headers.Authorization = `Bearer ${userToken}`
   return config
 })
 
 const Store = (props) => {
-  //change initial value of user to empty object
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || {}
-  )
+  const { user, login, logout, setUser } = useContext(AuthContext)
+  
   const [items, changeItems] = useState([])
   const [expenses, setExpenses] = useState([])
   const [ebayListings, setEbayListings] = useState([])
   const [newListings, setNewListings] = useState(sortNewListings())
 
   useEffect(() => {
-    if (user.token) {
+    console.log(userToken)
+    if (userToken) {
       getExpenses()
       if (user.syncedWithEbay && user.OAuthActive) {
-        console.log("Made it")
         getEbay()
       } else {
         getInventoryItems()
       }
     }
   }, [user])
-
-  const login = (credentials) => {
-    return authAxios.post("/auth/login", credentials).then(async (response) => {
-      const {
-        user,
-        user: { token },
-      } = response.data
-      localStorage.setItem("user", JSON.stringify(user))
-      localStorage.setItem("token", token)
-      setUser(user)
-
-      return response
-    })
-  }
-
-  const logout = () => {
-    localStorage.removeItem("user")
-    localStorage.removeItem("token")
-    setUser({})
-  }
 
   async function checkNewScores(newScores) {
     console.log("Checking New Scores is Disabled")
@@ -216,11 +195,6 @@ const Store = (props) => {
     }
   }
 
-  async function syncWithPayPal() {
-    //Eventually this will be a Permissions Flow, for right now, its only 1st person capable
-    //Wish eBay would fix their ish
-    setPayPalToken()
-  }
 
   function setEbayToken() {
     userAxios.post("/api/syncebay/setebaytoken").then((results) => {
@@ -252,14 +226,6 @@ const Store = (props) => {
     return { success, message }
   }
 
-  function setPayPalToken() {
-    userAxios.get("/api/syncpaypal/setAccessToken").then((results) => {
-      const data = results.data
-      if (data.success) {
-        setUser(data.user)
-      }
-    })
-  }
 
   function getEbay() {
     userAxios
@@ -339,8 +305,6 @@ const Store = (props) => {
         editInventoryItem,
         linkItem,
         syncWithEbay,
-        syncWithPayPal,
-        setPayPalToken,
         setEbayToken,
         login,
         expenses,
