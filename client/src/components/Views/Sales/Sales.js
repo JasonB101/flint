@@ -10,7 +10,7 @@ import {
 
 const Sales = (props) => {
   const [dateType, setDateType] = useState("week")
-  const [year, setYear] = useState(Date().getFullYear())
+  const [year, setYear] = useState(new Date().getFullYear())
 
   const [profitTrue, setProfitState] = useState(true)
 

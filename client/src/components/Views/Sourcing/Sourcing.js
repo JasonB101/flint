@@ -6,7 +6,7 @@ import { YearSourcingChart, YearSourcingChartByWeek, YearSourcingChartByMonth } 
 
 const Sourcing = (props) => {
     const [dateType, setDateType] = useState("week");
-    const [year, setYear] = useState(Date().getFullYear());
+    const [year, setYear] = useState(new Date().getFullYear());
 
     //dateType is day week year
     const { items } = props;
