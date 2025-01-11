@@ -73,13 +73,13 @@ function assembleSoldInfo(items) {
   }
 
   items.forEach((x) => {
-    const { priceSold, shippingCost, profit, roi } = x
+    const { priceSold, shippingCost, profit, roi, purchasePrice } = x
     soldObj.soldAmount++
     soldObj.totalProfit += profit
     soldObj.totalSales += priceSold
     soldObj.avgShipping += shippingCost < 1 ? 13 : shippingCost //This is a hard coded average. Too many items have 0 shipping cost. Aslong as you always update 0 shipping cost this should be fine
     soldObj.avgPriceSold += priceSold
-    soldObj.avgRoi += roi
+    soldObj.avgRoi += purchasePrice < 1 ? 100 : roi //Items that are sourced for free, and purchasePrice set to $0.01 throw off the avg, so they get recorded as 100% roi
     soldObj.avgProfit += profit
     soldObj.avgDaysListed += x.daysListed
   })
