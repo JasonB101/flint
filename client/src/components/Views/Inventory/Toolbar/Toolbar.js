@@ -9,8 +9,8 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 const Toolbar = (props) => {
   const { toggleModal, searchTerm, changeSearchTerm, items } = props
-  const listingDetails = assembleListingInfo(items)
-  const {totalListed, activeListings, inventoryCost} = listingDetails
+  const listingsDetails = assembleListingInfo(items)
+  const {totalListed, activeListings, inventoryCost} = listingsDetails
 
   return (
     <div className={Styles.wrapper}>

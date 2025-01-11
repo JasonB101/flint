@@ -100,6 +100,7 @@ const inventoryItemSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  avgDaysListed: Number,
   status: {
     type: String,
     default: "active",

@@ -8,7 +8,7 @@ import Toolbar from "./Toolbar/Toolbar"
 const Inventory = (props) => {
 
     const { items, ebayListings, submitNewItem, newListings, editInventoryItem, linkItem, user: {averageShippingCost, ebayFeePercent}, getActiveListings } = props;
-    const [inventoryList] = useState(items.filter(x => x.status === "active"))
+    const [inventoryList] = useState(items.filter(x => x.listed))
     const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
     const nextSku = items.reduce((highest, x) => {

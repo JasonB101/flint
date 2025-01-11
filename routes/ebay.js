@@ -61,7 +61,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     if (shippingTransactions.failedOAuth)
       throw new Error("Need to Update OAuth")
     shippingTransactions = shippingTransactions.transactions
-    console.log("Got Transactions, making changes.")
+    console.log(`Got Transactions, making changes. ${shippingTransactions.length}`)
     const [shippingUpdates, completedSales, ebayListings] = await Promise.all([
       updateAllZeroShippingCost(userId, shippingTransactions),
       getCompletedSales(ebayOAuthToken),

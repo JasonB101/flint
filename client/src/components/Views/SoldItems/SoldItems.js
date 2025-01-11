@@ -27,7 +27,7 @@ const SoldItems = (props) => {
     return (
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
-                searchTerm={soldItemsSearchTerm} />
+                searchTerm={soldItemsSearchTerm} items={soldItems} />
             <SoldTable updateItem={updateItem} soldItems={itemsToShow} />
         </div>
     );

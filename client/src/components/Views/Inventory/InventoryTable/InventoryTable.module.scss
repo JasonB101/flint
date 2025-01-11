@@ -2,13 +2,8 @@
   position: relative;
   padding-bottom: 5px;
   border-top: 1px solid rgb(206, 204, 204);
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  
-
+  overflow-y: auto; /* Enable vertical scrolling */
+ 
   th::before {
     content: "";
     width: 100%;
@@ -77,6 +72,7 @@
 }
 
 .itemsList{
-  overflow: visible !important;
+ 
+  background: white;
 
 }

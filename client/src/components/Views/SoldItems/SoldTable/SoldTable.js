@@ -54,7 +54,7 @@ const SoldTable = (props) => {
     function populateRow(itemObject) {
         const { title, partNo, sku, datePurchased,
             dateSold, purchasePrice, priceSold, shippingCost,
-            ebayFees, profit, _id, buyer } = itemObject;
+            ebayFees, profit, _id, buyer, daysListed } = itemObject;
         const username = buyer ? buyer: "Unknown";
         return (
             <tr key={_id}>
@@ -63,7 +63,7 @@ const SoldTable = (props) => {
                 <td>{sku}</td>
                 <td>{datePurchased}</td>
                 <td>{dateSold}</td>
-                <td>{getDaysBetween(datePurchased, dateSold)}</td>
+                <td>{daysListed}</td>
                 <td>${valueToFixed(purchasePrice)}</td>
                 <td>${valueToFixed(priceSold)}</td>
                 <td className={Styles['tdEdit']}>
@@ -126,7 +126,7 @@ const SoldTable = (props) => {
                         <th>SKU</th>
                         <th>Date Purchased</th>
                         <th>Date Sold</th>
-                        <th>Days Held</th>
+                        <th>Days Listed</th>
                         <th>Purchase Price</th>
                         <th>Price Sold</th>
                         <th>Shipping Cost</th>
