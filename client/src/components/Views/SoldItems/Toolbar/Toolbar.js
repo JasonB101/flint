@@ -96,19 +96,19 @@ function assembleSoldInfo(items) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(value)
   }
 
   return {
     soldAmount: soldObj.soldAmount.toLocaleString("en-US"),
-    totalProfit: formatCurrency(soldObj.totalProfit),
-    totalSales: formatCurrency(soldObj.totalSales),
-    avgRoi: soldObj.avgRoi.toFixed(2),
+    totalProfit: formatCurrency(Math.floor(soldObj.totalProfit)),
+    totalSales: formatCurrency(Math.floor(soldObj.totalSales)),
+    avgRoi: Math.floor(soldObj.avgRoi),
     avgShipping: formatCurrency(soldObj.avgShipping),
-    avgPriceSold: formatCurrency(soldObj.avgPriceSold),
-    avgProfit: formatCurrency(soldObj.avgProfit),
+    avgPriceSold: formatCurrency(Math.floor(soldObj.avgPriceSold)),
+    avgProfit: formatCurrency(Math.floor(soldObj.avgProfit)),
     avgDaysListed: Math.floor(soldObj.avgDaysListed),
   }
 }
