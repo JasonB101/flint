@@ -13,7 +13,7 @@ const {
   updateInventoryWithSales,
   getInventoryItems,
   updateAllZeroShippingCost,
-  figureProfit,
+  figureExpectedProfit,
   verifyCorrectPricesInInventoryItems,
 } = require("../lib/inventoryMethods")
 const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
@@ -52,6 +52,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     ebayToken: ebayAuthToken,
     ebayOAuthToken = "0",
     ebayRefreshOAuthToken,
+    ebayFeePercent
   } = userObject
 
   try {
@@ -78,7 +79,8 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(
       inventoryItems,
       ebayListings,
-      averageShippingCost
+      averageShippingCost,
+      ebayFeePercent
     )
 
     if (verifiedCorrectInfo) {
@@ -89,7 +91,6 @@ ebayRouter.get("/getebay", async (req, res, next) => {
       ebayListings,
       inventoryItems,
     }
-    console.log("This is right before the send")
     res.send(response)
   } catch (e) {
     console.log(e, "Access Token Expired")
@@ -123,7 +124,7 @@ ebayRouter.post("/refreshOToken", async (req, res, next) => {
 
 ebayRouter.put("/linkItem/:id", async (req, res, next) => {
   const { ItemID, BuyItNowPrice, SKU } = req.body
-  const { _id: userId, averageShippingCost } = req.user
+  const { _id: userId, averageShippingCost, ebayFeePercent } = req.user
   console.log(req.body)
   const item = await InventoryItem.findById(req.params.id)
   const purchasePrice = item.toObject().purchasePrice
@@ -132,10 +133,11 @@ ebayRouter.put("/linkItem/:id", async (req, res, next) => {
     listed: true,
     ebayId: ItemID,
     listedPrice: BuyItNowPrice,
-    expectedProfit: figureProfit(
+    expectedProfit: figureExpectedProfit(
       BuyItNowPrice,
       purchasePrice,
-      averageShippingCost
+      averageShippingCost,
+      ebayFeePercent
     ),
     userId: req.auth._id,
   }

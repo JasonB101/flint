@@ -6,7 +6,7 @@ import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
 
-const ebayFeePercent = 0.1 //This can change, I could figure the perctange by using a sold item, and save that percentage into the user object, if it ever changes then update it
+
 
 const ListingForm = (props) => {
   const {
@@ -16,6 +16,7 @@ const ListingForm = (props) => {
     items,
     averageShippingCost,
     getActiveListings,
+    ebayFeePercent
   } = props
   const { categoryId, partNo, sku, purchasePrice } = itemForm
   const autoFill = categories.find((x) => x.id == categoryId) || {
@@ -93,10 +94,11 @@ const ListingForm = (props) => {
     }
   }, [items, partNo])
 
-  const expectedProfit = figureProfit(
+  const expectedProfit = figureExpectedProfit(
     inputForm.listedPrice,
     purchasePrice,
-    averageShippingCost
+    averageShippingCost,
+    ebayFeePercent
   )
 
   useEffect(() => {
@@ -386,13 +388,13 @@ const ListingForm = (props) => {
   )
 }
 
-function figureProfit(listedPrice, purchasePrice, averageShippingCost) {
+function figureExpectedProfit(listedPrice, purchasePrice, averageShippingCost, ebayFeePercent = 0.1) {
   //Need to find a way to determine what tier the user is on, and how much their eBay fees are.
+  //Need to add estimated taxes to this calculation
   const ebayFee = listedPrice * ebayFeePercent
   //Need to get purchasePrice
   return +(listedPrice - ebayFee - averageShippingCost - purchasePrice).toFixed(
     2
   )
 }
-
 export default ListingForm

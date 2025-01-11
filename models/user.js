@@ -41,6 +41,7 @@ const userSchema = new Schema({
         default: 0.1
     },
     userDescriptionTemplate: String,
+    postalCode: Number,
     notifications: Array,
     ebayToken: String,
     ebayOAuthToken: String,

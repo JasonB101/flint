@@ -2,7 +2,7 @@ const express = require("express")
 const inventoryRouter = express.Router()
 const {
   getInventoryItems,
-  figureProfit,
+  figureExpectedProfit,
   updateUnlisted,
 } = require("../lib/inventoryMethods")
 const { createListing } = require("../lib/ebayApi")
@@ -15,17 +15,22 @@ inventoryRouter.post("/", async (req, res, next) => {
   console.log(req.body)
   const userRaw = await User.findOne({ _id: req.auth._id })
   const user = userRaw.toObject()
-  const { ebayToken, averageShippingCost, userDescriptionTemplate } = user
+  const { ebayToken, averageShippingCost, userDescriptionTemplate, postalCode, ebayFeePercent } = user
   const listingDetails = req.body
   const listingResponse = await createListing(
     ebayToken,
     listingDetails,
-    userDescriptionTemplate
+    userDescriptionTemplate,
+    postalCode
   )
+  if (!listingResponse.success){
+    return res.status(500).send({ success: false, message: listingResponse.message })
+  }
   const inventoryItemBody = parseInventoryObject(
     listingResponse,
     listingDetails,
-    averageShippingCost
+    averageShippingCost,
+    ebayFeePercent
   )
   if (inventoryItemBody.ebayId) {
     let inventoryItem = new InventoryItem(inventoryItemBody)
@@ -179,7 +184,8 @@ inventoryRouter.delete("/:id", (req, res, next) => {
 function parseInventoryObject(
   listingResponse,
   listingDetails,
-  averageShipping
+  averageShipping,
+  ebayFeePercent
 ) {
   const {
     title,
@@ -224,7 +230,7 @@ function parseInventoryObject(
     brand,
     shippingService,
     listed: true,
-    expectedProfit: figureProfit(listedPrice, purchasePrice, averageShipping),
+    expectedProfit: figureExpectedProfit(listedPrice, purchasePrice, averageShipping, ebayFeePercent),
   }
   return inventoryItemBody
 }

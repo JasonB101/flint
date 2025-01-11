@@ -1,37 +1,42 @@
 import React, { createContext, useContext, useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import axios from "axios"
 import prepItemsForImport from "./lib/massImportPrep"
 import readFile from "./lib/readAndParseCVS"
-import { AuthContext } from './AuthContext'
-const userToken = localStorage.getItem("token") || false
+import { AuthContext } from "./AuthContext"
 
 const userAxios = axios.create({ timeout: 60000 })
 export const storeContext = createContext({})
 
-userAxios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${userToken}`
-  return config
-})
-
 const Store = (props) => {
-  const { user, login, logout, setUser } = useContext(AuthContext)
-  
+  const { user, login, logout, setUser, token } = useContext(AuthContext)
   const [items, changeItems] = useState([])
   const [expenses, setExpenses] = useState([])
   const [ebayListings, setEbayListings] = useState([])
   const [newListings, setNewListings] = useState(sortNewListings())
+  const location = useLocation()
+
+  const authRoutes = ["/auth/signin", "/auth/signup"]
+  const isAuthRoute = authRoutes.includes(location.pathname)
 
   useEffect(() => {
-    console.log(userToken)
-    if (userToken) {
+    if (token && !isAuthRoute) {
+      // Setup interceptor
+      const interceptor = userAxios.interceptors.request.use((config) => {
+        config.headers.Authorization = `Bearer ${token}`
+        return config
+      })
+
+      // Make API calls
       getExpenses()
       if (user.syncedWithEbay && user.OAuthActive) {
         getEbay()
-      } else {
-        getInventoryItems()
       }
+
+      // Cleanup interceptor
+      return () => userAxios.interceptors.request.eject(interceptor)
     }
-  }, [user])
+  }, [token, isAuthRoute])
 
   async function checkNewScores(newScores) {
     console.log("Checking New Scores is Disabled")
@@ -157,10 +162,12 @@ const Store = (props) => {
       .then((result) => changeItems(result.data))
   }
   function getExpenses() {
-    userAxios.get("/api/expense").then((result) => {
-      setExpenses(result.data)
-    })
-    .catch((err) => console.log("Get Expenses Failed", err.message))
+    userAxios
+      .get("/api/expense")
+      .then((result) => {
+        setExpenses(result.data)
+      })
+      .catch((err) => console.log("Get Expenses Failed", err.message))
   }
 
   function linkItem(inventoryId, listingInfo) {
@@ -195,7 +202,6 @@ const Store = (props) => {
     }
   }
 
-
   function setEbayToken() {
     userAxios.post("/api/syncebay/setebaytoken").then((results) => {
       const data = results.data
@@ -225,7 +231,6 @@ const Store = (props) => {
     const { success, message } = result.data
     return { success, message }
   }
-
 
   function getEbay() {
     userAxios
