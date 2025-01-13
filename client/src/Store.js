@@ -9,7 +9,7 @@ const userAxios = axios.create({ timeout: 60000 })
 export const storeContext = createContext({})
 
 const Store = (props) => {
-  const { user, login, logout, setUser, token } = useContext(AuthContext)
+  const { user, login, setUser, setToken, token } = useContext(AuthContext)
   const [items, changeItems] = useState([])
   const [expenses, setExpenses] = useState([])
   const [ebayListings, setEbayListings] = useState([])
@@ -37,6 +37,17 @@ const Store = (props) => {
       return () => userAxios.interceptors.request.eject(interceptor)
     }
   }, [token, isAuthRoute])
+
+  const logout = () => {
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+      setToken(null)
+      setUser({})
+      changeItems([])
+      setExpenses([])
+      setEbayListings([])
+      setNewListings([])
+    }
 
   async function checkNewScores(newScores) {
     console.log("Checking New Scores is Disabled")

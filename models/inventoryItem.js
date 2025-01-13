@@ -14,7 +14,7 @@ const inventoryItemSchema = new Schema({
   },
   brand: {
     type: String,
-    default: ""
+    default: "",
   },
   ebayId: {
     type: String,
@@ -27,15 +27,15 @@ const inventoryItemSchema = new Schema({
   },
   categoryId: {
     type: String,
-    default: ""
+    default: "",
   },
-  conditionId:{
+  conditionId: {
     type: String,
-    default: "3000"
+    default: "3000",
   },
-  conditionDescription:{
+  conditionDescription: {
     type: String,
-    default: ""
+    default: "",
   },
   purchaseLocation: {
     type: String,
@@ -43,7 +43,7 @@ const inventoryItemSchema = new Schema({
   },
   watchers: {
     type: Number,
-    default: 0
+    default: 0,
   },
   purchasePrice: {
     type: Number,
@@ -55,11 +55,11 @@ const inventoryItemSchema = new Schema({
   },
   acceptOfferHigh: {
     type: Number,
-    default: 0
+    default: 0,
   },
   declineOfferLow: {
     type: Number,
-    default: 0
+    default: 0,
   },
   description: {
     type: String,
@@ -68,7 +68,7 @@ const inventoryItemSchema = new Schema({
   dateListed: String,
   dateReListed: {
     type: String,
-    default: ""
+    default: "",
   },
   imgUrl: String,
   expectedProfit: {
@@ -86,7 +86,7 @@ const inventoryItemSchema = new Schema({
   },
   shippingService: {
     type: String,
-    defaut: ""
+    defaut: "",
   },
   ebayFees: Number,
   additionalCosts: Number, //Return cost, 1st time shipping cost etc
@@ -100,7 +100,7 @@ const inventoryItemSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  avgDaysListed: Number,
+  daysListed: Number,
   status: {
     type: String,
     default: "active",
@@ -117,6 +117,5 @@ const inventoryItemSchema = new Schema({
     required: true,
   },
 })
-
 
 module.exports = mongoose.model("InventoryItem", inventoryItemSchema)
