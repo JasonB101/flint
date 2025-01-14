@@ -6,8 +6,6 @@ import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
 
-
-
 const ListingForm = (props) => {
   const {
     toggleModal,
@@ -16,7 +14,7 @@ const ListingForm = (props) => {
     items,
     averageShippingCost,
     getActiveListings,
-    ebayFeePercent
+    ebayFeePercent,
   } = props
   const { categoryId, partNo, sku, purchasePrice } = itemForm
   const autoFill = categories.find((x) => x.id == categoryId) || {
@@ -72,7 +70,7 @@ const ListingForm = (props) => {
           brand = "",
           shippingService = "USPSPriority",
           listedPrice,
-          location = ""
+          location = "",
         } = existing
         let labelDetails = getLabelFromTitle(title)
         let { year, model } = labelDetails
@@ -104,20 +102,19 @@ const ListingForm = (props) => {
   useEffect(() => {
     // Fetch active listings when the component mounts and when partNo changes
     const fetchActiveListings = async () => {
-        try {
-            const activeListingsData = await getActiveListings(partNo)
-            changeActiveListingsData((prevActiveListings) => {
-                return {
-                    ...prevActiveListings,
-                    activeListings: activeListingsData,
-                }
-            })
-        } catch (error) {
-            console.error("Error fetching active listings:", error.message)
-        }
+      try {
+        const activeListingsData = await getActiveListings(partNo)
+        changeActiveListingsData((prevActiveListings) => {
+          return {
+            ...prevActiveListings,
+            activeListings: activeListingsData,
+          }
+        })
+      } catch (error) {
+        console.error("Error fetching active listings:", error.message)
+      }
     }
     if (partNo !== "N/A") {
-      
       fetchActiveListings()
     }
   }, [partNo, getActiveListings])
@@ -388,13 +385,17 @@ const ListingForm = (props) => {
   )
 }
 
-function figureExpectedProfit(listedPrice, purchasePrice, averageShippingCost, ebayFeePercent = 0.1) {
-  //Need to find a way to determine what tier the user is on, and how much their eBay fees are.
-  //Need to add estimated taxes to this calculation
-  const ebayFee = listedPrice * ebayFeePercent
-  //Need to get purchasePrice
-  return +(listedPrice - ebayFee - averageShippingCost - purchasePrice).toFixed(
-    2
-  )
+function figureExpectedProfit(
+  listedPrice,
+  purchasePrice,
+  averageShippingCost,
+  ebayFeePercent = 0.1135,
+  estimatedTaxRate = 0.08
+) {
+  const taxOnListedPrice = listedPrice * estimatedTaxRate;
+  const ebayFee = (listedPrice + taxOnListedPrice) * ebayFeePercent;
+  const expectedProfit = listedPrice - ebayFee - averageShippingCost - purchasePrice;
+
+  return +expectedProfit.toFixed(2);
 }
 export default ListingForm

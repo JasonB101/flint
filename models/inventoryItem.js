@@ -68,6 +68,10 @@ const inventoryItemSchema = new Schema({
   dateListed: String,
   dateReListed: {
     type: String,
+    default: null,
+  },
+  lastPriceReduction: {
+    type: String,
     default: "",
   },
   imgUrl: String,
