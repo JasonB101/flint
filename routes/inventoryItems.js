@@ -187,6 +187,7 @@ function parseInventoryObject(
   averageShipping,
   ebayFeePercent
 ) {
+  console.log("listing response", listingResponse)
   const {
     title,
     partNo,
@@ -207,7 +208,7 @@ function parseInventoryObject(
     shippingService,
   } = listingDetails
   const {
-    AddFixedPriceItemResponse: { ItemID: ebayId },
+    listingData: {AddFixedPriceItemResponse: { ItemID: ebayId }},
   } = listingResponse
   //may have to suck the listing fees out of this object someday as well
   const inventoryItemBody = {
