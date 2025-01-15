@@ -74,7 +74,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
       shippingTransactions
     )
 
-    let inventoryItems = await getInventoryItems(userId)
+    let inventoryItems = await getInventoryItems(userId, true) //True is setting to get items that are listed: true
 
     const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(
       inventoryItems,
