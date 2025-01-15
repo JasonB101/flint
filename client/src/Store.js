@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react"
 import { useLocation } from "react-router-dom"
 import axios from "axios"
 import prepItemsForImport from "./lib/massImportPrep"
@@ -9,44 +15,65 @@ const userAxios = axios.create({ timeout: 60000 })
 export const storeContext = createContext({})
 
 const Store = (props) => {
-  const { user, login, setUser, setToken, token } = useContext(AuthContext)
-  const [items, changeItems] = useState([])
-  const [expenses, setExpenses] = useState([])
-  const [ebayListings, setEbayListings] = useState([])
-  const [newListings, setNewListings] = useState(sortNewListings())
+  const { user, setUser, login, logout } = useContext(AuthContext)
+
+  const [state, changeState] = useState({
+    items: [],
+    expenses: [],
+    ebayListings: [],
+    // newListings: []
+  })
+  const { items, expenses, ebayListings } = state
   const location = useLocation()
 
   const authRoutes = ["/auth/signin", "/auth/signup"]
   const isAuthRoute = authRoutes.includes(location.pathname)
-  userAxios.interceptors.request.use((config) => {
-    config.headers.Authorization = `Bearer ${token}`
-    return config
-  })
+  const interceptorRef = useRef(null)
 
   useEffect(() => {
-    if (token && !isAuthRoute) {
-      // Setup interceptor
+    // Clear existing interceptor
+    if (interceptorRef.current !== null) {
+      userAxios.interceptors.request.eject(interceptorRef.current)
+    }
 
-      // Make API calls
-      getExpenses()
-      if (user.syncedWithEbay && user.OAuthActive) {
-        getEbay()
+    // Create new interceptor if user exists
+    if (user?.token) {
+      interceptorRef.current = userAxios.interceptors.request.use((config) => {
+        config.headers["Authorization"] = `Bearer ${user.token}`
+        return config
+      })
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (interceptorRef.current !== null) {
+        userAxios.interceptors.request.eject(interceptorRef.current)
       }
-
-      // Cleanup interceptor
     }
-  }, [token, isAuthRoute])
-
-  const logout = () => {
-      localStorage.removeItem("user")
-      localStorage.removeItem("token")
-      setToken(null)
-      setUser({})
-      changeItems([])
-      setExpenses([])
-      setEbayListings([])
-      setNewListings([])
+  }, [user])
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user?.token && !isAuthRoute) {
+        getExpenses()
+        if (user.syncedWithEbay && user.OAuthActive) {
+          try {
+            await getEbay()
+          } catch (err) {
+            console.error("Error fetching eBay data:", err)
+          }
+        }
+      } else {
+        changeState({
+          items: [],
+          expenses: [],
+          ebayListings: [],
+        })
+      }
     }
+
+    fetchData()
+  }, [user, isAuthRoute])
 
   async function checkNewScores(newScores) {
     console.log("Checking New Scores is Disabled")
@@ -95,7 +122,9 @@ const Store = (props) => {
     userAxios
       .post("/api/inventoryItems", form)
       .then((result) => {
-        changeItems([...items, result.data.item])
+        changeState((prevState) => {
+          return { ...prevState, items: [...items, result.data.item] }
+        })
         return true
       })
       .catch((err) => {
@@ -120,7 +149,9 @@ const Store = (props) => {
     userAxios
       .post("/api/inventoryItems//massImport", form)
       .then((result) => {
-        changeItems([...items, result.data.item])
+        changeState((prevState) => {
+          return { ...prevState, items: [...items, result.data.item] }
+        })
       })
       .catch((err) => console.log(err))
   }
@@ -129,7 +160,9 @@ const Store = (props) => {
     userAxios
       .post("/api/expense/addexpense", form)
       .then((result) => {
-        setExpenses([...expenses, result.data.expense])
+        changeState((prevState) => {
+          return { ...prevState, expenses: [...expenses, result.data.expense] }
+        })
       })
       .catch((err) => console.log(err))
   }
@@ -141,7 +174,9 @@ const Store = (props) => {
         const updatedExpenses = expenses.filter(
           (expense) => expense._id !== expenseId
         )
-        setExpenses(updatedExpenses)
+        changeState((prevState) => {
+          return { ...prevState, expenses: updatedExpenses }
+        })
       })
       .catch((err) => console.log(err))
   }
@@ -149,7 +184,11 @@ const Store = (props) => {
   function getInventoryItems() {
     userAxios
       .get("/api/inventoryItems")
-      .then((result) => changeItems(result.data))
+      .then((result) =>
+        changeState((prevState) => {
+          return { ...prevState, items: result.data }
+        })
+      )
       .catch((err) => console.log("Get Inventory Failed", err.message))
   }
   function editInventoryItem(itemObject) {
@@ -159,7 +198,9 @@ const Store = (props) => {
         const updatedItems = items.map((item) =>
           item._id === itemObject.itemId ? { ...item, ...itemObject } : item
         )
-        changeItems(updatedItems)
+        changeState((prevState) => {
+          return { prevState, items: updatedItems }
+        })
       })
       .catch((err) => {
         alert("An error has occured during the update")
@@ -169,38 +210,44 @@ const Store = (props) => {
   function updateUnlisted(ids) {
     userAxios
       .post("/api/inventoryItems/updateUnlisted", { ids: ids })
-      .then((result) => changeItems(result.data))
+      .then((result) =>
+        changeState((prevState) => {
+          return { ...prevState, items: result.data }
+        })
+      )
   }
   function getExpenses() {
     userAxios
       .get("/api/expense")
       .then((result) => {
-        setExpenses(result.data)
+        changeState((prevState) => {
+          return { ...prevState, expenses: result.data }
+        })
       })
       .catch((err) => console.log("Get Expenses Failed", err.message))
   }
 
-  function linkItem(inventoryId, listingInfo) {
-    userAxios
-      .put(`/api/ebay/linkItem/${inventoryId}`, listingInfo)
-      .then((result) => {
-        const success = result.data.success
+  // function linkItem(inventoryId, listingInfo) {
+  //   userAxios
+  //     .put(`/api/ebay/linkItem/${inventoryId}`, listingInfo)
+  //     .then((result) => {
+  //       const success = result.data.success
 
-        if (success) {
-          const updatedItem = result.data.updatedItem
-          console.log(updatedItem)
-          //Need to learn how to useReducer
-          changeItems(
-            items.map((x) => (x._id === updatedItem._id ? updatedItem : x))
-          )
-          setNewListings(
-            newListings.filter((x) => x.ebayId !== listingInfo.ItemID)
-          )
-        } else {
-          alert("Something went wrong! Item not linked.")
-        }
-      })
-  }
+  //       if (success) {
+  //         const updatedItem = result.data.updatedItem
+  //         console.log(updatedItem)
+  //         //Need to learn how to useReducer
+  //         changeItems(
+  //           items.map((x) => (x._id === updatedItem._id ? updatedItem : x))
+  //         )
+  //         setNewListings(
+  //           newListings.filter((x) => x.ebayId !== listingInfo.ItemID)
+  //         )
+  //       } else {
+  //         alert("Something went wrong! Item not linked.")
+  //       }
+  //     })
+  // }
   async function syncWithEbay() {
     try {
       const linkData = await userAxios.get("/api/syncebay/gettokenlink")
@@ -244,12 +291,20 @@ const Store = (props) => {
 
   function getEbay() {
     userAxios
-      .get("/api/ebay/getebay", { timeout: 30000 })
+      .get("/api/ebay/getebay", {
+        headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
+        timeout: 30000,
+      })
       .then((result) => {
         const data = result.data
         const { ebayListings = [], inventoryItems = [] } = data
-        changeItems(inventoryItems)
-        setEbayListings(ebayListings)
+        changeState((prevState) => {
+          return {
+            ...prevState,
+            items: inventoryItems,
+            ebayListings: ebayListings,
+          }
+        })
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
@@ -265,8 +320,13 @@ const Store = (props) => {
                 .then((result) => {
                   const data = result.data
                   const { ebayListings = [], inventoryItems = [] } = data
-                  changeItems(inventoryItems)
-                  setEbayListings(ebayListings)
+                  changeState((prevState) => {
+                    return {
+                      ...prevState,
+                      items: inventoryItems,
+                      ebayListings: ebayListings,
+                    }
+                  })
                 })
                 .catch((err) => {
                   console.log(err.message)
@@ -300,13 +360,13 @@ const Store = (props) => {
     preppedItems.forEach((x) => submitMassImport(x))
   }
 
-  function sortNewListings() {
-    const ebayIds = items.map((x) => x.ebayId)
-    const newEbayListings = ebayListings.filter((x) => {
-      return ebayIds.indexOf(x.ItemID) === -1
-    })
-    return newEbayListings
-  }
+  // function sortNewListings(items) {
+  //   const ebayIds = items.map((x) => x.ebayId)
+  //   const newEbayListings = ebayListings.filter((x) => {
+  //     return ebayIds.indexOf(x.ItemID) === -1
+  //   })
+  //   return newEbayListings
+  // }
 
   return (
     <storeContext.Provider
@@ -316,9 +376,9 @@ const Store = (props) => {
         submitNewItem,
         submitNewExpense,
         deleteExpense,
-        newListings,
+        // newListings,
         editInventoryItem,
-        linkItem,
+        // linkItem,
         syncWithEbay,
         setEbayToken,
         login,

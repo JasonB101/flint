@@ -49,10 +49,10 @@ const Inventory = (props) => {
                 toggleModal={toggleNewItemModal}
                 items={items} />
             <InventoryTable editInventoryItem={editInventoryItem} openLinkModal={openLinkModal} ebayListings={ebayListings} inventoryList={itemsToShow} />
-            {inventoryId && <LinkItemModal inventoryId={inventoryId}
+            {/* {inventoryId && <LinkItemModal inventoryId={inventoryId}
                 linkItem={linkItem}
                 newListings={newListings}
-                setInventoryId={setInventoryId} />}
+                setInventoryId={setInventoryId} />} */}
             {showNewItemModal && <NewItemModal items={items} nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} averageShippingCost={averageShippingCost} ebayFeePercent={ebayFeePercent} getActiveListings={getActiveListings} />}
         </div>
     );

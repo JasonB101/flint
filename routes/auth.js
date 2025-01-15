@@ -53,6 +53,19 @@ authRouter.post("/login", (req, res, next) => {
 
 })
 
+authRouter.post('/logout', (req, res) => {
+    // If using sessions, destroy the session
+    // req.session.destroy((err) => {
+    //   if (err) {
+    //     return res.status(500).send('Failed to log out');
+    //   }
+    //   res.status(200).send('Logged out successfully');
+    // });
+  
+    // // If using JWT, you can optionally blacklist the token or just let it expire
+    res.status(200).send('Logged out successfully');
+  });
+
 
 
 const loginUserInfo = (user) => {

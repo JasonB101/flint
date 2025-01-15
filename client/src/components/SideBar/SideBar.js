@@ -15,7 +15,7 @@ const SideBar = (props) => {
             <SideBarHeader />
 
 
-            {user.token && <>
+            {user?.token && <>
                 <NavBar />
                 <div className="spacer"></div>
                 {
