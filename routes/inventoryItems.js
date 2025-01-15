@@ -4,6 +4,7 @@ const {
   getInventoryItems,
   figureExpectedProfit,
   updateUnlisted,
+  parseInventoryObject
 } = require("../lib/inventoryMethods")
 const { createListing } = require("../lib/ebayApi")
 const InventoryItem = require("../models/inventoryItem")
@@ -180,61 +181,6 @@ inventoryRouter.delete("/:id", (req, res, next) => {
     else res.send({ success: true })
   })
 })
-
-function parseInventoryObject(
-  listingResponse,
-  listingDetails,
-  averageShipping,
-  ebayFeePercent
-) {
-  console.log("listing response", listingResponse)
-  const {
-    title,
-    partNo,
-    sku,
-    listedPrice,
-    acceptOfferHigh,
-    declineOfferLow,
-    description,
-    conditionId,
-    conditionDescription,
-    dateListed,
-    location,
-    datePurchased,
-    purchasePrice,
-    purchaseLocation,
-    categoryId,
-    brand,
-    shippingService,
-  } = listingDetails
-  const {
-    listingData: {AddFixedPriceItemResponse: { ItemID: ebayId }},
-  } = listingResponse
-  //may have to suck the listing fees out of this object someday as well
-  const inventoryItemBody = {
-    title,
-    partNo,
-    sku,
-    listedPrice,
-    acceptOfferHigh,
-    declineOfferLow,
-    description,
-    conditionId,
-    conditionDescription,
-    location,
-    datePurchased,
-    purchasePrice,
-    purchaseLocation,
-    categoryId,
-    dateListed,
-    ebayId,
-    brand,
-    shippingService,
-    listed: true,
-    expectedProfit: figureExpectedProfit(listedPrice, purchasePrice, averageShipping, ebayFeePercent),
-  }
-  return inventoryItemBody
-}
 
 async function getUserObject(userId) {
   const userInfo = await User.findById(userId)

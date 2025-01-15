@@ -18,14 +18,14 @@ const Store = (props) => {
 
   const authRoutes = ["/auth/signin", "/auth/signup"]
   const isAuthRoute = authRoutes.includes(location.pathname)
+  userAxios.interceptors.request.use((config) => {
+    config.headers.Authorization = `Bearer ${token}`
+    return config
+  })
 
   useEffect(() => {
     if (token && !isAuthRoute) {
       // Setup interceptor
-      const interceptor = userAxios.interceptors.request.use((config) => {
-        config.headers.Authorization = `Bearer ${token}`
-        return config
-      })
 
       // Make API calls
       getExpenses()
@@ -34,7 +34,6 @@ const Store = (props) => {
       }
 
       // Cleanup interceptor
-      return () => userAxios.interceptors.request.eject(interceptor)
     }
   }, [token, isAuthRoute])
 

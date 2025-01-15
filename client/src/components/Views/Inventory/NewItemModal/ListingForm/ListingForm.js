@@ -74,8 +74,8 @@ const ListingForm = (props) => {
         } = existing
         let labelDetails = getLabelFromTitle(title)
         let { year, model } = labelDetails
-        let acceptOfferHigh = (+listedPrice - 4.99).toFixed(2)
-        let declineOfferLow = (+listedPrice - 14.99).toFixed(2)
+        let acceptOfferHigh = (+listedPrice - 9.99).toFixed(2)
+        let declineOfferLow = (+listedPrice - 19.99).toFixed(2)
         setInput((prevInputForm) => ({
           ...prevInputForm,
           title,

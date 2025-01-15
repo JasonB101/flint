@@ -72,7 +72,7 @@ const inventoryItemSchema = new Schema({
   },
   lastPriceReduction: {
     type: String,
-    default: "",
+    default: null,
   },
   imgUrl: String,
   expectedProfit: {
@@ -112,6 +112,7 @@ const inventoryItemSchema = new Schema({
     //active
     //waste
   },
+  listingAgent: String,
   trackingNumber: String,
   orderId: String,
   buyer: String,
