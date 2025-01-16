@@ -21,9 +21,10 @@ const Store = (props) => {
     items: [],
     expenses: [],
     ebayListings: [],
+    churnSettings: null
     // newListings: []
   })
-  const { items, expenses, ebayListings } = state
+  const { items, expenses, ebayListings, churnSettings } = state
   const location = useLocation()
 
   const authRoutes = ["/auth/signin", "/auth/signup"]
@@ -56,6 +57,7 @@ const Store = (props) => {
     const fetchData = async () => {
       if (user?.token && !isAuthRoute) {
         getExpenses()
+        getChurnSettings()
         if (user.syncedWithEbay && user.OAuthActive) {
           try {
             await getEbay()
@@ -97,6 +99,50 @@ const Store = (props) => {
     //   console.error("Error checking new scores:", error)
     //   return false
     // }
+  }
+
+  async function saveChurnSettings(newChurnSettings) {
+    try {
+      const response = await userAxios.post("/api/churnsettings", newChurnSettings)
+      const { success, churnSettings, message } = response.data
+
+      if (success === true) {
+        changeState((prevState) => {
+          return { ...prevState, churnSettings: churnSettings }
+        })
+        console.log("Churn settings saved successfully")
+        return true
+      } else {
+        // Handle failure, e.g., display an error message
+        console.error("Saving churn settings failed:", message)
+        return false
+      }
+    } catch (error) {
+      // Handle error, e.g., display an error message or log the error
+      console.error("Error saving churn settings:", error)
+      return false
+    }
+  }
+
+  async function getChurnSettings() {
+    try {
+      const response = await userAxios.get("/api/churnsettings");
+      const { success, churnSettings, message } = response.data;
+  
+      if (success) {
+        changeState(prevState => ({
+          ...prevState,
+          churnSettings
+        }));
+        return true;
+      } else {
+        console.error("Failed to fetch churn settings:", message);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error fetching churn settings:", error);
+      return false;
+    }
   }
 
   async function updateItem(itemInfo) {
@@ -391,6 +437,8 @@ const Store = (props) => {
         setEbayOAuthTokens,
         checkNewScores,
         getActiveListings,
+        saveChurnSettings,
+        churnSettings
       }}
     >
       {props.children}

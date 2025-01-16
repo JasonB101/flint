@@ -1,9 +1,9 @@
 .wrapper {
-  position: relative;
+  height: 100%;
   padding-bottom: 5px;
   border-top: 1px solid rgb(206, 204, 204);
   overflow-y: auto; /* Enable vertical scrolling */
- 
+
   th::before {
     content: "";
     width: 100%;
@@ -26,15 +26,15 @@
     text-align: left;
     padding-left: 0px !important;
     .item-options {
-      visibility: hidden; 
-      opacity: 0; 
-      transition: visibility 0s, opacity 0.2s linear; 
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s, opacity 0.2s linear;
     }
 
     &:hover {
       .item-options {
-        visibility: visible; 
-        opacity: 1; 
+        visibility: visible;
+        opacity: 1;
       }
     }
   }
@@ -67,12 +67,11 @@
       font-size: 12px;
       text-align: center;
       vertical-align: middle !important;
+      color: #20adb2 !important;
     }
   }
 }
 
-.itemsList{
- 
+.itemsList {
   background: white;
-
 }

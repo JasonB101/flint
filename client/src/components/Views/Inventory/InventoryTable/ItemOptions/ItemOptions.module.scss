@@ -2,6 +2,7 @@
   position: relative;
   overflow: visible;
   .optionsModal {
+    overflow: visible;
     position: absolute; // Make it absolute
     top: 75%; // Align it to the bottom of the parent
     left: 10px; // Align it to the left of the parent
