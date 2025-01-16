@@ -51,7 +51,7 @@ const Store = (props) => {
       }
     }
   }, [user])
-  
+
   useEffect(() => {
     const fetchData = async () => {
       if (user?.token && !isAuthRoute) {
@@ -199,7 +199,7 @@ const Store = (props) => {
           item._id === itemObject.itemId ? { ...item, ...itemObject } : item
         )
         changeState((prevState) => {
-          return { prevState, items: updatedItems }
+          return { ...prevState, items: updatedItems }
         })
       })
       .catch((err) => {
