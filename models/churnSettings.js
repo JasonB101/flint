@@ -46,6 +46,10 @@ const churnSettingsSchema = new Schema({
     default: 30,
     min: 5,
     max: 100
+  },
+  listingAgent: {
+    type: String,
+    default: 'churn'
   }
 }, {
   timestamps: true
