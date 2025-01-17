@@ -21,6 +21,7 @@ import Churn from "./components/Views/Churn/Churn"
 function App() {
   const storeData = useContext(storeContext)
   const {
+    items,
     syncWithEbay,
     updateItem,
     user,
@@ -75,6 +76,7 @@ function App() {
             <Churn
               churnSettings={churnSettings}
               saveChurnSettings={saveChurnSettings}
+              items={items}
             />
           )}
         />

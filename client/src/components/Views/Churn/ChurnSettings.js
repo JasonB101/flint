@@ -15,6 +15,7 @@ const ChurnSettings = ({ churnSettings, saveChurnSettings }) => {
         +churnSettings.daysListedUntilPriceReduction ||
       +settings.maxPriceReduction !== +churnSettings.maxPriceReduction ||
       +settings.quantityToReList !== +churnSettings.quantityToReList ||
+      +settings.churnDaysToShow !== +churnSettings.churnDaysToShow ||
       settings.churnEnabled !== churnSettings.churnEnabled ||
       settings.allowPriceReduction !== churnSettings.allowPriceReduction ||
       settings.allowNegativeProfit !== churnSettings.allowNegativeProfit ||
@@ -117,6 +118,23 @@ const ChurnSettings = ({ churnSettings, saveChurnSettings }) => {
           />
           <span>{`${settings.quantityToReList} ${
             settings.quantityToReList > 1 ? "items" : "item"
+          }`}</span>
+        </div>
+
+        <div className={Styles.setting}>
+          <label>{"Show Listings from the Last (days)"}</label>
+          <input
+            disabled={!settings.churnEnabled}
+            type="range"
+            name="churnDaysToShow"
+            min="1"
+            max="14"
+            step="1"
+            value={settings.churnDaysToShow}
+            onChange={handleChange}
+          />
+          <span>{`${settings.churnDaysToShow} ${
+            settings.churnDaysToShow > 1 ? "days" : "day"
           }`}</span>
         </div>
 
