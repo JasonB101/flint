@@ -4,10 +4,12 @@ import getDaysInBetween from "../../../lib/getDaysBetween";
 
 
 const ChurnItems = ({ items }) => {
+
+    const sortedItems = items.sort((a, b) => new Date(b.dateReListed) - new Date(a.dateReListed));
  
 
   return <div className={Styles["churnItemsWrapper"]}>
-{items.map((item) => {
+{sortedItems.map((item) => {
         const daysInInventory = getDaysInBetween(new Date(item.datePurchased), new Date());
         return (
           <div key={item._id} className={Styles.churnItem}>
