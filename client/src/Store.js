@@ -27,7 +27,7 @@ const Store = (props) => {
   const { items, expenses, ebayListings, churnSettings } = state
   const location = useLocation()
 
-  const authRoutes = ["/auth/signin", "/auth/signup"]
+  const authRoutes = ["/auth/signin", "/auth/signup","/"]
   const isAuthRoute = authRoutes.includes(location.pathname)
   const interceptorRef = useRef(null)
 
