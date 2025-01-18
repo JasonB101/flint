@@ -101,6 +101,10 @@ const Store = (props) => {
     // }
   }
 
+  async function handleItemReturn(itemId, action) {
+  console.log(action)
+  }
+
   async function saveChurnSettings(newChurnSettings) {
     try {
       const response = await userAxios.post("/api/churnsettings", newChurnSettings)
@@ -419,6 +423,7 @@ const Store = (props) => {
       value={{
         user,
         items,
+        handleItemReturn,
         submitNewItem,
         submitNewExpense,
         deleteExpense,

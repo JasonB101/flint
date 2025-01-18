@@ -4,6 +4,27 @@
     border-top: 1px solid rgb(206, 204, 204);
     overflow: auto;
 
+    .titleId {
+        display: flex;
+        text-align: left;
+        align-items: center;
+        padding-left: 0px !important;
+        overflow: visible;
+        flex: 1;
+        
+        .item-options {
+          visibility: hidden;
+          opacity: 0;
+          transition: visibility 0s, opacity 0.2s linear;
+        }
+    
+        &:hover {
+          .item-options {
+            visibility: visible;
+            opacity: 1;
+          }
+        }
+      }
 
     th::before {
         content: '';
@@ -57,6 +78,7 @@
         border: 1px solid rgba(0, 0, 0, 0.2);
         text-overflow: ellipsis;
         overflow: hidden;
+        width: auto;
 
         input {
             text-align: center;
@@ -68,6 +90,7 @@
 
     th {
         position: -webkit-sticky;
+        padding: 6px !important;
         position: sticky;
         background: white;
         top: 0;

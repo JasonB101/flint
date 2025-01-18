@@ -4,7 +4,7 @@ import SoldTable from "./SoldTable/SoldTable";
 import Toolbar from "./Toolbar/Toolbar"
 
 const SoldItems = (props) => {
-    const { updateItem, items } = props
+    const { updateItem, items, handleItemReturn } = props
     const [soldItemsSearchTerm, changeSearchTerm] = useState("");
     const [soldItems] = useState(items.filter(x => x.sold === true));
     const [itemsToShow, filterItems] = useState(soldItems);
@@ -28,7 +28,7 @@ const SoldItems = (props) => {
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
                 searchTerm={soldItemsSearchTerm} items={soldItems} />
-            <SoldTable updateItem={updateItem} soldItems={itemsToShow} />
+            <SoldTable handleItemReturn={handleItemReturn} updateItem={updateItem} soldItems={itemsToShow} />
         </div>
     );
 }
