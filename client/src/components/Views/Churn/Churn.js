@@ -7,7 +7,7 @@ const Churn = ({ churnSettings, saveChurnSettings, items }) => {
   const [churnDaysToShow, setChurnDaysToShow] = useState(churnSettings?.churnDaysToShow || 3)
   
   const windowOfDays = new Date()
-  windowOfDays.setDate(windowOfDays.getDate() - churnDaysToShow)
+  windowOfDays.setDate(windowOfDays.getDate() - churnDaysToShow - 1)
 
   const filteredItems = items.filter((item) => {
     const itemDate = new Date(item.dateReListed)
