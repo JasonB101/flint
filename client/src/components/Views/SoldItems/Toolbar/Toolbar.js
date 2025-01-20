@@ -1,8 +1,10 @@
 import React from "react"
 import Styles from "./Toolbar.module.scss"
+import { Button } from "react-bootstrap"
+
 
 const Toolbar = (props) => {
-  const { searchTerm, changeSearchTerm, items } = props
+  const { searchTerm, changeSearchTerm, items, setToggleSummaryModal } = props
   const soldDetails = assembleSoldInfo(items)
   const {
     soldAmount,
@@ -56,6 +58,7 @@ const Toolbar = (props) => {
         <span>{avgDaysListed}</span>
       </h5>
       <div className="spacer"></div>
+      <Button onClick={() => setToggleSummaryModal(true)}>Summary</Button>
     </div>
   )
 }

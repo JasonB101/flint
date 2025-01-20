@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Styles from "./SoldItems.module.scss";
 import SoldTable from "./SoldTable/SoldTable";
 import Toolbar from "./Toolbar/Toolbar"
+import SoldSummaryModal from "./SoldSummaryModal/SoldSummaryModal";
 
 const SoldItems = (props) => {
     const { updateItem, items, handleItemReturn } = props
     const [soldItemsSearchTerm, changeSearchTerm] = useState("");
     const [soldItems] = useState(items.filter(x => x.sold === true));
     const [itemsToShow, filterItems] = useState(soldItems);
+    const [toggleSummaryModal, setToggleSummaryModal] = useState(false);
 
     useEffect(() => {
         console.log("useEffect")
@@ -23,12 +25,15 @@ const SoldItems = (props) => {
         }
     }, [soldItemsSearchTerm, soldItems])
 
+    
+
 
     return (
         <div className={Styles.wrapper}>
             <Toolbar changeSearchTerm={changeSearchTerm}
-                searchTerm={soldItemsSearchTerm} items={soldItems} />
+                searchTerm={soldItemsSearchTerm} items={soldItems} setToggleSummaryModal={setToggleSummaryModal} />
             <SoldTable handleItemReturn={handleItemReturn} updateItem={updateItem} soldItems={itemsToShow} />
+        {toggleSummaryModal && <SoldSummaryModal soldItems={soldItems} setToggleSummaryModal={setToggleSummaryModal} />}
         </div>
     );
 }
