@@ -8,6 +8,7 @@ const Churn = ({ churnSettings, saveChurnSettings, items }) => {
   
   const windowOfDays = new Date()
   windowOfDays.setDate(windowOfDays.getDate() - churnDaysToShow - 1)
+  windowOfDays.setHours(0, 0, 0, 0)
 
   const filteredItems = items.filter((item) => {
     const itemDate = new Date(item.dateReListed)
