@@ -6,6 +6,8 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
     key: "count",
     direction: "descending",
   })
+  const [sortMethod, setSortMethod] = useState("default")
+  const [selectedYear, setSelectedYear] = useState("All Years")
 
   const sortedItems = useMemo(() => {
     let sortableItems = [...soldItems]
@@ -40,7 +42,13 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
     const summary = {}
     items.forEach((item) => {
       const partNo = item.partNo.replace(/\s+/g, "") // Remove all spaces from partNo
-      if (partNo === "" || partNo === "N/A" || partNo === "n/a") return // Exclude items with "" or "N/A" partNo
+      if (
+        partNo === "" ||
+        partNo === "N/A" ||
+        partNo === "n/a" ||
+        item.purchasePrice < 0.01
+      )
+        return // Exclude items with "" or "N/A" partNo
 
       if (!summary[partNo]) {
         summary[partNo] = {
@@ -89,9 +97,66 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
     })
   }
 
+  const sortBestPerforming = (data) => {
+    // Threshold constants - adjusted based on data patterns
+    const MIN_PROFIT = 60 // Lowered to account for quick-turn items
+    const MIN_ROI = 400 // Adjusted for faster sales focus
+    const GOOD_DAYS = 15 // Reduced to emphasize very quick sales
+    const MAX_DAYS = 100 // Cap for very old items
+
+    return data.sort((a, b) => {
+      // Days listed scoring - exponential decay with cap
+      const daysA = Math.min(a.daysListed, MAX_DAYS)
+      const daysB = Math.min(b.daysListed, MAX_DAYS)
+      const daysScoreA = Math.exp(-daysA / GOOD_DAYS)
+      const daysScoreB = Math.exp(-daysB / GOOD_DAYS)
+
+      // ROI scoring - logarithmic scale to reduce extreme values' impact
+      const roiScoreA =
+        a.roi > MIN_ROI ? Math.log(a.roi) / Math.log(MIN_ROI) : 0
+      const roiScoreB =
+        b.roi > MIN_ROI ? Math.log(b.roi) / Math.log(MIN_ROI) : 0
+
+      // Profit scoring - linear with minimum threshold
+      const profitScoreA = a.profit > MIN_PROFIT ? a.profit / MIN_PROFIT : 0
+      const profitScoreB = b.profit > MIN_PROFIT ? b.profit / MIN_PROFIT : 0
+
+      // Count scoring - logarithmic scale
+      const countScoreA = Math.log(a.count + 1)
+      const countScoreB = Math.log(b.count + 1)
+
+      // Final score with adjusted weights
+      const scoreA =
+        0.4 * daysScoreA + // Quick sales are highest priority
+        0.25 * roiScoreA + // ROI still important
+        0.25 * profitScoreA + // Profit maintains importance
+        0.1 * countScoreA // Multiple sales indicator
+
+      const scoreB =
+        0.4 * daysScoreB +
+        0.25 * roiScoreB +
+        0.25 * profitScoreB +
+        0.1 * countScoreB
+      return scoreB - scoreA // Descending order
+    })
+  }
   const summaryData = useMemo(() => {
-    const data = calculateAverages(soldItems)
-    data.sort((a, b) => {
+    // Filter items by selected year first
+    const yearFilteredItems =
+      selectedYear === "All Years"
+        ? soldItems
+        : soldItems.filter(
+            (item) =>
+              new Date(item.dateSold).getFullYear() === parseInt(selectedYear)
+          )
+
+    const data = calculateAverages(yearFilteredItems)
+
+    if (sortMethod === "bestPerforming") {
+      return sortBestPerforming(data)
+    }
+
+    return data.sort((a, b) => {
       if (
         typeof a[sortConfig.key] === "string" &&
         typeof b[sortConfig.key] === "string"
@@ -105,8 +170,22 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
           : b[sortConfig.key] - a[sortConfig.key]
       }
     })
-    return data
-  }, [soldItems, sortConfig])
+  }, [soldItems, sortConfig, sortMethod, selectedYear])
+
+  const years = useMemo(() => {
+    const uniqueYears = [
+      ...new Set(
+        soldItems.map((item) => new Date(item.dateSold).getFullYear())
+      ),
+    ].sort((a, b) => b - a) // Sort descending
+    return ["All Years", ...uniqueYears]
+  }, [soldItems])
+
+  const handleSortBestPerforming = () => {
+    setSortMethod(
+      sortMethod === "bestPerforming" ? "default" : "bestPerforming"
+    )
+  }
 
   return (
     <div className={Styles.modal}>
@@ -117,7 +196,23 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
         >
           &times;
         </button>
-        <h2>Sold Summary</h2>
+        <div className={Styles.header}>
+          <h2>Sold Summary</h2>
+          <div className={Styles['year-filter']} >
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className={Styles['form-select']}
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+        <button onClick={handleSortBestPerforming}>Sort by Best Performing</button>
+        </div>
         <div className={Styles.tableContainer}>
           <table>
             <thead>
