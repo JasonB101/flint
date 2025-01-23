@@ -392,9 +392,9 @@ function figureExpectedProfit(
   ebayFeePercent = 0.1135,
   estimatedTaxRate = 0.08
 ) {
-  const taxOnListedPrice = listedPrice * estimatedTaxRate;
-  const ebayFee = (listedPrice + taxOnListedPrice) * ebayFeePercent;
-  const expectedProfit = listedPrice - ebayFee - averageShippingCost - purchasePrice;
+  const taxOnListedPrice = +listedPrice * +estimatedTaxRate;
+  const ebayFee = (+listedPrice + +taxOnListedPrice) * +ebayFeePercent;
+  const expectedProfit = +listedPrice - +ebayFee - +averageShippingCost - +purchasePrice;
 
   return +expectedProfit.toFixed(2);
 }

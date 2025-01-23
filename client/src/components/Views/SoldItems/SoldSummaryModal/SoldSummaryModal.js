@@ -9,27 +9,6 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
   const [sortMethod, setSortMethod] = useState("default")
   const [selectedYear, setSelectedYear] = useState("All Years")
 
-  const sortedItems = useMemo(() => {
-    let sortableItems = [...soldItems]
-    if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
-        if (
-          typeof a[sortConfig.key] === "string" &&
-          typeof b[sortConfig.key] === "string"
-        ) {
-          return sortConfig.direction === "ascending"
-            ? a[sortConfig.key].localeCompare(b[sortConfig.key])
-            : b[sortConfig.key].localeCompare(a[sortConfig.key])
-        } else {
-          return sortConfig.direction === "ascending"
-            ? a[sortConfig.key] - b[sortConfig.key]
-            : b[sortConfig.key] - a[sortConfig.key]
-        }
-      })
-    }
-    return sortableItems
-  }, [soldItems, sortConfig])
-
   const requestSort = (key) => {
     let direction = "ascending"
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -99,10 +78,10 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
 
   const sortBestPerforming = (data) => {
     // Threshold constants - adjusted based on data patterns
-    const MIN_PROFIT = 60 // Lowered to account for quick-turn items
-    const MIN_ROI = 400 // Adjusted for faster sales focus
-    const GOOD_DAYS = 15 // Reduced to emphasize very quick sales
-    const MAX_DAYS = 100 // Cap for very old items
+    const MIN_PROFIT = 80 // Lowered to account for quick-turn items
+    const MIN_ROI = 500 // Adjusted for faster sales focus
+    const GOOD_DAYS = 20 // Reduced to emphasize very quick sales
+    const MAX_DAYS = 90 // Cap for very old items
 
     return data.sort((a, b) => {
       // Days listed scoring - exponential decay with cap
