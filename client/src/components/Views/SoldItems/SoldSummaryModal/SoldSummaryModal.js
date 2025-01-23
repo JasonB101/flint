@@ -7,7 +7,14 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
     direction: "descending",
   })
   const [sortMethod, setSortMethod] = useState("default")
-  const [selectedYear, setSelectedYear] = useState("All Years")
+  const [filters, setFilters] = useState({
+    year: "All Years",
+    minPurchasePrice: 200,
+    minProfit: -50,
+    minCount: 1,
+    maxDaysListed: 2000,
+    titleKeyword: "",
+  })
 
   const requestSort = (key) => {
     let direction = "ascending"
@@ -15,6 +22,14 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
       direction = "descending"
     }
     setSortConfig({ key, direction })
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }))
   }
 
   const calculateAverages = (items) => {
@@ -119,18 +134,36 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
       return scoreB - scoreA // Descending order
     })
   }
+
   const summaryData = useMemo(() => {
-    // Filter items by selected year first
-    const yearFilteredItems =
-      selectedYear === "All Years"
-        ? soldItems
-        : soldItems.filter(
-            (item) =>
-              new Date(item.dateSold).getFullYear() === parseInt(selectedYear)
-          )
+    // Filter soldItems based on filters
+    const filteredItems = soldItems.filter((item) => {
+      const itemYear = new Date(item.dateSold).getFullYear()
+      const matchesYear =
+        filters.year === "All Years" || itemYear === parseInt(filters.year)
+      const matchesPurchasePrice =
+        item.purchasePrice <= filters.minPurchasePrice
+      const matchesProfit = item.profit >= filters.minProfit
+      const matchesDaysListed = item.daysListed <= filters.maxDaysListed
+      const matchesKeyword =
+        filters.titleKeyword === "" ||
+        item.title.toLowerCase().includes(filters.titleKeyword.toLowerCase())
 
-    const data = calculateAverages(yearFilteredItems)
+      return (
+        matchesYear &&
+        matchesPurchasePrice &&
+        matchesProfit &&
+        matchesDaysListed &&
+        matchesKeyword
+      )
+    })
 
+    // Calculate averages
+    let data = calculateAverages(filteredItems)
+
+    // Remove objects with count < filters.minCount
+    const filteredData = data.filter((item) => item.count >= filters.minCount)
+    data = filteredData
     if (sortMethod === "bestPerforming") {
       return sortBestPerforming(data)
     }
@@ -149,7 +182,7 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
           : b[sortConfig.key] - a[sortConfig.key]
       }
     })
-  }, [soldItems, sortConfig, sortMethod, selectedYear])
+  }, [soldItems, sortConfig, sortMethod, filters])
 
   const years = useMemo(() => {
     const uniqueYears = [
@@ -177,11 +210,12 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
         </button>
         <div className={Styles.header}>
           <h2>Sold Summary</h2>
-          <div className={Styles['year-filter']} >
+          <div className={Styles["filter-inputs"]}>
             <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(e.target.value)}
-              className={Styles['form-select']}
+              name="year"
+              value={filters.year}
+              onChange={handleInputChange}
+              className={Styles["yearSelect"]}
             >
               {years.map((year) => (
                 <option key={year} value={year}>
@@ -189,8 +223,65 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
                 </option>
               ))}
             </select>
+            <input
+              type="text"
+              name="titleKeyword"
+              value={filters.titleKeyword}
+              onChange={handleInputChange}
+              placeholder="Title Keyword"
+              className={Styles["keywordFilter"]}
+            />
+            <div className={Styles["filter-inputs"]}>
+              <div className={Styles["filter-group"]}>
+                <label htmlFor="minPurchasePrice">Min Price</label>
+                <input
+                  id="minPurchasePrice"
+                  type="number"
+                  name="minPurchasePrice"
+                  value={filters.minPurchasePrice}
+                  onChange={handleInputChange}
+                  placeholder="Enter minimum price"
+                />
+              </div>
+              <div className={Styles["filter-group"]}>
+                <label htmlFor="minProfit">Min Profit</label>
+                <input
+                  id="minProfit"
+                  type="number"
+                  name="minProfit"
+                  value={filters.minProfit}
+                  onChange={handleInputChange}
+                  placeholder="Enter minimum profit"
+                />
+              </div>
+              <div className={Styles["filter-group"]}>
+                <label htmlFor="minCount">Min Count</label>
+                <input
+                  id="minCount"
+                  type="number"
+                  name="minCount"
+                  value={filters.minCount}
+                  onChange={handleInputChange}
+                  placeholder="Enter minimum count"
+                />
+              </div>
+              <div className={Styles["filter-group"]}>
+                <label htmlFor="maxDaysListed">Max Days</label>
+                <input
+                  id="maxDaysListed"
+                  type="number"
+                  name="maxDaysListed"
+                  value={filters.maxDaysListed}
+                  onChange={handleInputChange}
+                  placeholder="Enter maximum days listed"
+                />
+              </div>
+            </div>
+            
           </div>
-        <button onClick={handleSortBestPerforming}>Sort by Best Performing</button>
+          <button onClick={handleSortBestPerforming}>
+            Sort by Best Performing
+          </button>
         </div>
         <div className={Styles.tableContainer}>
           <table>
