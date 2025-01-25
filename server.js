@@ -1,4 +1,4 @@
-const Sentry = require("./instrument")
+require("./instrument")
 const express = require("express")
 const app = express()
 const morgan = require("morgan")
