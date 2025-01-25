@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react"
 import Styles from "./ItemOptions.module.scss"
 
-const ItemOptions = ({handleItemReturn}) => {
+const ItemOptions = ({setReturnItem, itemObject}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [action, setAction] = useState(null) // To track which action is selected
   const modalRef = useRef(null)
 
   useEffect(() => {
@@ -27,22 +26,17 @@ const ItemOptions = ({handleItemReturn}) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
-    setAction(null) // Reset the action when closing
   }
 
   const handleAction = (actionType) => {
-    setAction(actionType)
-    // Logic based on action type
     switch (actionType) {
       
-      case "return/relisted":
-        //logic
-        console.log("return/relisted")
+      case "return":
+        setReturnItem(itemObject)
         break
      
-      case "return/waste":
+      case "otherOptions":
         // Logic for removing
-        console.log("return/waste")
         break
       default:
         break
@@ -57,7 +51,7 @@ const ItemOptions = ({handleItemReturn}) => {
       </i>
       {isModalOpen && (
         <div ref={modalRef} className={Styles["optionsModal"]}>
-          <p onClick={() => handleAction("returned")}>Return</p>
+          <p onClick={() => handleAction("return")}>Return</p>
         </div>
       )}
     </div>

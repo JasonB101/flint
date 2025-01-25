@@ -3,14 +3,17 @@ import Styles from "./SoldTable.module.scss"
 import { Table } from "react-bootstrap"
 import $ from "jquery"
 import ItemOptions from "./ItemOptions/ItemOptions"
+import ItemReturnModal from "../ItemReturn/ItemReturnModal"
 
 const SoldTable = (props) => {
-  const { soldItems, updateItem, handleItemReturn } = props
+  const { soldItems, updateItem, editInventoryItem } = props
   const [editItem, changeEdit] = useState({
     entryItem: "", //shippingCost needs to be the same name thats in the inventory Item MODEL
     value: "",
     id: "",
   })
+  const [returnItem, setReturnItem] = useState(null)
+
   soldItems.sort((a, b) => {
     const { dateSold: aDate } = a
     const { dateSold: bDate } = b
@@ -73,7 +76,10 @@ const SoldTable = (props) => {
       <tr key={_id}>
         <td className={Styles["titleId"]}>
           <span className={Styles["item-options"]}>
-            <ItemOptions handleItemReturn={handleItemReturn} />
+            <ItemOptions
+              setReturnItem={setReturnItem}
+              itemObject={itemObject}
+            />
           </span>{" "}
           {title}
         </td>
@@ -193,6 +199,17 @@ const SoldTable = (props) => {
         </thead>
         <tbody className={Styles.itemsList}>{items}</tbody>
       </Table>
+      {returnItem && (
+        <ItemReturnModal
+          onClose={() => setReturnItem(null)}
+          onSubmit={(itemObject) => {
+            console.log(itemObject)
+            setReturnItem(null)
+          }}
+          itemObject={returnItem}
+        />
+      )}
+      {/* {returnItem && <ItemReturnModal onClose={()=> setReturnItem(null)} onSubmit={(itemObject)=>{editInventoryItem(itemObject)}} itemObject={returnItem}/>} */}
     </div>
   )
 }
