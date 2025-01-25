@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "node server.js",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build && npm run sentry:sourcemaps && npm run sentry:sourcemaps",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build && cd .. && npm run sentry:sourcemaps",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org jbam --project flintbooks ./client/build/static/js && sentry-cli sourcemaps upload --org jbam --project flintbooks ./client/build/static/js"
   },
   "engines": {
