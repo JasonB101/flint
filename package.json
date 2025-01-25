@@ -7,7 +7,7 @@
     "test": "jest",
     "start": "node server.js",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build && npm run sentry:sourcemaps",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org flintbooks --project flintbooks ./client/build && sentry-cli sourcemaps upload --org flintbooks --project flintbooks ./client/build"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org flintbooks --project flintbooks ./client/build && sentry-cli sourcemaps upload --org flintbooks --project flintbooks ./client/build/static/js"
   },
   "engines": {
     "node": "18.12.0"
