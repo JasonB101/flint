@@ -7,3 +7,5 @@ node_modules/
 .idea/
 .vscode/
 *.txt
+# Sentry Config File
+.sentryclirc
