@@ -14,7 +14,7 @@ const {
   getInventoryItems,
   updateAllZeroShippingCost,
   figureExpectedProfit,
-  verifyCorrectPricesInInventoryItems,
+  verifyCorrectInfoInInventoryItems,
 } = require("../lib/inventoryMethods")
 const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
 
@@ -77,7 +77,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
 
     let inventoryItems = await getInventoryItems(userId, true) //True is setting to get items that are listed: true
 
-    const verifiedCorrectInfo = await verifyCorrectPricesInInventoryItems(
+    const verifiedCorrectInfo = await verifyCorrectInfoInInventoryItems(
       inventoryItems,
       ebayListings,
       averageShippingCost,
