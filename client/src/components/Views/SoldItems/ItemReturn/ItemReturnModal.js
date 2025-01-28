@@ -40,6 +40,7 @@ const ItemReturnModal = ({
     dateListed = new Date(StartTime).toLocaleDateString()
     ebayId = newEbayId
   }
+  const [submitEnabled, setSubmitEnabled] = useState(false)
 
   const [inputs, setInputs] = useState({
     isRelisted: Boolean(ebayListing),
@@ -108,20 +109,28 @@ const ItemReturnModal = ({
     try {
       const labels = await getShippingLabels(orderId)
 
-      const totalReturnShippingCost = labels
-        .filter((label) => label.transactionMemo === "Return shipping label")
-        .reduce(
-          (total, label) => total + parseFloat(label.amount.value || 0),
-          0
-        )
+      const returnLabels = labels.filter(
+        (label) => label.transactionMemo === "Return shipping label"
+      )
 
-      setInputs((prev) => ({
-        ...prev,
-        returnShippingCost: totalReturnShippingCost,
-      }))
+      if (returnLabels.length > 0) {
+        const latestLabel = returnLabels.reduce((latest, current) => {
+          const latestDate = new Date(latest.date)
+          const currentDate = new Date(current.date)
+          return currentDate > latestDate ? current : latest
+        })
+
+        const returnShippingCost = parseFloat(latestLabel.amount.value || 0)
+
+        setInputs((prev) => ({
+          ...prev,
+          returnShippingCost,
+        }))
+      }
     } catch (error) {
       console.error("Error fetching shipping labels:", error)
     }
+    setSubmitEnabled(true)
   }
 
   return (
@@ -209,6 +218,7 @@ const ItemReturnModal = ({
             <div className="spacer"></div>
             <button
               className={Styles.submitButton}
+              disabled={!submitEnabled}
               onClick={prepareAndSubmitChanges}
             >
               Submit

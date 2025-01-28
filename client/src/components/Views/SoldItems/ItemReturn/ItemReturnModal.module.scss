@@ -96,6 +96,10 @@
     background-color: #0056b3;
   }
 }
+.submitButton:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
 
 .mainToggle {
   display: flex;
