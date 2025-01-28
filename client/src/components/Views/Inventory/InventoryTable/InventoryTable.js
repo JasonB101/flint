@@ -93,7 +93,7 @@ const InventoryTable = (props) => {
         style={
           unlistedItems.length > 0
             ? unlistedItems.indexOf(ebayId) !== -1
-              ? { backgroundColor: "#ffa8a3" }
+              ? { backgroundColor: "#e3f385" }
               : {}
             : {}
         }
