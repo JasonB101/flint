@@ -117,7 +117,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     }
     res.send(response)
   } catch (e) {
-    console.log(e, "Access Token Expired")
+    console.log("Access Token Expired")
     res.status(402).send({ success: false, message: "Access Token Expired" })
   }
 })

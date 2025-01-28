@@ -101,9 +101,6 @@ const Store = (props) => {
     // }
   }
 
-  async function handleItemReturn(itemId, action) {
-    console.log(action)
-  }
 
   async function saveChurnSettings(newChurnSettings) {
     try {
@@ -257,6 +254,25 @@ const Store = (props) => {
       )
       .catch((err) => console.log("Get Inventory Failed", err.message))
   }
+
+  function returnInventoryItem(itemUpdates) {
+    userAxios
+      .put("/api/inventoryItems/returnInventoryItem", itemUpdates)
+      .then((res) => {
+        if (res.data.success) {
+          const updatedItems = [...items]
+          const itemIndex = updatedItems.findIndex(item => item._id === itemUpdates.itemId)
+          updatedItems[itemIndex] = res.data.result
+          
+          changeState((prevState) => ({
+            ...prevState,
+            items: updatedItems
+          }))
+        }
+      })
+      .catch((err) => console.log("Return Item Failed:", err.message))
+  }
+
   function editInventoryItem(itemObject) {
     userAxios
       .put("/api/inventoryItems/editInventoryItem", itemObject)
@@ -439,12 +455,12 @@ const Store = (props) => {
       value={{
         user,
         items,
-        handleItemReturn,
         submitNewItem,
         submitNewExpense,
         deleteExpense,
         // newListings,
         editInventoryItem,
+        returnInventoryItem,
         // linkItem,
         syncWithEbay,
         setEbayToken,

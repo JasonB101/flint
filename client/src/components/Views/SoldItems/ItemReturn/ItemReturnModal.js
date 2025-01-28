@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react"
 import Styles from "./ItemReturnModal.module.scss"
 import updateAdditionalCosts from "./updateAdditionalCost"
 import figureExpectedProfit from "../../../../lib/figureExpectedProfit"
+import itemReListed from "./itemReListed"
+import itemIsWaste from "./itemIsWaste"
 
 const ItemReturnModal = ({
   onClose,
@@ -9,9 +11,10 @@ const ItemReturnModal = ({
   itemObject,
   ebayListings,
   getShippingLabels,
-  user
+  user,
 }) => {
   let {
+    _id: itemId,
     title,
     sku,
     ebayId,
@@ -22,35 +25,21 @@ const ItemReturnModal = ({
     listedPrice,
     purchasePrice,
     shippingCost,
+    dateListed,
     additionalCosts = [],
   } = itemObject
 
   const { averageShippingCost, ebayFeePercent } = user
 
   const ebayListing = ebayListings.find((x) => x.SKU === sku)
-  if (ebayListing) ebayId = ebayListing.ItemID
-
-  const [itemObjectReturnValues, setItemObjectReturnValues] = useState({
-    listed: true,
-    ebayId: ebayId,
-    dateListed: "",
-    expectedProfit: 0,
-    additionalCosts,
-    shippingCost: 0,
-    priceSold: 0,
-    shipped: false,
-    sold: false,
-    status: "active", // or "waste"
-    buyer: "",
-    dateSold: "",
-    ebayFees: 0,
-    orderId: "",
-    profit: 0,
-    roi: 0,
-    trackingNumber: "0",
-    daysListed: 0,
-    listingAgent: "member",
-  })
+  if (ebayListing) {
+    const {
+      ItemID: newEbayId,
+      ListingDetails: { StartTime },
+    } = ebayListing
+    dateListed = new Date(StartTime).toLocaleDateString()
+    ebayId = newEbayId
+  }
 
   const [inputs, setInputs] = useState({
     isRelisted: Boolean(ebayListing),
@@ -74,8 +63,47 @@ const ItemReturnModal = ({
     setCombinedAdditionalCost(updatedAdditionalCosts)
   }, [inputs.returnShippingCost, additionalCosts, shippingCost])
 
-  let newExpectedProfit = figureExpectedProfit(listedPrice, purchasePrice, combinedAdditionalCost, averageShippingCost, ebayFeePercent)
+  let newExpectedProfit = inputs.isRelisted
+    ? figureExpectedProfit(
+        listedPrice,
+        purchasePrice,
+        combinedAdditionalCost,
+        averageShippingCost,
+        ebayFeePercent
+      )
+    : +(
+        0 -
+        +purchasePrice -
+        combinedAdditionalCost.reduce((acc, cost) => acc + cost.amount, 0)
+      ).toFixed(2)
 
+  const itemReturnValues = {
+    itemId: itemId,
+    ebayId: ebayId,
+    dateListed,
+    expectedProfit: newExpectedProfit,
+    additionalCosts: combinedAdditionalCost,
+    roi: Math.floor((purchasePrice / newExpectedProfit) * 100),
+  }
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+
+    setInputs((prevState) => ({
+      ...prevState,
+      [name]: type === "checkbox" ? checked : value,
+    }))
+  }
+
+  const prepareAndSubmitChanges = () => {
+    let updates = inputs.isRelisted
+      ? itemReListed(itemReturnValues)
+      : itemIsWaste(itemReturnValues)
+    if (ebayListing && !inputs.isRelisted) {
+      //end listing
+    }
+    onSubmit(updates)
+  }
   async function fetchAndSetReturnShippingCost() {
     try {
       const labels = await getShippingLabels(orderId)
@@ -94,15 +122,6 @@ const ItemReturnModal = ({
     } catch (error) {
       console.error("Error fetching shipping labels:", error)
     }
-  }
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-
-    setInputs((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }))
   }
 
   return (
@@ -160,14 +179,18 @@ const ItemReturnModal = ({
                 </div>
               </div>
             </div>
-          <div className={Styles.expectedProfitWrapper}>
-          <p>
-              <strong>Listed Price:</strong> ${listedPrice}
-            </p>
-            <p>
-              <strong>Expected Profit:</strong> ${newExpectedProfit}
-            </p>
-          </div>
+            <div className={Styles.expectedProfitWrapper}>
+              <p>
+                <strong>Listed Price:</strong> ${listedPrice}
+              </p>
+              <p>
+                <strong>Purchase Price</strong> ${purchasePrice}
+              </p>
+              <p>
+                <strong>Expected Profit:</strong> $
+                {itemReturnValues.expectedProfit}
+              </p>
+            </div>
           </div>
           <div className={Styles.actionSection}>
             <div className={Styles.mainToggle}>
@@ -186,7 +209,7 @@ const ItemReturnModal = ({
             <div className="spacer"></div>
             <button
               className={Styles.submitButton}
-              onClick={() => onSubmit({ itemObjectReturnValues })}
+              onClick={prepareAndSubmitChanges}
             >
               Submit
             </button>

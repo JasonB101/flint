@@ -8,9 +8,9 @@ const SoldItems = (props) => {
   const {
     updateItem,
     items,
-    handleItemReturn,
     ebayListings,
     getShippingLabels,
+    returnInventoryItem,
     user,
   } = props
   const [soldItemsSearchTerm, changeSearchTerm] = useState("")
@@ -47,11 +47,11 @@ const SoldItems = (props) => {
         setToggleSummaryModal={setToggleSummaryModal}
       />
       <SoldTable
-        handleItemReturn={handleItemReturn}
         updateItem={updateItem}
         soldItems={itemsToShow}
         ebayListings={ebayListings}
         getShippingLabels={getShippingLabels}
+        returnInventoryItem={returnInventoryItem}
         user={user}
       />
       {toggleSummaryModal && (

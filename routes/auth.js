@@ -69,7 +69,7 @@ authRouter.post('/logout', (req, res) => {
 
 
 const loginUserInfo = (user) => {
-    console.log(user)
+    // console.log(user)
 return {
     user: {...user, 
     token: jwt.sign(user, process.env.SECRET)

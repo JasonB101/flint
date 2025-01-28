@@ -53,6 +53,19 @@ inventoryRouter.post("/", async (req, res, next) => {
   }
 })
 
+inventoryRouter.put("/returnInventoryItem", async (req, res, next) => {
+  const user = await getUserObject(req.auth._id)
+  const { _id: userId } = user
+  const updates = req.body
+  const {itemId, ...updateFields} = updates
+  // console.log(itemId, updateFields)
+  InventoryItem.findOneAndUpdate({ _id: itemId, userId: userId }, updateFields, { new: true }, (err, result) => {
+    if (err) res.send({ success: false, message: err.message })
+    if (result) res.send({ success: true, result })
+  })
+  // res.send({success: false, message: "This is a placeholder"})
+})
+
 inventoryRouter.put("/editInventoryItem", async (req, res, next) => {
   const user = await getUserObject(req.auth._id)
   const { _id: userId } = user
