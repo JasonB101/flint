@@ -6,7 +6,7 @@ import ItemOptions from "./ItemOptions/ItemOptions"
 import ItemReturnModal from "../ItemReturn/ItemReturnModal"
 
 const SoldTable = (props) => {
-  const { soldItems, updateItem, editInventoryItem } = props
+  const { soldItems, updateItem, editInventoryItem, ebayListings, getShippingLabels, user } = props
   const [editItem, changeEdit] = useState({
     entryItem: "", //shippingCost needs to be the same name thats in the inventory Item MODEL
     value: "",
@@ -207,6 +207,9 @@ const SoldTable = (props) => {
             setReturnItem(null)
           }}
           itemObject={returnItem}
+          ebayListings={ebayListings}
+          getShippingLabels={getShippingLabels}
+          user={user}
         />
       )}
       {/* {returnItem && <ItemReturnModal onClose={()=> setReturnItem(null)} onSubmit={(itemObject)=>{editInventoryItem(itemObject)}} itemObject={returnItem}/>} */}

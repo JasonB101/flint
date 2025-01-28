@@ -5,6 +5,7 @@ import Label from "./Label/Label"
 import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
+import figureExpectedProfit from "../../../../../lib/figureExpectedProfit"
 
 const ListingForm = (props) => {
   const {
@@ -95,6 +96,7 @@ const ListingForm = (props) => {
   const expectedProfit = figureExpectedProfit(
     inputForm.listedPrice,
     purchasePrice,
+    [], // additionalCosts, cleaning parts service etc...
     averageShippingCost,
     ebayFeePercent
   )
@@ -385,17 +387,5 @@ const ListingForm = (props) => {
   )
 }
 
-function figureExpectedProfit(
-  listedPrice,
-  purchasePrice,
-  averageShippingCost,
-  ebayFeePercent = 0.1135,
-  estimatedTaxRate = 0.08
-) {
-  const taxOnListedPrice = +listedPrice * +estimatedTaxRate;
-  const ebayFee = (+listedPrice + +taxOnListedPrice) * +ebayFeePercent;
-  const expectedProfit = +listedPrice - +ebayFee - +averageShippingCost - +purchasePrice;
 
-  return +expectedProfit.toFixed(2);
-}
 export default ListingForm

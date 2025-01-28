@@ -42,6 +42,7 @@ const ItemForm = (props) => {
     purchasePrice: localStorage.getItem("tempPurchasePrice") || "",
     purchaseLocation: localStorage.getItem("tempLocation") || "",
     categoryId: sortedCategories[0].id,
+    additionalCosts: [],
     suggestedPartNums: [],
     suggestedLocations: [],
   })

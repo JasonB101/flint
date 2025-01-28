@@ -21,13 +21,13 @@ const Store = (props) => {
     items: [],
     expenses: [],
     ebayListings: [],
-    churnSettings: null
+    churnSettings: null,
     // newListings: []
   })
   const { items, expenses, ebayListings, churnSettings } = state
   const location = useLocation()
 
-  const authRoutes = ["/auth/signin", "/auth/signup","/"]
+  const authRoutes = ["/auth/signin", "/auth/signup", "/"]
   const isAuthRoute = authRoutes.includes(location.pathname)
   const interceptorRef = useRef(null)
 
@@ -102,12 +102,15 @@ const Store = (props) => {
   }
 
   async function handleItemReturn(itemId, action) {
-  console.log(action)
+    console.log(action)
   }
 
   async function saveChurnSettings(newChurnSettings) {
     try {
-      const response = await userAxios.post("/api/churnsettings", newChurnSettings)
+      const response = await userAxios.post(
+        "/api/churnsettings",
+        newChurnSettings
+      )
       const { success, churnSettings, message } = response.data
 
       if (success === true) {
@@ -130,22 +133,22 @@ const Store = (props) => {
 
   async function getChurnSettings() {
     try {
-      const response = await userAxios.get("/api/churnsettings");
-      const { success, churnSettings, message } = response.data;
-  
+      const response = await userAxios.get("/api/churnsettings")
+      const { success, churnSettings, message } = response.data
+
       if (success) {
-        changeState(prevState => ({
+        changeState((prevState) => ({
           ...prevState,
-          churnSettings
-        }));
-        return true;
+          churnSettings,
+        }))
+        return true
       } else {
-        console.error("Failed to fetch churn settings:", message);
-        return false;
+        console.error("Failed to fetch churn settings:", message)
+        return false
       }
     } catch (error) {
-      console.error("Error fetching churn settings:", error);
-      return false;
+      console.error("Error fetching churn settings:", error)
+      return false
     }
   }
 
@@ -192,6 +195,19 @@ const Store = (props) => {
     } catch (error) {
       console.error("Error fetching active listings:", error)
       throw error // Re-throw the error to handle it in the calling code if needed
+    }
+  }
+
+  async function getShippingLabels(orderId = null) {
+    try {
+      const result = await userAxios.get("/api/ebay/getshippinglabels")
+      const shippingLabels = result.data.shippingLabels || []
+
+      // Filter for items that have an orderId, and optionally match the provided orderId
+      return shippingLabels.filter((label) => orderId ? label.orderId === orderId : true)
+    } catch (error) {
+      console.error("Error fetching shipping labels:", error)
+      return []
     }
   }
 
@@ -357,7 +373,7 @@ const Store = (props) => {
         })
       })
       .catch((err) => {
-        if (err.response && err.response.status === 401) {
+        if (err.response && err.response.status === 402) {
           userAxios
             .post("/api/ebay/refreshOToken")
             .then((result) => {
@@ -442,8 +458,9 @@ const Store = (props) => {
         setEbayOAuthTokens,
         checkNewScores,
         getActiveListings,
+        getShippingLabels,
         saveChurnSettings,
-        churnSettings
+        churnSettings,
       }}
     >
       {props.children}

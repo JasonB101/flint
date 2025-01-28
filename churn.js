@@ -1,3 +1,4 @@
+require("./instrument")
 const ChurnSettings = require("./models/churnSettings.js")
 const User = require("./models/user.js")
 const InventoryItem = require("./models/inventoryItem.js")

@@ -7,7 +7,10 @@ const inventoryItemSchema = new Schema({
     required: true,
   },
   partNo: String,
-  sku: String,
+  sku: {
+    type: String,
+    unique: true
+  },
   listed: {
     type: Boolean,
     default: false,
@@ -93,7 +96,7 @@ const inventoryItemSchema = new Schema({
     defaut: "",
   },
   ebayFees: Number,
-  additionalCosts: Number, //Return cost, 1st time shipping cost etc
+  additionalCosts: Array, //Return cost, 1st time shipping cost etc
   profit: Number,
   roi: Number,
   shipped: {

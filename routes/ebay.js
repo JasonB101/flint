@@ -4,10 +4,7 @@ const User = require("../models/user")
 const InventoryItem = require("../models/inventoryItem")
 const findEbayListings = require("../lib/ebayMethods/findEbayListings")
 const { updateSellerAvgShipping } = require("../lib/userMethods")
-const {
-  getEbayListings,
-  getShippingTransactions,
-} = require("../lib/ebayApi")
+const { getEbayListings, getShippingTransactions } = require("../lib/ebayApi")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const {
   updateInventoryWithSales,
@@ -17,6 +14,7 @@ const {
   verifyCorrectInfoInInventoryItems,
 } = require("../lib/inventoryMethods")
 const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
+const { get } = require("request")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -24,8 +22,6 @@ const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
 //set as "Sold" ;) Goodluck, ima play a video game :P Need to think about how to filter between transactions that have been recorded
 //already. There may be more in inventory and the same part is counted more than once. Save the transaction ID to the item
 //so when you retrieve transactions to merge, you filter the list by which transactions have not been merged.
-
-
 
 ebayRouter.get("/getactivelistings", async (req, res, next) => {
   try {
@@ -44,6 +40,20 @@ ebayRouter.get("/getactivelistings", async (req, res, next) => {
   }
 })
 
+ebayRouter.get("/getShippingLabels", async (req, res, next) => {
+  const userObject = await getUserObject(req.auth._id)
+  const { ebayOAuthToken } = userObject
+  try {
+    const shippingTransactions = await getShippingTransactions(ebayOAuthToken)
+    if (shippingTransactions.failedOAuth) {
+      throw new Error("Need to Update OAuth")
+    }
+    res.send({success: true, shippingLabels: shippingTransactions.transactions})
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({ success: false, message: e.message, shippingLabels: [] })
+  }
+})
 
 ebayRouter.get("/getebay", async (req, res, next) => {
   const userObject = await getUserObject(req.auth._id)
@@ -53,7 +63,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     ebayToken: ebayAuthToken,
     ebayOAuthToken = "0",
     ebayRefreshOAuthToken,
-    ebayFeePercent
+    ebayFeePercent,
   } = userObject
 
   try {
@@ -62,30 +72,43 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     if (shippingTransactions.failedOAuth)
       throw new Error("Need to Update OAuth")
     shippingTransactions = shippingTransactions.transactions
-    console.log(`Got Transactions, making changes. ${shippingTransactions.length}`)
+    console.log(
+      `Got Transactions, making changes. ${shippingTransactions.length}`
+    )
     const [shippingUpdates, completedSales, ebayListings] = await Promise.all([
       updateAllZeroShippingCost(userId, shippingTransactions),
       getCompletedSales(ebayOAuthToken),
       getEbayListings(ebayAuthToken, userId),
     ])
+    // console.log("Got Completed Sales", completedSales)
+    let inventoryItems = await getInventoryItems(userId, false) //True is setting to get items that are listed: true
+    const inventoryItemsMap = new Map(
+      inventoryItems.map((item) => [item.sku, item])
+    )
 
     const newSoldItems = await updateInventoryWithSales(
       userId,
       completedSales,
+      inventoryItemsMap,
       shippingTransactions
     )
-
-    let inventoryItems = await getInventoryItems(userId, true) //True is setting to get items that are listed: true
+    if (newSoldItems.length > 0) {
+      updateSellerAvgShipping(userId)
+      newSoldItems.forEach((item) => {
+        inventoryItemsMap.set(item.sku, item)
+      })
+    }
 
     const verifiedCorrectInfo = await verifyCorrectInfoInInventoryItems(
-      inventoryItems,
+      inventoryItemsMap,
       ebayListings,
       averageShippingCost,
       ebayFeePercent
     )
 
-    if (verifiedCorrectInfo) {
-      updateSellerAvgShipping(userId)
+    // console.log("Is verified true? ", verifiedCorrectInfo)
+
+    if (verifiedCorrectInfo || newSoldItems.length > 0) {
       inventoryItems = await getInventoryItems(userId)
     }
     const response = {
@@ -95,7 +118,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     res.send(response)
   } catch (e) {
     console.log(e, "Access Token Expired")
-    res.status(401).send({ success: false, message: "Access Token Expired" })
+    res.status(402).send({ success: false, message: "Access Token Expired" })
   }
 })
 
@@ -122,7 +145,6 @@ ebayRouter.post("/refreshOToken", async (req, res, next) => {
   }
 })
 
-
 ebayRouter.put("/linkItem/:id", async (req, res, next) => {
   const { ItemID, BuyItNowPrice, SKU } = req.body
   const { _id: userId, averageShippingCost, ebayFeePercent } = req.user
@@ -137,6 +159,7 @@ ebayRouter.put("/linkItem/:id", async (req, res, next) => {
     expectedProfit: figureExpectedProfit(
       BuyItNowPrice,
       purchasePrice,
+      [], //additionalCosts
       averageShippingCost,
       ebayFeePercent
     ),

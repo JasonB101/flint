@@ -1,83 +1,207 @@
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 40%;
+  max-width: 1200px;
+  height: auto;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+
+  &:hover {
+    color: #d9534f;
   }
-  
-  .modalContent {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 40%;
-    max-width: 1200px;
-    height: auto;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .closeButton {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #333;
-  
-    &:hover {
-      color: #d9534f;
-    }
-  }
-  
-  .contentWrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-  
-  .infoSection {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-  }
-  
-  .infoSection p {
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  p {
+    color: #666;
     margin: 0;
     font-size: 1rem;
     line-height: 1.5;
-  }
   
-  .actionSection {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-  }
-  
-  .submitButton {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-  
-    &:hover {
-      background-color: #0056b3;
+    strong {
+      color: #333;
     }
   }
-  
+}
+
+.title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.infoSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.infoSection p {
+  color: #666;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+
+  strong {
+    color: #333;
+  }
+}
+
+.actionSection {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.submitButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+.mainToggle {
+  display: flex;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  align-items: center;
+  width: 50px;
+  height: 24px;
+  margin-right: 6px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background-color: #007bff;
+    }
+
+    &:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 24px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+  }
+}
+.moneyInfo{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+}
+.expectedProfitWrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.additionalCosts {
+
+  h5 {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .additionalCostsInputs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .additionalCostItem {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+    }
+
+    input,
+    p {
+      font-size: 16px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #333;
+      text-align: center;
+    }
+
+    input {
+      width: 100px;
+      // box-sizing: border-box;
+    }
+
+    p {
+      margin: 0;
+      padding: 8px 10px;
+      background-color: #f4f4f4;
+    }
+  }
+}
