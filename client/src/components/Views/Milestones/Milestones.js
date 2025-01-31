@@ -5,7 +5,7 @@ import DisplayCongrats from "../../Notifications/DisplayCongrats/DisplayCongrats
 
 const Milestones = (props) => {
     const {items, checkNewScores} = props
-    const report = CreateReport(items, true, 2024) //Manually set to this year
+    const report = CreateReport(items, true, 2025) //Manually set to this year
     const [prepObject, changePrepObject] = useState({
         day:{
             listed: {}, //Entry that has 'listed' in competition array
