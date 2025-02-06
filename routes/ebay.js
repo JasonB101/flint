@@ -4,7 +4,10 @@ const User = require("../models/user")
 const InventoryItem = require("../models/inventoryItem")
 const findEbayListings = require("../lib/ebayMethods/findEbayListings")
 const { updateSellerAvgShipping } = require("../lib/userMethods")
-const { getEbayListings, getShippingTransactions } = require("../lib/ebayApi")
+const {
+  getEbayListings,
+  getShippingTransactions,
+} = require("../lib/ebayMethods/ebayApi")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const {
   updateInventoryWithSales,
@@ -14,7 +17,7 @@ const {
   verifyCorrectInfoInInventoryItems,
 } = require("../lib/inventoryMethods")
 const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
-const { get } = require("request")
+const findCompatibilityList = require("../lib/ebayMethods/findCompatibilityList")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -48,10 +51,45 @@ ebayRouter.get("/getShippingLabels", async (req, res, next) => {
     if (shippingTransactions.failedOAuth) {
       throw new Error("Need to Update OAuth")
     }
-    res.send({success: true, shippingLabels: shippingTransactions.transactions})
+    res.send({
+      success: true,
+      shippingLabels: shippingTransactions.transactions,
+    })
   } catch (e) {
     console.log(e)
-    res.status(500).send({ success: false, message: e.message, shippingLabels: [] })
+    res
+      .status(500)
+      .send({ success: false, message: e.message, shippingLabels: [] })
+  }
+})
+
+ebayRouter.get("/getCompatibility", async (req, res, next) => {
+  const userObject = await getUserObject(req.auth._id)
+  const { ebayToken } = userObject
+  const listingLimit = 10
+  try {
+    // Get item IDs from query or body
+    let itemIds = req.query.itemIds?.split(",") || [] // Assuming item IDs are passed as a comma-separated string
+    itemIds = itemIds.splice(0, listingLimit)
+    if (itemIds.length === 0) {
+      throw new Error("No item IDs provided")
+    }
+
+    const compatibilityList = await findCompatibilityList(itemIds, ebayToken)
+    if (compatibilityList.length === 0) {
+      res.send({
+        success: true,
+        compatibility: [],
+        message: "No compatible items found",
+      })
+    } else {
+      res.send({ success: true, compatibility: compatibilityList })
+    }
+  } catch (e) {
+    console.log(e)
+    res
+      .status(500)
+      .send({ success: false, message: e.message, compatibility: [] })
   }
 })
 
@@ -117,7 +155,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     }
     res.send(response)
   } catch (e) {
-    console.log(e,"Access Token Expired")
+    console.log(e, "Access Token Expired")
     res.status(402).send({ success: false, message: "Access Token Expired" })
   }
 })

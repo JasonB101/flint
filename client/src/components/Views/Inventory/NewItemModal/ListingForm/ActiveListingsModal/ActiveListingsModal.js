@@ -18,10 +18,10 @@ const ActiveListingsModal = ({ activeListings, closeActiveListingsModal }) => {
     <div className={Styles.modal}>
       <div className={Styles.modalContent}>
         <div className={Styles.modalHeader}>
-          <div className='spacer'></div>
           <span className={Styles.closeModal} onClick={closeActiveListingsModal}>
-            &times;
+            X
           </span>
+          <div className='spacer'></div>
           
         </div>
         <div className={Styles['listingInfo']}>

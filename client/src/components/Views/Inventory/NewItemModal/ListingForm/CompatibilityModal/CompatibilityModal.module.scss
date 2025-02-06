@@ -1,0 +1,161 @@
+.compatibilityModalWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #fff;
+  padding: 15px;
+  padding-top: 28px;
+  border-radius: 8px;
+  width: 500px;
+  max-height: 70%;
+  position: relative;
+}
+
+.newItemForm {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  /* First row: year, make, model */
+  .row1 {
+    display: flex;
+    gap: 1rem;
+
+    input {
+      flex: 1;
+    }
+  }
+
+  /* Second row: trim, engine */
+  .row2 {
+    display: flex;
+    gap: 1rem;
+
+    input {
+      flex: 1;
+    }
+  }
+
+  button {
+    align-self: flex-end;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    background-color: #0670b7;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #055a94;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(6, 112, 183, 0.3);
+    }
+  }
+}
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  color: #666;
+  cursor: pointer;
+  text-align: center;
+  line-height: 26px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #999;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.compatibilityList {
+  list-style: none;
+  padding: 0 5px;
+  margin: 10px 0 0 0;
+  height: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.compatibilityList::-webkit-scrollbar {
+  width: 5px; /* Width of the scrollbar */
+}
+
+.compatibilityList::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Make the scrollbar thumb transparent */
+}
+
+.compatibilityList:hover::-webkit-scrollbar-thumb {
+  background-color: #aaa; /* Change the scrollbar thumb color on hover */
+}
+
+.compatibilityItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  font-size: 0.85rem;
+  position: relative; // To position the remove button in the top-right corner
+}
+
+.itemDetails {
+  flex: 1;
+}
+
+.itemDetails p {
+  margin: 3px 0;
+  line-height: 1.2;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem; // Larger "X"
+  color: #ff4d4d;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.removeBtn:hover {
+  color: #ff1a1a; // Redder "X" on hover
+}
+
+.noItems {
+  text-align: center;
+  color: #666;
+  font-size: 1rem;
+  margin-top: 20px;
+}

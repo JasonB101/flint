@@ -5,6 +5,7 @@ import Label from "./Label/Label"
 import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
+import CompatibilityModal from "./CompatibilityModal/CompatibilityModal"
 import figureExpectedProfit from "../../../../../lib/figureExpectedProfit"
 
 const ListingForm = (props) => {
@@ -15,10 +16,11 @@ const ListingForm = (props) => {
     items,
     averageShippingCost,
     getActiveListings,
+    getCompatibility,
     ebayFeePercent,
   } = props
   const { categoryId, partNo, sku, purchasePrice } = itemForm
-  const autoFill = categories.find((x) => x.id == categoryId) || {
+  const autoFill = categories.find((x) => +x.id === +categoryId) || {
     title: "",
     description: "",
   }
@@ -43,8 +45,11 @@ const ListingForm = (props) => {
   })
 
   const [activeListingsData, changeActiveListingsData] = useState({
-    showModal: false,
+    showActiveListingsModal: false,
+    showCompatibilityModal: false,
+    compatibilityEnabled: true,
     activeListings: [],
+    compatibilityList: [],
   })
 
   useEffect(() => {
@@ -105,11 +110,16 @@ const ListingForm = (props) => {
     // Fetch active listings when the component mounts and when partNo changes
     const fetchActiveListings = async () => {
       try {
-        const activeListingsData = await getActiveListings(partNo)
+        const activeListingsData = (await getActiveListings(partNo)) || []
+        const activeIds = activeListingsData.map((x) => x.itemId)
+        const compatibilityList = await getCompatibility(activeIds)
+
         changeActiveListingsData((prevActiveListings) => {
           return {
             ...prevActiveListings,
             activeListings: activeListingsData,
+            compatibilityList: compatibilityList,
+            compatibilityEnabled: compatibilityList.length > 0,
           }
         })
       } catch (error) {
@@ -119,13 +129,13 @@ const ListingForm = (props) => {
     if (partNo !== "N/A") {
       fetchActiveListings()
     }
-  }, [partNo, getActiveListings])
+  }, [partNo])
 
   const openActiveListingsModal = () => {
     changeActiveListingsData((prev) => {
       return {
         ...prev,
-        showModal: true,
+        showActiveListingsModal: true,
       }
     })
   }
@@ -133,7 +143,37 @@ const ListingForm = (props) => {
     changeActiveListingsData((prev) => {
       return {
         ...prev,
-        showModal: false,
+        showActiveListingsModal: false,
+      }
+    })
+  }
+  const openCompatibilityModal = () => {
+    changeActiveListingsData((prev) => {
+      return {
+        ...prev,
+        showCompatibilityModal: true,
+      }
+    })
+  }
+  const closeCompatibilityModal = () => {
+    changeActiveListingsData((prev) => {
+      return {
+        ...prev,
+        showCompatibilityModal: false,
+      }
+    })
+  }
+
+  const handleCompatibilityEnabled = (e) => {
+    let setToTrue =
+      !activeListingsData.compatibilityEnabled &&
+      activeListingsData.compatibilityList.length > 0
+        ? true
+        : false
+    changeActiveListingsData((prev) => {
+      return {
+        ...prev,
+        compatibilityEnabled: setToTrue,
       }
     })
   }
@@ -195,7 +235,13 @@ const ListingForm = (props) => {
 
   async function saveChanges(e) {
     e.preventDefault()
-    let ebayForm = inputForm
+    let compatibilityList = activeListingsData.compatibilityEnabled
+      ? activeListingsData.compatibilityList
+      : []
+    let ebayForm = {
+      ...inputForm,
+      compatibilities: compatibilityList,
+    }
     try {
       const successfullyListed = await submitNewItem({
         ...ebayForm,
@@ -225,8 +271,8 @@ const ListingForm = (props) => {
         </Form.Group>
       </Form.Row>
       <Form.Label>Money</Form.Label>
-      <Form.Row>
-        <Form.Group as={Col} controlId="formGridListedPrice">
+      <div className={Styles.formRowCustom}>
+        <div className={Styles.formGroupCustom}>
           <Form.Control
             required
             value={inputForm.listedPrice}
@@ -234,34 +280,62 @@ const ListingForm = (props) => {
             onChange={handleChange}
             placeholder="List Price"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group as={Col} controlId="formGridAcceptOfferHigh">
+        <div className={Styles.formGroupCustom}>
           <Form.Control
             value={inputForm.acceptOfferHigh}
             name="acceptOfferHigh"
             onChange={handleChange}
             placeholder="Accepted Offer"
           />
-        </Form.Group>
-        <Form.Group as={Col} controlId="formGridDeclineOfferLow">
+        </div>
+
+        <div className={Styles.formGroupCustom}>
           <Form.Control
             value={inputForm.declineOfferLow}
             name="declineOfferLow"
             onChange={handleChange}
             placeholder="Declined Offer"
           />
-        </Form.Group>
-        <Form.Label
-          className={Styles["expected-profit-label"]}
-        >{`$${expectedProfit}`}</Form.Label>
-      </Form.Row>
+        </div>
+
+        <span className={Styles["expected-profit-label"]}>
+          ${expectedProfit}
+        </span>
+      </div>
       <Form.Row>
         <Form.Group as={Col} className="text-center">
-          <Button variant="primary" onClick={openActiveListingsModal}>
-            Active Listings
+          <Button
+            className={Styles.listingFormButton}
+            variant="primary"
+            onClick={openActiveListingsModal}
+          >
+            View Active Listings
           </Button>
         </Form.Group>
+        <div className={Styles.mainToggle}>
+          <label className={Styles.switch}>
+            <input
+              type="checkbox"
+              name="compatibilityEnabled"
+              checked={activeListingsData.compatibilityEnabled}
+              onChange={handleCompatibilityEnabled}
+            />
+            <span className={Styles.slider}></span>
+          </label>
+          <span>Compatibility</span>
+        </div>
+        <Form.Group as={Col} className="text-center">
+          <Button
+            className={Styles.listingFormButton}
+            variant="primary"
+            onClick={openCompatibilityModal}
+          >
+            Edit Compatibility
+          </Button>
+        </Form.Group>
+        
       </Form.Row>
       <Form.Row>
         <Form.Group as={Col} controlId="formGridDescription">
@@ -377,15 +451,20 @@ const ListingForm = (props) => {
           }}
         />
       </Modal.Footer>
-      {activeListingsData.showModal && (
+      {activeListingsData.showActiveListingsModal && (
         <ActiveListingsModal
           closeActiveListingsModal={closeActiveListingsModal}
           activeListings={activeListingsData.activeListings}
         />
       )}
+      {activeListingsData.showCompatibilityModal && (
+        <CompatibilityModal
+          closeCompatibilityModal={closeCompatibilityModal}
+          compatibilityList={activeListingsData.compatibilityList}
+        />
+      )}
     </Form>
   )
 }
-
 
 export default ListingForm

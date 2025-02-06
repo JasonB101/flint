@@ -6,14 +6,14 @@ const {
   updateUnlisted,
   parseInventoryObject
 } = require("../lib/inventoryMethods")
-const { createListing } = require("../lib/ebayApi")
+const { createListing } = require("../lib/ebayMethods/ebayApi")
 const InventoryItem = require("../models/inventoryItem")
 const User = require("../models/user")
 const inventoryItemChange = require("../lib/editItemMethods/inventoryItemChange")
 const listingChange = require("../lib/editItemMethods/listingChange")
 
 inventoryRouter.post("/", async (req, res, next) => {
-  console.log(req.body)
+  // console.log(req.body)
   const userRaw = await User.findOne({ _id: req.auth._id })
   const user = userRaw.toObject()
   const { ebayToken, averageShippingCost, userDescriptionTemplate, postalCode, ebayFeePercent } = user

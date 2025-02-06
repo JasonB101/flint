@@ -101,7 +101,6 @@ const Store = (props) => {
     // }
   }
 
-
   async function saveChurnSettings(newChurnSettings) {
     try {
       const response = await userAxios.post(
@@ -191,7 +190,7 @@ const Store = (props) => {
       return result.data
     } catch (error) {
       console.error("Error fetching active listings:", error)
-      throw error // Re-throw the error to handle it in the calling code if needed
+      return []
     }
   }
 
@@ -201,10 +200,32 @@ const Store = (props) => {
       const shippingLabels = result.data.shippingLabels || []
 
       // Filter for items that have an orderId, and optionally match the provided orderId
-      return shippingLabels.filter((label) => orderId ? label.orderId === orderId : true)
+      return shippingLabels.filter((label) =>
+        orderId ? label.orderId === orderId : true
+      )
     } catch (error) {
       console.error("Error fetching shipping labels:", error)
       return []
+    }
+  }
+
+  async function getCompatibility(itemIds) {
+    if (itemIds.length === 0) return []
+    try {
+      // Send a GET request to the /getCompatibility route, passing itemIds as a query parameter
+      const result = await userAxios.get("/api/ebay/getCompatibility", {
+        params: {
+          itemIds: itemIds.join(","), // Pass itemIds as a comma-separated string
+        },
+      })
+
+      const compatibility = result.data.compatibility || []
+
+      // If you need to filter by some condition (e.g., if the list has matches), you can do so
+      return compatibility // Return the compatibility data
+    } catch (error) {
+      console.error("Error fetching compatibility data:", error)
+      return [] // Return an empty array in case of error
     }
   }
 
@@ -261,12 +282,14 @@ const Store = (props) => {
       .then((res) => {
         if (res.data.success) {
           const updatedItems = [...items]
-          const itemIndex = updatedItems.findIndex(item => item._id === itemUpdates.itemId)
+          const itemIndex = updatedItems.findIndex(
+            (item) => item._id === itemUpdates.itemId
+          )
           updatedItems[itemIndex] = res.data.result
-          
+
           changeState((prevState) => ({
             ...prevState,
-            items: updatedItems
+            items: updatedItems,
           }))
         }
       })
@@ -474,6 +497,7 @@ const Store = (props) => {
         setEbayOAuthTokens,
         checkNewScores,
         getActiveListings,
+        getCompatibility,
         getShippingLabels,
         saveChurnSettings,
         churnSettings,

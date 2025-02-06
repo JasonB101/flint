@@ -20,29 +20,21 @@
   max-width: 400px; /* Adjusted to a max-width for responsiveness */
   width: 100%; /* Full width on smaller screens */
   border-radius: 8px;
-  max-height: 300px;
-  overflow-y: scroll;
-}
-.modalContent::-webkit-scrollbar {
-  width: 5px; /* Width of the scrollbar */
+  max-height: 500px;
 }
 
-.modalContent::-webkit-scrollbar-thumb {
-  background-color: transparent; /* Make the scrollbar thumb transparent */
-}
-
-.modalContent:hover::-webkit-scrollbar-thumb {
-  background-color: #aaa; /* Change the scrollbar thumb color on hover */
-}
 .listingInfo {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 8px;
   align-items: center;
 }
 .modalHeader {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 5px;
   //   border-bottom: 1px solid #ddd;
 }
 
@@ -51,21 +43,52 @@
 }
 
 .closeModal {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  color: #666;
   cursor: pointer;
-  font-size: 30px;
-  margin: -10px 0px -5px 5px;
-  color: #aaa;
-}
+  text-align: center;
+  line-height: 26px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 
-.closeModal:hover,
-.closeModal:focus {
-  color: black;
+  &:hover {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #999;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+  }
 }
 
 .modalBody {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  max-height: 400px;
+  padding: 5px;
+  overflow-y: scroll;
+}
+.modalBody::-webkit-scrollbar {
+  width: 5px; /* Width of the scrollbar */
+}
+
+.modalBody::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Make the scrollbar thumb transparent */
+}
+
+.modalBody:hover::-webkit-scrollbar-thumb {
+  background-color: #aaa; /* Change the scrollbar thumb color on hover */
 }
 
 .itemContainer {
