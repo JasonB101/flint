@@ -58,39 +58,38 @@ inventoryRouter.post("/", async (req, res, next) => {
     const { compatibilities, partNo: partNumber } = inventoryItemBody
     if (compatibilities.length > 0) {
       try {
-        const updatedFitment = await Fitment.findOneAndUpdate(
-          {
-            partNumber: partNumber,
-            $expr: {
-              $ne: ["$compatibilityList", compatibilities], // Check if compatibilityList differs
-            },
-          },
-          {
-            $set: {
-              compatibilityList: compatibilities,
-              userId: req.auth._id,
-            },
-          },
-          {
-            upsert: true, // Create a new document if none matches
-            new: true, // Return the updated or newly created document
-          }
-        )
+        // Check if the document exists and needs updating
+        const existingFitment = await Fitment.findOne({
+          partNumber: partNumber,
+        })
 
-        res.status(200).json({
-          message: updatedFitment
-            ? "Fitment updated successfully"
-            : "Fitment created successfully",
-          fitment: updatedFitment,
-        })
+        if (
+          !existingFitment ||
+          !isEqual(existingFitment.compatibilityList, compatibilities)
+        ) {
+          // Update or insert the document
+          const updatedFitment = await Fitment.findOneAndUpdate(
+            { partNumber: partNumber },
+            {
+              $set: {
+                compatibilityList: compatibilities,
+                userId: req.auth._id,
+              },
+            },
+            {
+              upsert: true, // Create a new document if none matches
+              new: true, // Return the updated or newly created document
+            }
+          )
+
+          console.log("Updated Fitment:", updatedFitment)
+        } else {
+          console.log("No update required: Compatibility list is unchanged")
+        }
       } catch (error) {
-        res.status(500).json({
-          message: "An error occurred while updating the fitment.",
-          error: error.message,
-        })
+        console.error("Error updating fitment:", error)
       }
     }
-    
   } else {
     return res
       .status(500)

@@ -66,41 +66,57 @@ ebayRouter.get("/getShippingLabels", async (req, res, next) => {
 
 ebayRouter.get("/getCompatibility", async (req, res, next) => {
   const userObject = await getUserObject(req.auth._id)
+  const partNumber = req.query.partNumber
+  // Check database for existing fitment data
+  const fitment = await Fitment.findOne({ partNumber: partNumber })
+  if (fitment) {
+    return res.send({
+      success: true,
+      compatibility: fitment.compatibilityList,
+    })
+  }
+
   const { ebayToken } = userObject
-  const listingLimit = 10 // Prevents doing too many calls to ebay
+  const listingBatchLimit = 10 // Prevents doing too many calls to eBay
+
   try {
     // Get item IDs from query or body
     let itemIds = req.query.itemIds?.split(",") || [] // Assuming item IDs are passed as a comma-separated string
-    itemIds = itemIds.splice(0, listingLimit)
-    const partNumber = req.query.partNumber
-    const fitmentList = await Fitment.find({ partNumber: partNumber })
+    itemIds = itemIds.splice(0, listingBatchLimit * 5) // Limit total number of items to process
 
-    if (fitmentList) {
-      return res.send({
-        success: true,
-        compatibility: fitmentList.compatibilityList,
-      })
-    }
-    //Check database for fitment first
+
+    // Validate that there are item IDs to process
     if (itemIds.length === 0) {
       throw new Error("No item IDs provided")
     }
 
-    const compatibilityList = await findCompatibilityList(itemIds, ebayToken)
-    if (compatibilityList.length === 0) {
-      res.send({
-        success: true,
-        compatibility: [],
-        message: "No compatible items found",
-      })
-    } else {
-      res.send({ success: true, compatibility: compatibilityList })
+    // Fetch compatibility data from eBay in batches
+    while (itemIds.length > 0) {
+      const currentBatch = itemIds.splice(0, listingBatchLimit) // Take a batch of IDs
+      const batchCompatibility = await findCompatibilityList(
+        currentBatch,
+        ebayToken
+      )
+
+      if (batchCompatibility.length > 0) {
+        // Return the results immediately if any are found
+        return res.send({ success: true, compatibility: batchCompatibility })
+      }
     }
+
+    // If no results found after exhausting all itemIds
+    res.send({
+      success: true,
+      compatibility: [],
+      message: "No compatible items found",
+    })
   } catch (e) {
-    console.log(e)
-    res
-      .status(500)
-      .send({ success: false, message: e.message, compatibility: [] })
+    console.error(e)
+    res.status(500).send({
+      success: false,
+      message: e.message,
+      compatibility: [],
+    })
   }
 })
 
