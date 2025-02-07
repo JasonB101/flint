@@ -44,6 +44,17 @@ const CompatibilityModal = ({ compatibilityList, closeCompatibilityModal }) => {
     const updatedItems = items.filter((item, i) => i !== index)
     setItems(updatedItems)
   }
+  const handleCLearList = (e) => {
+    e.preventDefault()
+    setItems([])
+    setNewItem({
+        Year: "",
+        Make: "",
+        Model: "",
+        Trim: "",
+        Engine: "",
+      })
+  }
 
   return (
     <div className={Styles.compatibilityModalWrapper}>
@@ -88,7 +99,11 @@ const CompatibilityModal = ({ compatibilityList, closeCompatibilityModal }) => {
               onChange={handleChange}
             />
           </div>
-          <button onClick={handleAddItem}>Add Vehicle</button>
+          <div className={Styles.vehicleButtons}>
+            <button onClick={handleCLearList}>Clear List</button>
+            <div className="spacer"></div>
+            <button onClick={handleAddItem}>Add Vehicle</button>
+          </div>
         </form>
         <button
           className={Styles.closeBtn}

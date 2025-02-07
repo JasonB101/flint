@@ -47,6 +47,10 @@
     }
   }
 
+  .vehicleButtons{
+    display: flex;
+    padding: 0 8px;}
+
   button {
     align-self: flex-end;
     padding: 0.5rem 0.75rem;
