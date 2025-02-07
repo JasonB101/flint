@@ -4,11 +4,12 @@ const {
   getInventoryItems,
   figureExpectedProfit,
   updateUnlisted,
-  parseInventoryObject
+  parseInventoryObject,
 } = require("../lib/inventoryMethods")
 const { createListing } = require("../lib/ebayMethods/ebayApi")
 const InventoryItem = require("../models/inventoryItem")
 const User = require("../models/user")
+const Fitment = require("../models/fitment")
 const inventoryItemChange = require("../lib/editItemMethods/inventoryItemChange")
 const listingChange = require("../lib/editItemMethods/listingChange")
 
@@ -16,7 +17,13 @@ inventoryRouter.post("/", async (req, res, next) => {
   // console.log(req.body)
   const userRaw = await User.findOne({ _id: req.auth._id })
   const user = userRaw.toObject()
-  const { ebayToken, averageShippingCost, userDescriptionTemplate, postalCode, ebayFeePercent } = user
+  const {
+    ebayToken,
+    averageShippingCost,
+    userDescriptionTemplate,
+    postalCode,
+    ebayFeePercent,
+  } = user
   const listingDetails = req.body
   const listingResponse = await createListing(
     ebayToken,
@@ -24,8 +31,10 @@ inventoryRouter.post("/", async (req, res, next) => {
     userDescriptionTemplate,
     postalCode
   )
-  if (!listingResponse.success){
-    return res.status(500).send({ success: false, message: listingResponse.message })
+  if (!listingResponse.success) {
+    return res
+      .status(500)
+      .send({ success: false, message: listingResponse.message })
   }
   const inventoryItemBody = parseInventoryObject(
     listingResponse,
@@ -46,6 +55,42 @@ inventoryRouter.post("/", async (req, res, next) => {
         })
       } else res.send({ success: true, item })
     })
+    const { compatibilities, partNo: partNumber } = inventoryItemBody
+    if (compatibilities.length > 0) {
+      try {
+        const updatedFitment = await Fitment.findOneAndUpdate(
+          {
+            partNumber: partNumber,
+            $expr: {
+              $ne: ["$compatibilityList", compatibilities], // Check if compatibilityList differs
+            },
+          },
+          {
+            $set: {
+              compatibilityList: compatibilities,
+              userId: req.auth._id,
+            },
+          },
+          {
+            upsert: true, // Create a new document if none matches
+            new: true, // Return the updated or newly created document
+          }
+        )
+
+        res.status(200).json({
+          message: updatedFitment
+            ? "Fitment updated successfully"
+            : "Fitment created successfully",
+          fitment: updatedFitment,
+        })
+      } catch (error) {
+        res.status(500).json({
+          message: "An error occurred while updating the fitment.",
+          error: error.message,
+        })
+      }
+    }
+    
   } else {
     return res
       .status(500)
@@ -57,12 +102,17 @@ inventoryRouter.put("/returnInventoryItem", async (req, res, next) => {
   const user = await getUserObject(req.auth._id)
   const { _id: userId } = user
   const updates = req.body
-  const {itemId, ...updateFields} = updates
+  const { itemId, ...updateFields } = updates
   // console.log(itemId, updateFields)
-  InventoryItem.findOneAndUpdate({ _id: itemId, userId: userId }, updateFields, { new: true }, (err, result) => {
-    if (err) res.send({ success: false, message: err.message })
-    if (result) res.send({ success: true, result })
-  })
+  InventoryItem.findOneAndUpdate(
+    { _id: itemId, userId: userId },
+    updateFields,
+    { new: true },
+    (err, result) => {
+      if (err) res.send({ success: false, message: err.message })
+      if (result) res.send({ success: true, result })
+    }
+  )
   // res.send({success: false, message: "This is a placeholder"})
 })
 
@@ -169,7 +219,6 @@ inventoryRouter.post("/relist/:id", async (req, res, next) => {
   const itemId = req.params.id
 
   try {
-
     //call the relist function, I need to make so I can feed many into it as well.
   } catch (e) {
     console.log(e)

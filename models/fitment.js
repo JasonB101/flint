@@ -9,7 +9,8 @@ const fitmentSchema = new Schema({
   },
   partNumber: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   compatibilityList: {
     type: Array,

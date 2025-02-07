@@ -209,13 +209,14 @@ const Store = (props) => {
     }
   }
 
-  async function getCompatibility(itemIds) {
+  async function getCompatibility(itemIds, partNumber) {
     if (itemIds.length === 0) return []
     try {
       // Send a GET request to the /getCompatibility route, passing itemIds as a query parameter
       const result = await userAxios.get("/api/ebay/getCompatibility", {
         params: {
           itemIds: itemIds.join(","), // Pass itemIds as a comma-separated string
+          partNumber: partNumber, // Include partNumber in the request
         },
       })
 

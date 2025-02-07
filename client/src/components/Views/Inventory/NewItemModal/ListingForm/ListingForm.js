@@ -112,7 +112,7 @@ const ListingForm = (props) => {
       try {
         const activeListingsData = (await getActiveListings(partNo)) || []
         const activeIds = activeListingsData.map((x) => x.itemId)
-        const compatibilityList = await getCompatibility(activeIds)
+        const compatibilityList = await getCompatibility(activeIds, partNo)
 
         changeActiveListingsData((prevActiveListings) => {
           return {

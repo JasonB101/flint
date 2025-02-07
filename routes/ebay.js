@@ -2,6 +2,7 @@ const express = require("express")
 const ebayRouter = express.Router()
 const User = require("../models/user")
 const InventoryItem = require("../models/inventoryItem")
+const Fitment = require("../models/fitment")
 const findEbayListings = require("../lib/ebayMethods/findEbayListings")
 const { updateSellerAvgShipping } = require("../lib/userMethods")
 const {
@@ -66,11 +67,21 @@ ebayRouter.get("/getShippingLabels", async (req, res, next) => {
 ebayRouter.get("/getCompatibility", async (req, res, next) => {
   const userObject = await getUserObject(req.auth._id)
   const { ebayToken } = userObject
-  const listingLimit = 10
+  const listingLimit = 10 // Prevents doing too many calls to ebay
   try {
     // Get item IDs from query or body
     let itemIds = req.query.itemIds?.split(",") || [] // Assuming item IDs are passed as a comma-separated string
     itemIds = itemIds.splice(0, listingLimit)
+    const partNumber = req.query.partNumber
+    const fitmentList = await Fitment.find({ partNumber: partNumber })
+
+    if (fitmentList) {
+      return res.send({
+        success: true,
+        compatibility: fitmentList.compatibilityList,
+      })
+    }
+    //Check database for fitment first
     if (itemIds.length === 0) {
       throw new Error("No item IDs provided")
     }
