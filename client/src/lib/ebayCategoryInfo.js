@@ -1,7 +1,7 @@
 
 const categories = [
     {
-        category: "Engine Computer ECU",
+        category: "Engine Computer or Module",
         id: 33596,
         description: "Some ECU’s (Engine Control Unit) need to be reprogrammed with your vehicle's VIN. This process is not done by us. Please research the specific process your vehicle’s ECU may need before purchasing this ECU.",
         title: "Engine Computer ECU ECM PCM"
@@ -19,10 +19,6 @@ const categories = [
     {
         category: "Engine Coolant Components",
         id: 46096
-    },
-    {
-        category: "Computer Chip (Other)",
-        id: 33598
     },
     {
         category: "Cup Holders",

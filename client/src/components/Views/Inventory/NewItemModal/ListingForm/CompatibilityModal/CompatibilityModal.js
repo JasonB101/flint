@@ -1,9 +1,12 @@
 import React, { useState } from "react"
 import Styles from "./CompatibilityModal.module.scss"
 
-const CompatibilityModal = ({ compatibilityList, closeCompatibilityModal }) => {
-  const [items, setItems] = useState(compatibilityList)
-  let firstItem = items[0] || {}
+const CompatibilityModal = ({
+  compatibilityList,
+  closeCompatibilityModal,
+  changeActiveListingsData,
+}) => {
+  let firstItem = compatibilityList[0] || {}
   const { Year = "", Make = "", Model = "" } = firstItem
   const [newItem, setNewItem] = useState({
     Year,
@@ -13,18 +16,21 @@ const CompatibilityModal = ({ compatibilityList, closeCompatibilityModal }) => {
     Engine: "",
   })
 
-  const sortedItems = items.sort((a, b) => {
+  compatibilityList.sort((a, b) => {
     const makeComparison = a.Make.localeCompare(b.Make)
     if (makeComparison !== 0) return makeComparison
 
     const modelComparison = a.Model.localeCompare(b.Model)
     if (modelComparison !== 0) return modelComparison
 
-    const trimComparison = a.Trim.localeCompare(b.Trim)
-    if (trimComparison !== 0) return trimComparison
-
-    const engineComparison = a.Engine.localeCompare(b.Engine)
-    if (engineComparison !== 0) return engineComparison
+    if (a.Trim && b.Trim) {
+      const trimComparison = a.Trim.localeCompare(b.Trim)
+      if (trimComparison !== 0) return trimComparison
+    }
+    if (a.Engine && b.Engine) {
+      const engineComparison = a.Engine.localeCompare(b.Engine)
+      if (engineComparison !== 0) return engineComparison
+    }
 
     return parseInt(a.Year, 10) - parseInt(b.Year, 10)
   })
@@ -36,24 +42,33 @@ const CompatibilityModal = ({ compatibilityList, closeCompatibilityModal }) => {
 
   const handleAddItem = (e) => {
     e.preventDefault()
-    setItems((prev) => [...prev, newItem])
+    changeActiveListingsData((prev) => {
+      return {
+        ...prev,
+        compatibilityList: [...prev.compatibilityList, newItem],
+      }
+    })
     setNewItem({ Year, Make, Model, Trim: "", Engine: "" })
   }
   const handleRemoveItem = (index, e) => {
     e.preventDefault()
-    const updatedItems = items.filter((item, i) => i !== index)
-    setItems(updatedItems)
+    const updatedItems = compatibilityList.filter((item, i) => i !== index)
+    changeActiveListingsData((prev) => {
+      return { ...prev, compatibilityList: updatedItems }
+    })
   }
   const handleCLearList = (e) => {
     e.preventDefault()
-    setItems([])
+    changeActiveListingsData((prev) => {
+      return { ...prev, compatibilityList: [] }
+    })
     setNewItem({
-        Year: "",
-        Make: "",
-        Model: "",
-        Trim: "",
-        Engine: "",
-      })
+      Year: "",
+      Make: "",
+      Model: "",
+      Trim: "",
+      Engine: "",
+    })
   }
 
   return (
@@ -114,11 +129,11 @@ const CompatibilityModal = ({ compatibilityList, closeCompatibilityModal }) => {
         >
           X
         </button>
-        {items.length === 0 ? (
+        {compatibilityList.length === 0 ? (
           <p className={Styles.noItems}>No compatible items found</p>
         ) : (
           <ul className={Styles.compatibilityList}>
-            {sortedItems.map((item, index) => (
+            {compatibilityList.map((item, index) => (
               <li key={index} className={Styles.compatibilityItem}>
                 <div className={Styles.itemDetails}>
                   <p>

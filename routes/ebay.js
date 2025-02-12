@@ -81,42 +81,47 @@ ebayRouter.get("/getCompatibility", async (req, res, next) => {
 
   try {
     // Get item IDs from query or body
-    let itemIds = req.query.itemIds?.split(",") || [] // Assuming item IDs are passed as a comma-separated string
-    itemIds = itemIds.splice(0, listingBatchLimit * 5) // Limit total number of items to process
-
-
+    let itemIds = req.query.itemIds?.split(",") || []; // Assuming item IDs are passed as a comma-separated string
+    itemIds = itemIds.splice(0, listingBatchLimit * 5); // Limit total number of items to process
+  
     // Validate that there are item IDs to process
     if (itemIds.length === 0) {
-      throw new Error("No item IDs provided")
+      throw new Error("No item IDs provided");
     }
-
+  
+    let compatibilityList = []; // Accumulate compatibility results
+  
     // Fetch compatibility data from eBay in batches
     while (itemIds.length > 0) {
-      const currentBatch = itemIds.splice(0, listingBatchLimit) // Take a batch of IDs
+      const currentBatch = itemIds.splice(0, listingBatchLimit); // Take a batch of IDs
       const batchCompatibility = await findCompatibilityList(
         currentBatch,
         ebayToken
-      )
-
+      );
+  
       if (batchCompatibility.length > 0) {
-        // Return the results immediately if any are found
-        return res.send({ success: true, compatibility: batchCompatibility })
+        compatibilityList = compatibilityList.concat(batchCompatibility); // Accumulate results
+      }
+  
+      // Stop if we've gathered enough results
+      if (compatibilityList.length >= 4) {
+        break;
       }
     }
-
-    // If no results found after exhausting all itemIds
-    res.send({
-      success: true,
-      compatibility: [],
-      message: "No compatible items found",
-    })
+  
+    // Send the accumulated results or indicate no compatibility found
+    if (compatibilityList.length > 0) {
+      res.send({ success: true, compatibility: compatibilityList });
+    } else {
+      res.send({
+        success: true,
+        compatibility: [],
+        message: "No compatible items found",
+      });
+    }
   } catch (e) {
-    console.error(e)
-    res.status(500).send({
-      success: false,
-      message: e.message,
-      compatibility: [],
-    })
+    console.error(e);
+    res.status(500).send({ success: false, message: e.message, compatibility: [] });
   }
 })
 

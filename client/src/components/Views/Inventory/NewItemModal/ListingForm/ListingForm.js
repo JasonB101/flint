@@ -461,6 +461,7 @@ const ListingForm = (props) => {
         <CompatibilityModal
           closeCompatibilityModal={closeCompatibilityModal}
           compatibilityList={activeListingsData.compatibilityList}
+          changeActiveListingsData={changeActiveListingsData}
         />
       )}
     </Form>
