@@ -13,6 +13,11 @@ const categories = [
         title: "Transmission Control Module TCU TCM"
     },
     {
+        category: "Body Control Module",
+        id: 33596,
+        title: "Body Control Module BCM"
+    },
+    {
         category: "ABS Parts",
         id: 33560
     },
@@ -84,6 +89,10 @@ const categories = [
     {
         category: "Dash Parts",
         id: 40017
+    },
+    {
+        category: "Navigation System",
+        id: 38776
     },
     {
         category: "Switches",
