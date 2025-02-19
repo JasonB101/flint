@@ -3,6 +3,10 @@
   padding-bottom: 5px;
   border-top: 1px solid rgb(206, 204, 204);
   overflow-y: auto; /* Enable vertical scrolling */
+  table {
+    border-collapse: separate;
+  border-spacing: 0;
+  }
 
   th::before {
     content: "";
@@ -12,6 +16,7 @@
     top: -1px;
     left: 0;
     background: rgb(175, 175, 175);
+    
   }
  
 tr{
@@ -23,7 +28,9 @@ tr{
     text-align: center;
     vertical-align: middle !important;
     padding: 3px 10px !important;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 0 !important ;
+    cursor: default !important;
+
   }
 
   .titleTd {
@@ -31,6 +38,7 @@ tr{
     text-align: left;
     align-items: center;
     padding-left: 0px !important;
+    box-sizing: border-box;
     .item-options {
       visibility: hidden;
       opacity: 0;
@@ -46,14 +54,15 @@ tr{
   }
 
   th {
-    // position: -webkit-sticky;
     position: sticky;
-    background: white;
     top: 0;
-    margin-top: -4px;
     z-index: 2;
-    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
+    background: white;
+    box-sizing: border-box;
+    border: none !important;
+    background-clip: padding-box;
+    /* Remove negative margins that might offset the sticky element */
+    margin-top: 0;
   }
 
   & > div > table > thead > tr {
