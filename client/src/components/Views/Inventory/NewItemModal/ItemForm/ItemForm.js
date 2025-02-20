@@ -20,15 +20,15 @@ const ItemForm = (props) => {
     "EBAY",
   ]
   const tempDate = localStorage.getItem("tempDate") || false
-  const tempCategory = +localStorage.getItem("tempCategoryId") || false
+  const tempCategory = localStorage.getItem("tempCategory") || false
   const [purchaseDate, changePurchaseDate] = useState(
     tempDate ? new Date(tempDate) : new Date()
   )
 
   const sortedCategories = [...categories].sort((a, b) => {
-    if (a.id === tempCategory) {
+    if (a.category === tempCategory) {
       return -1
-    } else if (b.id === tempCategory) {
+    } else if (b.category === tempCategory) {
       return 1
     } else {
       return a.category.localeCompare(b.category)
@@ -41,19 +41,22 @@ const ItemForm = (props) => {
     datePurchased: "",
     purchasePrice: localStorage.getItem("tempPurchasePrice") || "",
     purchaseLocation: localStorage.getItem("tempLocation") || "",
-    categoryId: sortedCategories[0].id,
+    categoryId:
+      sortedCategories.find((cat) => cat.category === tempCategory)?.id ||
+      sortedCategories[0].id,
+    categoryName:
+      sortedCategories.find((cat) => cat.category === tempCategory)?.category ||
+      sortedCategories[0].category,
     additionalCosts: [],
     suggestedPartNums: [],
     suggestedLocations: [],
   })
 
-  const categoryOptions = sortedCategories.map((x) => {
-    return (
-      <option key={x.id} value={x.id}>
-        {x.category}
-      </option>
-    )
-  })
+  const categoryOptions = sortedCategories.map((x) => (
+    <option key={x.id} value={x.category}>
+      {x.category}
+    </option>
+  ))
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -90,9 +93,14 @@ const ItemForm = (props) => {
   }
 
   const handleCategorySelect = (e) => {
+    const selectedName = e.target.value
+    const selectedCategory = sortedCategories.find(
+      (cat) => cat.category === selectedName
+    )
     setInput({
       ...inputForm,
-      categoryId: e.target.value,
+      categoryId: selectedCategory ? selectedCategory.id : inputForm.categoryId,
+      categoryName: selectedName,
     })
   }
 
@@ -127,7 +135,7 @@ const ItemForm = (props) => {
   function setTempData(form) {
     localStorage.setItem("tempDate", form.datePurchased)
     localStorage.setItem("tempLocation", form.purchaseLocation)
-    localStorage.setItem("tempCategoryId", form.categoryId)
+    localStorage.setItem("tempCategory", form.categoryName)
     localStorage.setItem("tempPurchasePrice", form.purchasePrice)
   }
 
@@ -229,18 +237,12 @@ const ItemForm = (props) => {
             as="select"
             name="conditionId"
             onChange={handleCategorySelect}
-            value={
-              categories.some((category) => category.id == inputForm.categoryId)
-                ? inputForm.categoryId
-                : ""
-            }
+            value={inputForm.categoryName}
           >
-            {[
-              <option value="" disabled>
-                Select a Category
-              </option>,
-              ...categoryOptions,
-            ]}
+            <option value="" disabled>
+              Select a Category
+            </option>
+            {categoryOptions}
           </Form.Control>
         </Form.Group>
 

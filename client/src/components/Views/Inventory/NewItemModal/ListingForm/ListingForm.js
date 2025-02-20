@@ -19,8 +19,8 @@ const ListingForm = (props) => {
     getCompatibility,
     ebayFeePercent,
   } = props
-  const { categoryId, partNo, sku, purchasePrice } = itemForm
-  const autoFill = categories.find((x) => +x.id === +categoryId) || {
+  const { categoryName, partNo, sku, purchasePrice } = itemForm
+  const autoFill = categories.find((x) => x.category === categoryName) || {
     title: "",
     description: "",
   }
