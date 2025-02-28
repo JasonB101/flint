@@ -47,9 +47,13 @@ const Overview = ({ items, expenses }) => {
       0
     )
     // Calculate average values
-    const avgROI = soldItems.length
-      ? soldItems.reduce((sum, item) => sum + parseFloat(item.roi || 0), 0) /
-        soldItems.length
+    const nonFreeItems = soldItems.filter(
+      (item) => parseFloat(item.purchasePrice || 0) > 0.01
+    )
+
+    const avgROI = nonFreeItems.length
+      ? nonFreeItems.reduce((sum, item) => sum + parseFloat(item.roi || 0), 0) /
+        nonFreeItems.length
       : 0
     const avgDaysListed = soldItems.length
       ? soldItems.reduce((sum, item) => sum + (item.daysListed || 0), 0) /
