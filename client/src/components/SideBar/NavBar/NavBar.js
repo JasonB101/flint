@@ -44,6 +44,15 @@ const NavBar = (props) => {
         >
           Milestones<div className="spacer"></div>
         </NavLink>,
+        <NavLink
+          key="overview"
+          to="/reports/overview"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Overview<div className="spacer"></div>
+        </NavLink>,
       ],
     },
     tools: {
