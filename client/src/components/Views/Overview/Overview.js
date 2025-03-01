@@ -81,6 +81,14 @@ const Overview = ({ items, expenses }) => {
       0
     )
 
+    const expectedRevenue = activeItems.reduce(
+      (sum, item) =>
+        sum +
+        parseFloat(item.purchasePrice || 0) +
+        parseFloat(item.expectedProfit || 0),
+      0
+    )
+
     const profitMargin =
       totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0
 
@@ -89,6 +97,7 @@ const Overview = ({ items, expenses }) => {
       inventoryValue: formatCurrency(inventoryValue),
       totalListedValue: formatCurrency(totalListedValue),
       potentialProfit: formatCurrency(potentialProfit),
+      expectedRevenue: formatCurrency(expectedRevenue),
 
       soldItems: soldItems.length,
       totalRevenue: formatCurrency(totalRevenue),
@@ -128,6 +137,10 @@ const Overview = ({ items, expenses }) => {
           <div className={Styles.metric}>
             <span>Total Listed Value:</span>
             <span>{metrics.totalListedValue}</span>
+          </div>
+          <div className={Styles.metric}>
+            <span>Expected Revenue:</span>
+            <span>{metrics.expectedRevenue}</span>
           </div>
           <div className={Styles.metric}>
             <span>Potential Profit:</span>
