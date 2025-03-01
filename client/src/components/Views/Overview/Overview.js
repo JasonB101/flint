@@ -70,6 +70,19 @@ const Overview = ({ items, expenses }) => {
       0
     )
     const netProfit = totalProfit - totalExpenses
+    const rawInventoryValue = activeItems.reduce(
+      (sum, item) => sum + parseFloat(item.purchasePrice || 0),
+      0
+    )
+    const totalCost = rawInventoryValue + totalExpenses
+
+    const costOfInventorySold = soldItems.reduce(
+      (sum, item) => sum + parseFloat(item.purchasePrice || 0),
+      0
+    )
+
+    const profitMargin =
+      totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0
 
     return {
       activeListings: activeItems.length,
@@ -82,10 +95,14 @@ const Overview = ({ items, expenses }) => {
       totalProfit: formatCurrency(totalProfit),
       averageROI: avgROI.toFixed(1),
       averageDaysListed: Math.round(avgDaysListed),
+      costOfInventorySold: formatCurrency(costOfInventorySold),
+      profitMargin: profitMargin.toFixed(1),
 
       totalEbayFees: formatCurrency(totalEbayFees),
       totalShippingCosts: formatCurrency(totalShippingCosts),
       totalExpenses: formatCurrency(totalExpenses),
+      totalExpenses: formatCurrency(totalExpenses),
+      totalCost: formatCurrency(totalCost),
       netProfit: formatCurrency(netProfit),
       netProfitValue: netProfit, // Keep the raw value for styling positive/negative
     }
@@ -141,8 +158,12 @@ const Overview = ({ items, expenses }) => {
         <div className={Styles.card}>
           <h2>Profit Analysis</h2>
           <div className={Styles.metric}>
-            <span>Total Profit:</span>
-            <span>{metrics.totalProfit}</span>
+            <span>Total Revenue:</span>
+            <span>{metrics.totalRevenue}</span>
+          </div>
+          <div className={Styles.metric}>
+            <span>Cost of Goods Sold:</span>
+            <span>{metrics.costOfInventorySold}</span>
           </div>
           <div className={Styles.metric}>
             <span>eBay Fees:</span>
@@ -155,6 +176,10 @@ const Overview = ({ items, expenses }) => {
           <div className={Styles.metric}>
             <span>Business Expenses:</span>
             <span>{metrics.totalExpenses}</span>
+          </div>
+          <div className={Styles.metric}>
+            <span>Business Investment:</span>
+            <span>{metrics.totalCost}</span>
           </div>
           <div className={`${Styles.metric} ${Styles.highlight}`}>
             <span>Net Profit:</span>
