@@ -12,19 +12,6 @@
   flex-direction: column;
 }
 
-.modalHeader {
-  background-color: #f8f9fa;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e9ecef;
-
-  h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    color: #343a40;
-    font-weight: 500;
-  }
-}
-
 .dropDownsWrapper {
   padding: 20px;
   display: flex;
@@ -55,7 +42,7 @@
   padding-right: 30px; /* Add more padding on the right side for the dropdown arrow */
   border: 1px solid #ced4da;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: #495057;
   background-color: #fff;
   transition: border-color 0.15s ease-in-out;
@@ -74,9 +61,7 @@
 .buttonContainer {
   display: flex;
   justify-content: flex-end;
-  padding: 16px 20px;
-  background-color: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  padding: 4px 5px;
 }
 
 .submitButton {
@@ -99,6 +84,36 @@
     opacity: 0.65;
     cursor: not-allowed;
   }
+  &.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  
+  &.loading {
+    position: relative;
+    color: transparent;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin: -8px 0 0 -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+  
 }
 
 // Optional: Specific styling for each dropdown if needed
@@ -142,34 +157,12 @@
   }
 }
 
-.searchButton {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  background-color: #007bff;
-  border: 1px solid #007bff;
-  color: white;
-  margin-left: auto;
-
-  &:hover {
-    background-color: #0069d9;
-    border-color: #0062cc;
-  }
-
-  &.disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-}
-
 .optionsList {
   display: flex;
   flex-direction: column;
   gap: 2px;
   height: 100%;
-  max-height: 120px;
+  max-height: 160px;
   overflow-y: auto;
 }
 

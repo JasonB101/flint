@@ -9,6 +9,8 @@ const SettingsModal = ({
   sortFilters,
   setSortFilters,
 }) => {
+  const [isLoadingOptions, setIsLoadingOptions] = useState(false)
+  const [isLoadingParts, setIsLoadingParts] = useState(false)
   const { years, models, parts } = carPartOptions
 
   const [state, setState] = useState({
@@ -38,26 +40,34 @@ const SettingsModal = ({
 
     if (partSearchOptions === null) {
       // First phase: Get options
+      setIsLoadingOptions(true)
       onSubmit(state)
     } else {
       // Second phase: Search with selected options
+      setIsLoadingParts(true)
       searchSelectedOptions()
     }
   }
 
   async function onSubmit(formData) {
-    const { year, model, part } = formData
-    const partOptions = await getPartSearchOptions(year, model, part)
-    setPartSearchOptions(partOptions)
+    try {
+      const { year, model, part } = formData
+      const partOptions = await getPartSearchOptions(year, model, part)
+      setPartSearchOptions(partOptions)
 
-    // Initialize all checkboxes as checked by default
-    const initialSelections = {}
-    if (Array.isArray(partOptions)) {
-      partOptions.forEach((option, index) => {
-        initialSelections[index] = false
-      })
+      // Initialize all checkboxes as unchecked by default
+      const initialSelections = {}
+      if (Array.isArray(partOptions)) {
+        partOptions.forEach((option, index) => {
+          initialSelections[index] = false
+        })
+      }
+      setSelectedOptions(initialSelections)
+    } catch (error) {
+      console.error("Error fetching options:", error)
+    } finally {
+      setIsLoadingOptions(false)
     }
-    setSelectedOptions(initialSelections)
   }
 
   // Handle checkbox changes
@@ -94,12 +104,21 @@ const SettingsModal = ({
   const searchSelectedOptions = () => {
     if (!Array.isArray(partSearchOptions)) return
 
-    const selectedPayloads = partSearchOptions
-      .filter((_, index) => selectedOptions[index])
-      .map((option) => option.payload)
+    try {
+      const selectedPayloads = partSearchOptions
+        .filter((_, index) => selectedOptions[index])
+        .map((option) => option.payload)
 
-    if (selectedPayloads.length > 0) {
-      fetchAllParts(selectedPayloads)
+      if (selectedPayloads.length > 0) {
+        fetchAllParts(selectedPayloads).finally(() => {
+          setIsLoadingParts(false)
+        })
+      } else {
+        setIsLoadingParts(false)
+      }
+    } catch (error) {
+      console.error("Error searching parts:", error)
+      setIsLoadingParts(false)
     }
   }
 
@@ -229,18 +248,27 @@ const SettingsModal = ({
       <div className={Styles.buttonContainer}>
         <button
           className={`${Styles.submitButton} ${
-            isButtonDisabled ? Styles.disabled : ""
+            isButtonDisabled || isLoadingOptions || isLoadingParts
+              ? Styles.disabled
+              : ""
           }`}
           onClick={handleSmartSubmit}
-          disabled={isButtonDisabled}
+          disabled={isButtonDisabled || isLoadingOptions || isLoadingParts}
         >
-          {partSearchOptions
+          {isLoadingOptions
+            ? "Loading Options..."
+            : isLoadingParts
+            ? "Searching Parts..."
+            : partSearchOptions
             ? `Search Selected (${selectedCount})`
             : "Get Options"}
         </button>
       </div>
       <div className="spacer"></div>
-      <FilterOptions sortFilters={sortFilters} setSortFilters={setSortFilters} />
+      <FilterOptions
+        sortFilters={sortFilters}
+        setSortFilters={setSortFilters}
+      />
     </div>
   )
 }

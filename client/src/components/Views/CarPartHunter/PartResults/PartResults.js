@@ -204,7 +204,7 @@ const PartResults = ({ parts, sortFilters }) => {
     <div className={Styles.partResultsWrapper}>
       <h2 className={Styles.resultsHeader}>
         {totalFilteredParts} parts from {Object.keys(groupedParts).length}{" "}
-        dealers
+        shops
         {gradesDisqualifed?.length > 0 && (
           <span className={Styles.filterInfo}>
             (excluding grade{gradesDisqualifed.length > 1 ? "s" : ""}:{" "}
