@@ -22,6 +22,7 @@ app.use(
 
 app.use("/api/inventoryItems", require("./routes/inventoryItems"))
 app.use("/api/churnSettings", require("./routes/churnSettings"))
+app.use("/api/carparthunter", require("./routes/carPartHunter"))
 app.use("/api/expense", require("./routes/expense"))
 app.use("/api/syncebay", require("./routes/syncEbay"))
 app.use("/api/ebay", require("./routes/ebay"))

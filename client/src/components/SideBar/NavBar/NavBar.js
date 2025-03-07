@@ -66,16 +66,25 @@ const NavBar = (props) => {
           }}
         >
           Churn<div className="spacer"></div>
-        </NavLink>, 
+        </NavLink>,
         <NavLink
-        key="parthunter"
+          key="carparthunter"
+          to="/car-parthunter"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Part Hunter<div className="spacer"></div>
+        </NavLink>,
+        <NavLink
+          key="parthunter"
           to="/parthunter"
           activeStyle={{
             backgroundColor: "#353a42",
           }}
         >
-          Keyword Hunter
-        </NavLink>
+          eBay Hunter
+        </NavLink>,
       ],
     },
   }

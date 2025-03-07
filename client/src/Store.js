@@ -22,6 +22,7 @@ const Store = (props) => {
     expenses: [],
     ebayListings: [],
     churnSettings: null,
+
     // newListings: []
   })
   const { items, expenses, ebayListings, churnSettings } = state
@@ -70,6 +71,12 @@ const Store = (props) => {
           items: [],
           expenses: [],
           ebayListings: [],
+          churnSettings: null,
+          carPartOptions: {
+            years: [],
+            models: [],
+            parts: [],
+          },
         })
       }
     }
@@ -182,6 +189,60 @@ const Store = (props) => {
       })
   }
 
+  async function getCarPartOptions() {
+    try {
+      const result = await userAxios.get("/api/carparthunter/getoptions")
+      // Update state with the car part models
+      return result.data // Return success status
+    } catch (error) {
+      console.error("Error fetching car part models:", error)
+      // Set empty array on error
+
+      return {
+        years: [],
+        models: [],
+        parts: [],
+      }
+    }
+  }
+
+  async function getPartSearchOptions(year, model, part, zipCode = "84067") {
+    try {
+      // Call the endpoint we just created with query parameters
+      const result = await userAxios.get("/api/carparthunter/getpartoptions", {
+        params: {
+          year,
+          model,
+          part,
+          zipCode,
+        },
+      })
+
+      return result.data // Return the data for immediate use if needed
+    } catch (error) {
+      console.error("Error fetching part options:", error)
+
+      return [] // Return empty array in case of error
+    }
+  }
+
+  async function getAllParts(payloads) {
+    if (!payloads || payloads.length === 0) {
+      console.log("No payloads provided")
+      return []
+    }
+
+    try {
+      const result = await userAxios.post("/api/carparthunter/getallparts", {
+        payloads: payloads,
+      })
+
+      return result.data
+    } catch (error) {
+      console.error("Error fetching all parts:", error)
+      return []
+    }
+  }
   async function getActiveListings(keyword) {
     try {
       const result = await userAxios.get(
@@ -502,6 +563,9 @@ const Store = (props) => {
         getShippingLabels,
         saveChurnSettings,
         churnSettings,
+        getCarPartOptions,
+        getPartSearchOptions,
+        getAllParts,
       }}
     >
       {props.children}

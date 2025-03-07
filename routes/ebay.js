@@ -160,7 +160,8 @@ ebayRouter.get("/getebay", async (req, res, next) => {
       userId,
       completedSales,
       inventoryItemsMap,
-      shippingTransactions
+      shippingTransactions,
+      ebayFeePercent
     )
     if (newSoldItems.length > 0) {
       updateSellerAvgShipping(userId)

@@ -1,0 +1,227 @@
+.settingsModalWrapper {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  margin-top: 70px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  background-color: #f8f9fa;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #343a40;
+    font-weight: 500;
+  }
+}
+
+.dropDownsWrapper {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.formGroup {
+  flex: 1;
+  min-width: 180px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #495057;
+    text-align: center;
+  }
+}
+
+.dropDown {
+  width: 100%;
+  padding: 10px 12px;
+  padding-right: 30px; /* Add more padding on the right side for the dropdown arrow */
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #495057;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out;
+  appearance: none; /* Remove default arrow in some browsers */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23495057' d='M6 8.825L1.763 4.5 2.487 3.773 6 7.358 9.513 3.773 10.237 4.5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center; /* Position the custom arrow with same padding */
+  
+  &:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.submitButton {
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+
+  &:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+
+  &.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+// Optional: Specific styling for each dropdown if needed
+.yearDropDown {
+  // Custom styles for year dropdown
+}
+
+.modelDropDown {
+  // Custom styles for model dropdown
+}
+
+.partDropDown {
+  // Custom styles for part dropdown
+}
+
+.searchOptionsContainer {
+  padding: 8px;
+  border-top: 1px solid #e9ecef;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.selectionControls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.selectAllButton, .deselectAllButton {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px solid #ced4da;
+  background-color: #f8f9fa;
+  color: #495057;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+}
+
+.searchButton {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  color: white;
+  margin-left: auto;
+
+  &:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+
+  &.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.optionItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 4px 6px;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+  margin-bottom: 2px;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.checkbox {
+  margin-right: 8px;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.optionLabel {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: #343a40;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.primaryLabel {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.secondaryLabel {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: normal;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.1;
+}
+
+.selectionCount {
+  margin-left: auto;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  color: #495057;
+}

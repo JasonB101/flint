@@ -1,0 +1,230 @@
+.partResultsWrapper {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Take full height of parent container
+}
+
+.resultsHeader {
+  font-size: 1.4rem;
+  color: #333;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  flex-shrink: 0; // Prevent header from shrinking
+}
+
+.scrollableResults {
+  flex: 1; // Take remaining space
+  overflow-y: auto; // Enable vertical scrolling
+  padding-right: 4px; // Space for scrollbar
+  max-height: 90%; // Set a maximum height or adjust as needed
+
+  // Better scrollbar styling for webkit browsers
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+
+  // For Firefox
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+// Rest of your styles remain unchanged
+
+.noResults {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.dealerGroup {
+  margin-bottom: 16px;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dealerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f1f3f5;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #343a40;
+  }
+}
+
+.dealerInfo {
+  flex: 1;
+}
+
+.dealerMeta {
+  display: flex;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 2px;
+  align-items: center;
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.dealerStats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.partCount {
+  font-size: 0.9rem;
+  color: #6c757d;
+  background: #e9ecef;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.expandIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+
+  svg {
+    color: #6c757d;
+  }
+
+  &.expanded {
+    transform: rotate(-180deg); // This properly flips the chevron
+  }
+}
+
+.partsContainer {
+  border-top: 1px solid #e1e1e1;
+  background-color: #fff;
+}
+
+.partCard {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.partHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.partTitle {
+  font-weight: 500;
+  color: #212529;
+  font-size: 1rem;
+}
+
+.partPrice {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 1.1rem;
+}
+
+.partDescription {
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.partMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.detailItem {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.detailLabel {
+  color: #6c757d;
+}
+
+.detailValue {
+  color: #343a40;
+  font-weight: 500;
+}
+
+.imageButton {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+
+  svg {
+    fill: #0682ff;
+  }
+}
+.filterInfo {
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: #6c757d;
+  margin-left: 8px;
+}

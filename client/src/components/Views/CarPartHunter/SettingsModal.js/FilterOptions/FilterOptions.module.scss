@@ -1,0 +1,60 @@
+.filterOptionsWrapper {
+    padding: 16px;
+    border-top: 1px solid #e9ecef;
+  }
+  
+  .filterHeader {
+    margin-bottom: 12px;
+    
+    h3 {
+      font-size: 1rem;
+      color: #343a40;
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+  
+  .filterSection {
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  .sectionTitle {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #495057;
+    // margin-bottom: 8px;
+  }
+  
+  .radioGroup, .checkboxGroup {
+    display: flex;
+    flex-wrap: wrap;
+    line-height: 0.6;
+    gap: 3px;
+  }
+  
+  .radioLabel, .checkboxLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 2px;
+    
+    input {
+      margin-right: 6px;
+      cursor: pointer;
+    }
+    
+    span {
+      font-size: 0.9rem;
+      color: #495057;
+    }
+  }
+  
+  .helpText {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 8px;
+    font-style: italic;
+  }

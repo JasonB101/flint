@@ -16,6 +16,7 @@ import Expense from "./components/Views/Expense/Expense"
 import Overview from "./components/Views/Overview/Overview"
 import SignIn from "./components/SignIn/SignIn"
 import PartHunter from "./components/Views/KeywordHunter/KeywordHunter"
+import CarPartHunter from "./components/Views/CarPartHunter/CarPartHunter"  
 import OAuthCode from "./components/OAuth/OAuthCode"
 import Churn from "./components/Views/Churn/Churn"
 
@@ -108,6 +109,10 @@ function App() {
         <ProtectedRoute
           path="/parthunter"
           component={() => <PartHunter {...storeData} />}
+        />
+        <ProtectedRoute
+          path="/car-parthunter"
+          component={() => <CarPartHunter {...storeData} />}
         />
         <ProtectedRoute
           path="/verifyUserToken"
