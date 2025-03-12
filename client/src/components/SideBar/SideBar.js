@@ -16,7 +16,7 @@ const SideBar = (props) => {
 
 
             {user?.token && <>
-                <NavBar />
+                <NavBar fname={user.fname} />
                 <div className="spacer"></div>
                 {
                     !user.syncedWithEbay &&

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom"
 import Styles from "./NavBar.module.scss"
 import Menu from "./Menu/Menu"
 
-const NavBar = (props) => {
+const NavBar = ({fname}) => {
   const navMenu = {
     reports: {
       title: "Reports",
@@ -125,7 +125,7 @@ const NavBar = (props) => {
           backgroundColor: "#353a42",
         }}
       >
-        Sign Out
+       {`Sign Out of ${fname}` }
       </NavLink>
     </div>
   )
