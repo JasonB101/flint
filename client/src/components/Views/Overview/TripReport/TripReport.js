@@ -155,6 +155,12 @@ const TripReport = ({ items, expenses }) => {
       .filter((item) => !item.sold)
       .reduce((sum, item) => sum + parseFloat(item.purchasePrice || 0), 0)
 
+    // Calculate potential ROI (what could be achieved when all items sell)
+    const potentialROI =
+      tripTotalCost > 0
+        ? ((tripPotentialRevenue / tripTotalCost) * 100).toFixed(1)
+        : "0.0"
+
     // Update metrics state
     setMetrics({
       tripPartsCost: formatCurrency(tripPartsCost),
@@ -162,6 +168,7 @@ const TripReport = ({ items, expenses }) => {
       tripTotalCost: formatCurrency(tripTotalCost),
       tripRevenueReceived: formatCurrency(tripRevenueReceived),
       tripROI: tripROI,
+      tripPotentialROI: potentialROI,
       tripTotalItems: tripPurchases.length,
       tripSoldItems: tripPurchases.filter((item) => item.sold).length,
       tripItemsRemaining: tripItemsRemaining,
@@ -260,15 +267,21 @@ const TripReport = ({ items, expenses }) => {
                 <span>{metrics.tripRevenueReceived}</span>
               </div>
               <div className={Styles.summaryMetric}>
-                <span>Current ROI</span>
-                <span
-                  className={
-                    parseFloat(metrics.tripROI) > 0
-                      ? Styles.positive
-                      : Styles.negative
-                  }
-                >
-                  {metrics.tripROI}%
+                <span>Current / Potential ROI</span>
+                <span>
+                  <span
+                    className={`${Styles.currentValue} ${
+                      parseFloat(metrics.tripROI) > 0
+                        ? Styles.positive
+                        : Styles.negative
+                    }`}
+                  >
+                    {metrics.tripROI}%
+                  </span>
+                  {" / "}
+                  <span className={Styles.potentialHighlight}>
+                    {metrics.tripPotentialROI}%
+                  </span>
                 </span>
               </div>
             </div>

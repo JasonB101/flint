@@ -364,3 +364,13 @@
     text-align: center;
   }
   
+  .currentValue {
+    font-size: 18px !important; // Smaller text for current value
+    opacity: 0.85; // Slightly dimmed
+  }
+  
+  .potentialHighlight {
+    font-size: 14px !important; // Larger text for potential value
+    font-weight: 700; // Bolder
+    color: #6c5ce7; // Purple color for potential
+  }
