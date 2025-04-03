@@ -80,16 +80,17 @@ const TripReport = ({ items, expenses }) => {
       }
     })
 
-    // Calculate potential revenue from unsold items (purchase price + expected profit)
-    const tripPotentialRevenue = tripPurchases
-      .filter((item) => !item.sold)
-      .reduce(
-        (sum, item) =>
-          sum +
-          parseFloat(item.purchasePrice || 0) +
-          parseFloat(item.expectedProfit || 0),
-        0
-      )
+    // Calculate TOTAL potential revenue from ALL trip items (sold and unsold)
+    const tripPotentialRevenue = tripPurchases.reduce(
+      (sum, item) =>
+        sum +
+        parseFloat(item.purchasePrice || 0) +
+        // Use actual sale price for sold items, expected profit for unsold items
+        (item.sold
+          ? parseFloat(item.profit || 0)
+          : parseFloat(item.expectedProfit || 0)),
+      0
+    )
 
     // Group expenses by title (case-insensitive)
     const expenseGroups = {}
@@ -245,7 +246,7 @@ const TripReport = ({ items, expenses }) => {
                 </span>
               </div>
               <div className={Styles.summaryMetric}>
-                <span>Parts Cost</span>
+                <span>Items Cost</span>
                 <span>{metrics.tripPartsCost}</span>
               </div>
               <div className={Styles.summaryMetric}>
