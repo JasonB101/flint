@@ -1,5 +1,6 @@
 import React, { useMemo } from "react"
 import Styles from "./Overview.module.scss"
+import TripReport from "./TripReport/TripReport"
 
 const Overview = ({ items, expenses }) => {
   // Currency formatter
@@ -110,10 +111,9 @@ const Overview = ({ items, expenses }) => {
       totalEbayFees: formatCurrency(totalEbayFees),
       totalShippingCosts: formatCurrency(totalShippingCosts),
       totalExpenses: formatCurrency(totalExpenses),
-      totalExpenses: formatCurrency(totalExpenses),
       totalCost: formatCurrency(totalCost),
       netProfit: formatCurrency(netProfit),
-      netProfitValue: netProfit, // Keep the raw value for styling positive/negative
+      netProfitValue: netProfit,
     }
   }, [items, expenses])
 
@@ -123,6 +123,10 @@ const Overview = ({ items, expenses }) => {
     <div className={Styles.overviewWrapper}>
       <h1 className={Styles.title}>Business Overview</h1>
 
+      {/* Trip Report Component - Now at the top */}
+      <TripReport items={items} expenses={expenses} />
+
+      {/* Metrics grid now below the Trip Report */}
       <div className={Styles.metricsGrid}>
         <div className={Styles.card}>
           <h2>Inventory Status</h2>

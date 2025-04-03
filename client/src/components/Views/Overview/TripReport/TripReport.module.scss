@@ -1,0 +1,366 @@
+.tripReportCard {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #333;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+  }
+  
+  // Trip Report header layout
+  .tripReportHeader {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+  
+  // Date filter container
+  .dateFilterContainer {
+    flex: 0 0 250px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 16px;
+  }
+  
+  .datePickerGroup {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    
+    label {
+      width: 80px;
+      font-size: 0.9rem;
+      color: #495057;
+      margin-right: 10px;
+    }
+  }
+  
+  .datePicker {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 130px;
+    
+    &:focus {
+      border-color: #80bdff;
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+  
+  .dateFilterButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  .applyButton, .resetButton {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .applyButton {
+    background-color: #007bff;
+    color: white;
+    
+    &:hover {
+      background-color: #0069d9;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      outline: none;
+    }
+  }
+  
+  .resetButton {
+    background-color: #6c757d;
+    color: white;
+    
+    &:hover {
+      background-color: #5a6268;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+      outline: none;
+    }
+  }
+  
+  // Trip summary styling
+  .tripSummary {
+    flex: 1;
+    background-color: #f8fafb;
+    border-radius: 6px;
+    padding: 16px;
+  }
+  
+  .summaryHeader {
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .summaryMetrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .summaryMetric {
+    display: flex;
+    flex-direction: column;
+    
+    span:first-child {
+      font-size: 13px;
+      color: #6c757d;
+    }
+    
+    span:last-child {
+      font-size: 18px;
+      font-weight: 600;
+      color: #212529;
+      margin-top: 4px;
+    }
+  }
+  
+  // Trip report content
+  .tripReportContent {
+    padding-top: 8px;
+  }
+  
+  .noFilterMessage, .noDataMessage {
+    padding: 20px 0;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  .noFilterMessage {
+    color: #6c757d;
+  }
+  
+  .noDataMessage {
+    color: #dc3545;
+  }
+  
+  // Trip metrics grid
+  .tripMetricsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .tripMetricsColumn {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .columnHeader {
+    font-size: 16px;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  // Metric styling
+  .metric {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    
+    span:first-child {
+      color: #555;
+    }
+    
+    span:last-child {
+      font-weight: 500;
+      color: #333;
+    }
+  }
+  
+  .totalMetric {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e9ecef;
+    
+    span:first-child {
+      font-weight: 500;
+    }
+    
+    span:last-child {
+      font-weight: 600;
+    }
+  }
+  
+  // Value styling
+  .highlight {
+    font-weight: 600;
+    color: #212529;
+  }
+  
+  .positive {
+    color: #28a745 !important;
+  }
+  
+  .negative {
+    color: #dc3545 !important;
+  }
+
+  // Add these to your TripReport.module.scss file
+
+// Expense list styling
+.expenseList {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+  }
+  
+  .expenseItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .expenseTitle {
+    color: #495057;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .expenseAmount {
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .noExpenses {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .summaryMetricsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px 24px;
+  }
+  
+  .summaryMetric {
+    display: flex;
+    flex-direction: column;
+    
+    span:first-child {
+      font-size: 13px;
+      color: #6c757d;
+    }
+    
+    span:last-child {
+      font-size: 18px;
+      font-weight: 600;
+      color: #212529;
+      margin-top: 4px;
+    }
+  }
+  
+  // Expense section styling
+  .expensesSection {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .expenseList {
+    max-height: 300px; // Make it taller since it's the only content now
+    overflow-y: auto;
+    margin-bottom: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+  }
+  
+  .totalExpenses {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    margin-top: 8px;
+    border-top: 1px solid #dee2e6;
+    font-weight: 600;
+    
+    span:first-child {
+      color: #495057;
+    }
+    
+    span:last-child {
+      color: #212529;
+    }
+  }
+  
+  // Make the column header more prominent
+  .columnHeader {
+    font-size: 18px;
+    font-weight: 500;
+    color: #212529;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
