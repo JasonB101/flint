@@ -395,7 +395,7 @@ const TripReport = ({ items, expenses }) => {
               {metrics.tripLocations && (
                 <span className={Styles.tripLocations}>
                   {" "}
-                  ({metrics.tripLocations})
+                  {metrics.tripLocations}
                 </span>
               )}
             </div>
