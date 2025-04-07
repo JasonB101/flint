@@ -329,7 +329,7 @@ const TripReport = ({ items, expenses }) => {
     const tripLocations = Array.from(locationMap.values())
       .sort((a, b) => a.date - b.date) // Sort by date (earliest first)
       .map((item) => item.location) // Extract just the location names
-      .join(", ")
+      .join(" - ")
     // Update metrics state
     setMetrics({
       tripPartsCost: formatCurrency(tripPartsCost),
