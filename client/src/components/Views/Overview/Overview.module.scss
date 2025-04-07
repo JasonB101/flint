@@ -1,24 +1,27 @@
 .overviewWrapper {
   padding: 20px;
-  max-width: 1280px;
+  // max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  height: calc(100vh - 80px); /* Set a fixed height (adjust 80px based on your header height) */
+  height: calc(
+    100vh - 80px
+  ); /* Set a fixed height (adjust 80px based on your header height) */
   overflow-y: auto; /* Specifically enable vertical scrolling */
-  
+
   /* Nicer scrollbar styling */
   &::-webkit-scrollbar {
     width: 0px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 4px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #bbb;
     border-radius: 4px;
-    
+
     &:hover {
       background: #999;
     }
@@ -44,7 +47,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  
+
   h2 {
     font-size: 18px;
     font-weight: 600;
@@ -60,22 +63,22 @@
   justify-content: space-between;
   margin-bottom: 12px;
   font-size: 14px;
-  
+
   span:first-child {
     color: #555;
   }
-  
+
   span:last-child {
     font-weight: 500;
     color: #333;
   }
-  
+
   &.highlight {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid #eee;
     font-weight: 600;
-    
+
     span {
       font-size: 16px;
     }
