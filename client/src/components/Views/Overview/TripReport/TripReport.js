@@ -21,6 +21,51 @@ const TripReport = ({ items, expenses }) => {
     tripRemainingInventory: "$0.00",
     groupedExpenses: [],
   })
+  const getHighlightedDates = () => {
+    // Create a Map to store dates that have items or expenses
+    const highlightedDatesMap = new Map()
+
+    if (items && items.length) {
+      // Add dates with items
+      items.forEach((item) => {
+        if (item.datePurchased) {
+          try {
+            const dateStr = new Date(item.datePurchased)
+              .toISOString()
+              .split("T")[0]
+            highlightedDatesMap.set(dateStr, true)
+          } catch (e) {
+            // Skip invalid dates
+          }
+        }
+      })
+    }
+
+    if (expenses && expenses.length) {
+      // Add dates with expenses
+      expenses.forEach((expense) => {
+        if (expense.date) {
+          try {
+            const dateStr = new Date(expense.date).toISOString().split("T")[0]
+            highlightedDatesMap.set(dateStr, true)
+          } catch (e) {
+            // Skip invalid dates
+          }
+        }
+      })
+    }
+
+    return highlightedDatesMap
+  }
+
+  // Use the Map to check if a date should be highlighted
+  const highlightedDatesMap = getHighlightedDates()
+
+  // Add this function to check if a date should be highlighted
+  const getDateClass = (date) => {
+    const dateStr = date.toISOString().split("T")[0]
+    return highlightedDatesMap.has(dateStr) ? Styles.highlightedDate : null
+  }
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -199,11 +244,9 @@ const TripReport = ({ items, expenses }) => {
               endDate={endDate}
               className={Styles.datePicker}
               dateFormat="MM/dd/yyyy"
+              dayClassName={getDateClass}
             />
-          </div>
 
-          <div className={Styles.datePickerGroup}>
-            <label>Trip End:</label>
             <DatePicker
               selected={endDate}
               onChange={(date) => setEndDate(date)}
@@ -213,6 +256,7 @@ const TripReport = ({ items, expenses }) => {
               minDate={startDate}
               className={Styles.datePicker}
               dateFormat="MM/dd/yyyy"
+              dayClassName={getDateClass}
             />
           </div>
 
