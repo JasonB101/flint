@@ -54,7 +54,7 @@ const ListingForm = (props) => {
   const [activeListingsData, changeActiveListingsData] = useState({
     showActiveListingsModal: false,
     showCompatibilityModal: false,
-    compatibilityEnabled: true,
+    compatibilityEnabled: false,
     activeListings: [],
     compatibilityList: [],
   })
@@ -119,30 +119,30 @@ const ListingForm = (props) => {
     ebayFeePercent
   )
 
-  useEffect(() => {
-    // Fetch active listings when the component mounts and when partNo changes
-    const fetchActiveListings = async () => {
-      try {
-        const activeListingsData = (await getActiveListings(partNo)) || []
-        const activeIds = activeListingsData.map((x) => x.itemId)
-        const compatibilityList = await getCompatibility(activeIds, partNo)
+  // useEffect(() => {
+  //   // Fetch active listings when the component mounts and when partNo changes
+  //   const fetchActiveListings = async () => {
+  //     try {
+  //       const activeListingsData = (await getActiveListings(partNo)) || []
+  //       const activeIds = activeListingsData.map((x) => x.itemId)
+  //       const compatibilityList = await getCompatibility(activeIds, partNo)
 
-        changeActiveListingsData((prevActiveListings) => {
-          return {
-            ...prevActiveListings,
-            activeListings: activeListingsData,
-            compatibilityList: compatibilityList,
-            compatibilityEnabled: compatibilityList.length > 0,
-          }
-        })
-      } catch (error) {
-        console.error("Error fetching active listings:", error.message)
-      }
-    }
-    if (partNo !== "N/A" && partNo !== "") {
-      fetchActiveListings()
-    }
-  }, [partNo])
+  //       changeActiveListingsData((prevActiveListings) => {
+  //         return {
+  //           ...prevActiveListings,
+  //           activeListings: activeListingsData,
+  //           compatibilityList: compatibilityList,
+  //           compatibilityEnabled: compatibilityList.length > 0,
+  //         }
+  //       })
+  //     } catch (error) {
+  //       console.error("Error fetching active listings:", error.message)
+  //     }
+  //   }
+  //   if (partNo !== "N/A" && partNo !== "") {
+  //     fetchActiveListings()
+  //   }
+  // }, [partNo])
 
   function handleListingWithSkuExists() {
     setShowConfirm(true)
