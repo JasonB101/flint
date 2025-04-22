@@ -8,6 +8,7 @@ const { updateSellerAvgShipping } = require("../lib/userMethods")
 const {
   getEbayListings,
   getShippingTransactions,
+  getListing,
 } = require("../lib/ebayMethods/ebayApi")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const {
@@ -81,47 +82,49 @@ ebayRouter.get("/getCompatibility", async (req, res, next) => {
 
   try {
     // Get item IDs from query or body
-    let itemIds = req.query.itemIds?.split(",") || []; // Assuming item IDs are passed as a comma-separated string
-    itemIds = itemIds.splice(0, listingBatchLimit * 5); // Limit total number of items to process
-  
+    let itemIds = req.query.itemIds?.split(",") || [] // Assuming item IDs are passed as a comma-separated string
+    itemIds = itemIds.splice(0, listingBatchLimit * 5) // Limit total number of items to process
+
     // Validate that there are item IDs to process
     if (itemIds.length === 0) {
-      throw new Error("No item IDs provided");
+      throw new Error("No item IDs provided")
     }
-  
-    let compatibilityList = []; // Accumulate compatibility results
-  
+
+    let compatibilityList = [] // Accumulate compatibility results
+
     // Fetch compatibility data from eBay in batches
     while (itemIds.length > 0) {
-      const currentBatch = itemIds.splice(0, listingBatchLimit); // Take a batch of IDs
+      const currentBatch = itemIds.splice(0, listingBatchLimit) // Take a batch of IDs
       const batchCompatibility = await findCompatibilityList(
         currentBatch,
         ebayToken
-      );
-  
+      )
+
       if (batchCompatibility.length > 0) {
-        compatibilityList = compatibilityList.concat(batchCompatibility); // Accumulate results
+        compatibilityList = compatibilityList.concat(batchCompatibility) // Accumulate results
       }
-  
+
       // Stop if we've gathered enough results
       if (compatibilityList.length >= 4) {
-        break;
+        break
       }
     }
-  
+
     // Send the accumulated results or indicate no compatibility found
     if (compatibilityList.length > 0) {
-      res.send({ success: true, compatibility: compatibilityList });
+      res.send({ success: true, compatibility: compatibilityList })
     } else {
       res.send({
         success: true,
         compatibility: [],
         message: "No compatible items found",
-      });
+      })
     }
   } catch (e) {
-    console.error(e);
-    res.status(500).send({ success: false, message: e.message, compatibility: [] });
+    console.error(e)
+    res
+      .status(500)
+      .send({ success: false, message: e.message, compatibility: [] })
   }
 })
 
@@ -248,6 +251,42 @@ ebayRouter.put("/linkItem/:id", async (req, res, next) => {
       res.send({ success: true, updatedItem })
     }
   )
+})
+
+ebayRouter.get("/getListing/:itemId", async (req, res) => {
+  try {
+    const { itemId } = req.params
+
+    if (!itemId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Item ID is required" })
+    }
+
+    const userObject = await getUserObject(req.auth._id)
+    const { ebayToken: ebayAuthToken } = userObject
+
+    const listingResponse = await getListing(ebayAuthToken, itemId)
+    // console.log("Listing Response:", listingResponse)
+
+    if (!listingResponse.success) {
+      return res.status(404).json({
+        success: false,
+        message: listingResponse.message || "Failed to retrieve listing",
+      })
+    }
+
+    res.json({
+      success: true,
+      listing: listingResponse.data,
+    })
+  } catch (error) {
+    console.error("Error fetching listing:", error)
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching listing details",
+    })
+  }
 })
 
 async function getUserObject(userId) {

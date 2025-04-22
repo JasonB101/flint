@@ -34,7 +34,7 @@ const Toolbar = (props) => {
             </h5>
             
       <div className="spacer"></div>
-      <Button onClick={() => toggleModal(true)}>List Item</Button>
+      <Button onClick={() => toggleModal(true)}>New Item</Button>
     </div>
   )
 

@@ -1,0 +1,65 @@
+.confirmModalWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    isolation: isolate;
+  }
+  
+  .modalContent {
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .question {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .yesButton, .cancelButton {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .yesButton {
+    background-color: #2d63af;
+    color: white;
+    
+    &:hover {
+      background-color: #204e8f;
+    }
+  }
+  
+  .cancelButton {
+    background-color: #f2f2f2;
+    color: #333;
+    
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }

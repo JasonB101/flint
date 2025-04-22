@@ -17,6 +17,7 @@ inventoryRouter.post("/", async (req, res, next) => {
   // console.log(req.body)
   const userRaw = await User.findOne({ _id: req.auth._id })
   const user = userRaw.toObject()
+  const ebayId = req.body.ebayId
   const {
     ebayToken,
     averageShippingCost,
@@ -25,12 +26,19 @@ inventoryRouter.post("/", async (req, res, next) => {
     ebayFeePercent,
   } = user
   const listingDetails = req.body
-  const listingResponse = await createListing(
-    ebayToken,
-    listingDetails,
-    userDescriptionTemplate,
-    postalCode
-  )
+  const listingResponse = ebayId
+    ? {
+        listingData: {
+          AddFixedPriceItemResponse: { ItemID: ebayId },  //If its a link and not a new item the response is artificially created.
+        },
+        success: true,
+      }
+    : await createListing(
+        ebayToken,
+        listingDetails,
+        userDescriptionTemplate,
+        postalCode
+      )
   if (!listingResponse.success) {
     return res
       .status(500)
@@ -51,7 +59,7 @@ inventoryRouter.post("/", async (req, res, next) => {
         console.log(req.body)
         res.status(500).send({
           success: false,
-          message: "Failed while trying to save item into database.",
+          message: `Failed while trying to save item into database. ${err.message}`,
         })
       } else res.send({ success: true, item })
     })

@@ -108,6 +108,31 @@ const Store = (props) => {
     // }
   }
 
+  async function getEbayListing(itemId) {
+    try {
+      if (!itemId) {
+        console.error("Item ID is required")
+        return { success: false, message: "Item ID is required" }
+      }
+
+      // Call the backend endpoint we just created
+      const response = await userAxios.get(`/api/ebay/getListing/${itemId}`)
+      console.log("Ebay Listing Response:", response.data)
+
+      // Return the response data for immediate use
+      return response.data
+    } catch (error) {
+      console.error("Error fetching eBay listing:", error)
+
+      // Return detailed error information for better debugging
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        error: error.response?.data || error.message,
+      }
+    }
+  }
+
   async function saveChurnSettings(newChurnSettings) {
     try {
       const response = await userAxios.post(
@@ -175,18 +200,18 @@ const Store = (props) => {
   }
 
   async function submitNewItem(form) {
-    userAxios
-      .post("/api/inventoryItems", form)
-      .then((result) => {
-        changeState((prevState) => {
-          return { ...prevState, items: [...items, result.data.item] }
-        })
-        return true
-      })
-      .catch((err) => {
-        console.log(err)
-        return false
-      })
+    try {
+      const result = await userAxios.post("/api/inventoryItems", form);
+      
+      changeState((prevState) => {
+        return { ...prevState, items: [...items, result.data.item] }
+      });
+      
+      return {success: true};
+    } catch (err) {
+      console.log(err);
+      return {success: false, message: err.message};
+    }
   }
 
   async function getCarPartOptions() {
@@ -566,6 +591,7 @@ const Store = (props) => {
         getCarPartOptions,
         getPartSearchOptions,
         getAllParts,
+        getEbayListing
       }}
     >
       {props.children}

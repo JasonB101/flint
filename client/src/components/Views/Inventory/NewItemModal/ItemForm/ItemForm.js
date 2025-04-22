@@ -52,8 +52,8 @@ const ItemForm = (props) => {
     suggestedLocations: [],
   })
 
-  const categoryOptions = sortedCategories.map((x) => (
-    <option key={x.id} value={x.category}>
+  const categoryOptions = sortedCategories.map((x, i) => (
+    <option key={`${x.id}${i}`} value={x.category}>
       {x.category}
     </option>
   ))
@@ -128,6 +128,7 @@ const ItemForm = (props) => {
     document.execCommand("copy")
     let form = { ...inputForm }
     form.datePurchased = purchaseDate.toLocaleDateString()
+    form.partNo = form.partNo || "N/A"
     setTempData(form)
     setAndToggleForm(form)
   }

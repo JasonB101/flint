@@ -14,6 +14,8 @@ const NewItemModal = (props) => {
     getActiveListings,
     getCompatibility,
     ebayFeePercent,
+    ebayListings,
+    getEbayListing
   } = props
   const [newItemForm, setNewItemForm] = useState({})
   const [showItemForm, toggleForm] = useState(true)
@@ -50,6 +52,8 @@ const NewItemModal = (props) => {
                 ebayFeePercent={ebayFeePercent}
                 getActiveListings={getActiveListings}
                 getCompatibility={getCompatibility}
+                ebayListings={ebayListings}
+                getEbayListing={getEbayListing}
               />
             )}
           </div>

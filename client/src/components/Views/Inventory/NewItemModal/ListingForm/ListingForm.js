@@ -6,8 +6,9 @@ import Styles from "./ListingForm.module.scss"
 import { getLabelFromTitle } from "./Label/getLabelDetails"
 import ActiveListingsModal from "./ActiveListingsModal/ActiveListingsModal"
 import CompatibilityModal from "./CompatibilityModal/CompatibilityModal"
+import ConfirmModal from "../../../../ConfirmModal/ConfirmModal"
 import figureExpectedProfit from "../../../../../lib/figureExpectedProfit"
-
+import createLinkItemData from "../../../../../lib/createLinkItemData"
 const ListingForm = (props) => {
   const {
     toggleModal,
@@ -18,7 +19,13 @@ const ListingForm = (props) => {
     getActiveListings,
     getCompatibility,
     ebayFeePercent,
+    ebayListings,
+    getEbayListing,
   } = props
+
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [itemToBeLinked, setItemToBeLinked] = useState(false)
+
   const { categoryName, partNo, sku, purchasePrice } = itemForm
   const autoFill = categories.find((x) => x.category === categoryName) || {
     title: "",
@@ -51,6 +58,12 @@ const ListingForm = (props) => {
     activeListings: [],
     compatibilityList: [],
   })
+
+  useEffect(() => {
+    if (ebayListings.some((x) => x.SKU === itemForm.sku)) {
+      handleListingWithSkuExists()
+    }
+  }, [ebayListings, itemForm.sku])
 
   useEffect(() => {
     if (partNo !== "N/A") {
@@ -126,10 +139,30 @@ const ListingForm = (props) => {
         console.error("Error fetching active listings:", error.message)
       }
     }
-    if (partNo !== "N/A") {
+    if (partNo !== "N/A" && partNo !== "") {
       fetchActiveListings()
     }
   }, [partNo])
+
+  function handleListingWithSkuExists() {
+    setShowConfirm(true)
+  }
+
+  const handleConfirmResult = async (result) => {
+    //If an ebay listing exists with the SKU provided
+    if (result) {
+      setItemToBeLinked(true)
+      const ebayItem = ebayListings.find((x) => x.SKU === itemForm.sku)
+      const ebayItemId = ebayItem.ItemID
+      const listingInfo = await createLinkItemData(ebayItemId, getEbayListing)
+      setInput((prevInputForm) => ({
+        ...prevInputForm,
+        ...listingInfo,
+      }))
+    }
+    // Hide the modal regardless of the result
+    setShowConfirm(false)
+  }
 
   const openActiveListingsModal = () => {
     changeActiveListingsData((prev) => {
@@ -244,11 +277,13 @@ const ListingForm = (props) => {
     }
     try {
       const successfullyListed = await submitNewItem({
-        ...ebayForm,
         ...itemForm,
+        ...ebayForm,
       })
-      if (successfullyListed === true) {
+      if (successfullyListed.success === true) {
         toggleModal(false)
+      } else {
+       throw new Error(successfullyListed.message)
       }
     } catch (e) {
       alert(e.message)
@@ -335,7 +370,6 @@ const ListingForm = (props) => {
             Edit Compatibility
           </Button>
         </Form.Group>
-        
       </Form.Row>
       <Form.Row>
         <Form.Group as={Col} controlId="formGridDescription">
@@ -440,7 +474,7 @@ const ListingForm = (props) => {
           Close
         </Button>
         <Button type="submit" variant="primary">
-          List Item
+          {itemToBeLinked ? "Link Item" : "List Item"}
         </Button>
 
         <Label
@@ -462,6 +496,12 @@ const ListingForm = (props) => {
           closeCompatibilityModal={closeCompatibilityModal}
           compatibilityList={activeListingsData.compatibilityList}
           changeActiveListingsData={changeActiveListingsData}
+        />
+      )}
+      {showConfirm && (
+        <ConfirmModal
+          question="An eBay listing was found with this SKU, would you like to link with it?"
+          onResult={handleConfirmResult}
         />
       )}
     </Form>
