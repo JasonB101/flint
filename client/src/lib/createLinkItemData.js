@@ -34,6 +34,7 @@ const createLinkItemData = async (ebayId, getEbayListing) => {
         SKU: item.SKU || "",
         imageUrls: item.PictureDetails?.PictureURL || [],
         ebayId,
+        categoryId: item.PrimaryCategory?.CategoryID || "",
       }
     } catch (error) {
       console.error("Error creating link item data:", error)
