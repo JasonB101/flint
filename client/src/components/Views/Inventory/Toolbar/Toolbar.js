@@ -53,7 +53,7 @@ function assembleListingInfo(items) {
       if (x.listed) {
         listingInfo.totalListed++
         listingInfo.inventoryCost += purchasePrice
-        listingInfo.activeListings[0] += listedPrice
+        listingInfo.activeListings[0] += purchasePrice + expectedProfit
         listingInfo.activeListings[1] += expectedProfit
       }
     
