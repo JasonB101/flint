@@ -57,6 +57,7 @@ const Store = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       if (user?.token && !isAuthRoute) {
+        console.log("Made it")
         getExpenses()
         getChurnSettings()
         if (user.syncedWithEbay && user.OAuthActive) {
