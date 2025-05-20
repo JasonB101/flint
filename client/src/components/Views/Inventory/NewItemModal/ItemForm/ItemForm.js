@@ -9,16 +9,11 @@ import "react-datepicker/dist/react-datepicker.css"
 const ItemForm = (props) => {
   const { items, toggleModal, setAndToggleForm, nextSku } = props
   const existingPartNumbers = items.map((item) => item.partNo.trim())
-  const sourcingLocations = [
-    "OGDEN TAP",
-    "OGDEN PAP",
-    "SLC TAP",
-    "SLC PNP",
-    "SLC PNS",
-    "OREM PAP",
-    "SPRINGVILLE PNS",
-    "EBAY",
-  ]
+  const sourcingLocations = [...new Set(
+    items
+      .map((item) => item.purchaseLocation?.trim())
+      .filter(location => location && location.length > 0) // Filter out undefined/null/empty values
+  )].sort()
   const tempDate = localStorage.getItem("tempDate") || false
   const tempCategory = localStorage.getItem("tempCategory") || false
   const [purchaseDate, changePurchaseDate] = useState(
