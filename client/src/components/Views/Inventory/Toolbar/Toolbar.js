@@ -10,7 +10,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 const Toolbar = (props) => {
-  const { toggleModal, searchTerm, changeSearchTerm, items } = props
+  const { toggleModal, searchTerm, changeSearchTerm, items, setToggleInventorySummaryModal } = props
   const listingsDetails = assembleListingInfo(items)
   const {totalListed, inventoryCost, expectedRevenue, expectedProfit} = listingsDetails
 
@@ -40,6 +40,7 @@ const Toolbar = (props) => {
       </h5>
       <div className="spacer"></div>
       <Button onClick={() => toggleModal(true)}>New Item</Button>
+      <Button onClick={() => setToggleInventorySummaryModal(true)}>Summary</Button>
     </div>
   )
 }

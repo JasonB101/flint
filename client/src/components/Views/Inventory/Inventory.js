@@ -4,14 +4,18 @@ import InventoryTable from "./InventoryTable/InventoryTable"
 import NewItemModal from "./NewItemModal/NewItemModal";
 import LinkItemModal from "./InventoryTable/LinkItemModal/LinkItemModal";
 import Toolbar from "./Toolbar/Toolbar"
+import InventorySummaryModal from "./InventorySummaryModal/InventorySummaryModal";
 
 const Inventory = (props) => {
 
     const { items, ebayListings, getEbayListing, submitNewItem, newListings, editInventoryItem, linkItem, user: {averageShippingCost, ebayFeePercent}, getActiveListings, getCompatibility } = props;
+    
+    // Extract sold items from the items array
+    const soldItems = items.filter(item => item.sold === true);
     const [inventoryList] = useState(items.filter(x => x.listed))
     const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
-
+    const [showInventorySummaryModal, setToggleInventorySummaryModal] = useState(false);
 
     const nextSku = items.reduce((highest, x) => {
         if (+x.sku > highest) {
@@ -62,7 +66,8 @@ const Inventory = (props) => {
                         changeSearchTerm={changeSearchTerm}
                         searchTerm={inventorySearchTerm}
                         toggleModal={toggleNewItemModal}
-                        items={items} 
+                        items={items}
+                        setToggleInventorySummaryModal={setToggleInventorySummaryModal}
                     />
                 </div>
                 
@@ -96,6 +101,13 @@ const Inventory = (props) => {
                     getActiveListings={getActiveListings} 
                     getCompatibility={getCompatibility} 
                     ebayListings={ebayListings} 
+                />
+            )}
+            {showInventorySummaryModal && (
+                <InventorySummaryModal
+                    inventoryItems={items.filter(item => !item.sold)}
+                    soldItems={soldItems}
+                    setToggleInventorySummaryModal={setToggleInventorySummaryModal}
                 />
             )}
         </div>
