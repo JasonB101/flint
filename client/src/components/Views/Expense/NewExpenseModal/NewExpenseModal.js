@@ -9,7 +9,7 @@ const NewItemModal = (props) => {
         <div className={Styles.modalWrapper}>
             <Modal.Dialog>
                 <Modal.Header>
-                    <Modal.Title>New Item</Modal.Title>
+                    <Modal.Title>Add New Expense</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>

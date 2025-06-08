@@ -16,8 +16,8 @@ const Expense = (props) => {
             filterItems(expenses)
         } else {
             filterItems(expenses.filter(x => {
-                const { title, amount, date } = x;
-                const conditionsArray = [title, amount, date];
+                const { title, amount, date, category } = x;
+                const conditionsArray = [title, amount, date, category];
                 return conditionsArray.some(j => String(j).toLowerCase().includes(searchTerm.toLowerCase()));
             }))
         }
@@ -26,6 +26,10 @@ const Expense = (props) => {
 
     return (
         <div className={Styles.wrapper}>
+            <div className={Styles.pageHeader}>
+                <h1>Expense Management</h1>
+                <p>Track and manage your business expenses</p>
+            </div>
             <Toolbar {...{ searchTerm, changeSearchTerm, toggleModal }} />
             <ExpenseTable expenses={itemsToShow} deleteExpense={deleteExpense}/>
             {modalOpen && <NewExpenseModal {...{toggleModal, submitNewExpense}} />}

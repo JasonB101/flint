@@ -10,9 +10,9 @@ const Toolbar = (props) => {
             <input onChange={(e) => changeSearchTerm(e.target.value)}
                 type="text"
                 value={searchTerm}
-                placeholder={"Search Expenses"} />
-            <div className="spacer"></div>
-            <Button onClick={() => toggleModal(true)}> Insert New Expense</Button>
+                placeholder={"Search by title, amount, or date..."} />
+            <div className={Styles.spacer}></div>
+            <Button onClick={() => toggleModal(true)}>Add New Expense</Button>
         </div>
     );
 }

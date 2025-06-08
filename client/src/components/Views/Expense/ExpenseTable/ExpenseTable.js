@@ -59,7 +59,7 @@ const ExpenseTable = (props) => {
   }
 
   function populateRow(expenseObject) {
-    const { title, date, _id, amount } = expenseObject
+    const { title, date, _id, amount, category } = expenseObject
     return (
       <tr key={_id}>
         <td className={Styles["titleTd"]}>
@@ -68,6 +68,9 @@ const ExpenseTable = (props) => {
           </span>{" "}
           {title}
         </td>
+        <td className={Styles["categoryTd"]}>
+          <span>{category || 'Other'}</span>
+        </td>
         <td>{date}</td>
         <td>{currencyFormatter.format(amount)}</td>
       </tr>
@@ -75,16 +78,25 @@ const ExpenseTable = (props) => {
   }
   return (
     <div className={Styles.wrapper}>
-      <Table striped bordered responsive hover>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Date of Expense</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody className={Styles.expenseList}>{expenseList}</tbody>
-      </Table>
+      {expenses.length === 0 ? (
+        <div className={Styles.emptyState}>
+          <div className={Styles.emptyIcon}>📋</div>
+          <h3>No expenses found</h3>
+          <p>Start by adding your first expense using the button above</p>
+        </div>
+      ) : (
+        <Table striped bordered responsive hover>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Date of Expense</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody className={Styles.expenseList}>{expenseList}</tbody>
+        </Table>
+      )}
     </div>
   )
 }

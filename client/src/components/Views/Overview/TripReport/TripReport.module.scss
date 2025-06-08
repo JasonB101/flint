@@ -233,137 +233,156 @@
     color: #dc3545 !important;
   }
 
-  // Add these to your TripReport.module.scss file
-
-// Expense list styling
-.expenseList {
-    max-height: 220px;
+  // Beautiful Expense section styling
+  .expensesSection {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .expenseList {
+    max-height: 320px;
     overflow-y: auto;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     
     &::-webkit-scrollbar {
       width: 6px;
     }
     
     &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 3px;
+      background: #f8f9fa;
+      border-radius: 6px;
     }
     
     &::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 3px;
+      background: #ced4da;
+      border-radius: 6px;
+      
+      &:hover {
+        background: #adb5bd;
+      }
     }
   }
   
   .expenseItem {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #e9ecef;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
     
     &:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
   }
   
   .expenseTitle {
     color: #495057;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+    flex: 1;
+    
+    // Add icon-like styling for count
+    .expenseCount {
+      display: inline-block;
+      background: #6c757d;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 8px;
+      min-width: 20px;
+      text-align: center;
+    }
   }
   
   .expenseAmount {
-    color: #333;
-    font-weight: 500;
+    color: #495057;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: 'Monaco', 'Menlo', monospace;
+    text-align: right;
+    min-width: 80px;
+  }
+  
+  .totalExpenses {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    margin: 16px -20px -20px -20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 2px solid #dee2e6;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    
+    span:first-child {
+      color: #495057;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    span:last-child {
+      color: #495057;
+      font-size: 18px;
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
   }
   
   .noExpenses {
     color: #6c757d;
     font-style: italic;
     text-align: center;
-    padding: 20px 0;
+    padding: 40px 20px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 2px dashed #dee2e6;
+    
+    &::before {
+      content: "💰";
+      display: block;
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
   }
 
-  .summaryMetricsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px 24px;
-  }
-  
-  .summaryMetric {
-    display: flex;
-    flex-direction: column;
-    
-    span:first-child {
-      font-size: 13px;
-      color: #6c757d;
-    }
-    
-    span:last-child {
-      font-size: 18px;
-      font-weight: 600;
-      color: #212529;
-      margin-top: 4px;
-    }
-  }
-  
-  // Expense section styling
-  .expensesSection {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .expenseList {
-    max-height: 300px; // Make it taller since it's the only content now
-    overflow-y: auto;
-    margin-bottom: 12px;
-    border: 1px solid #e9ecef;
-    border-radius: 6px;
-    padding: 12px;
-    
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 3px;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 3px;
-    }
-  }
-  
-  .totalExpenses {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    margin-top: 8px;
-    border-top: 1px solid #dee2e6;
-    font-weight: 600;
-    
-    span:first-child {
-      color: #495057;
-    }
-    
-    span:last-child {
-      color: #212529;
-    }
-  }
-  
-  // Make the column header more prominent
+  // Enhanced column header for sections
   .columnHeader {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 600;
     color: #212529;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     text-align: center;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, #007bff, #6c5ce7);
+      border-radius: 2px;
+    }
   }
-  
+
   .currentValue {
     font-size: 18px !important; // Smaller text for current value
     opacity: 0.85; // Slightly dimmed
@@ -382,11 +401,262 @@
     
     
   }
+
+  // Override react-datepicker selected date styling
+  :global(.react-datepicker__day--selected),
+  :global(.react-datepicker__day--in-selecting-range),
+  :global(.react-datepicker__day--in-range) {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px rgba(4, 92, 187, 0.8) !important;
+    border-radius: 4px !important;
+    color: #333 !important;
+  }
+
+  :global(.react-datepicker__day--range-start),
+  :global(.react-datepicker__day--range-end) {
+    background-color: transparent !important;
+    box-shadow: inset 0 0 0 2px rgba(4, 92, 187, 0.8) !important;
+    border-radius: 4px !important;
+    color: #333 !important;
+    font-weight: 600;
+  }
+
+  // Keep the highlighted purchase dates as circles
+  :global(.react-datepicker__day).highlightedDate {
+    background-color: rgba(4, 92, 187, 0.466) !important;
+    border-radius: 50% !important;
+    border: none !important;
+  }
+
   .tripLocations {
     font-size: 14px;
     font-style: italic;
     color: #6c757d;
     font-weight: normal;
     margin-left: 10px;
+  }
 
+  // Clickable location badges
+  .locationsContainer {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .locationBadges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .locationBadge {
+    display: inline-block;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid #ced4da;
+    background-color: white;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+
+    &:hover {
+      border-color: #007bff;
+      background-color: #f8f9fa;
+    }
+  }
+
+  .locationSelected {
+    background-color: #007bff !important;
+    color: white !important;
+    border-color: #007bff !important;
+
+    &:hover {
+      background-color: #0056b3 !important;
+      border-color: #0056b3 !important;
+    }
+  }
+
+  // Trip navigation
+  .tripNavigation {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .tripCounter {
+    font-size: 13px;
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .tripNavButtons {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .navButton {
+    padding: 6px 12px;
+    font-size: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+
+    &:disabled {
+      background-color: #f8f9fa;
+      color: #6c757d;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+
+  // Prominent Payoff Status (now in date filter container)
+  .payoffStatusContainer {
+    margin: 12px 0 0 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .payoffStatus {
+    padding: 8px 16px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    background: white;
+    border: 1px solid #dee2e6;
+    width: 100%;
+    text-align: center;
+  }
+
+  .payoffSuccess {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #28a745;
+  }
+
+  .payoffPending {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #fd7e14;
+  }
+
+  .payoffUnknown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+  }
+
+  .checkmark, .clockIcon {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .payoffText {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .payoffDays {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  // Key Metrics Grid
+  .keyMetricsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+    align-items: center;
+  }
+
+  .keyMetric {
+    background: white;
+    padding: 14px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .dualMetric {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .metricSection {
+    flex: 1;
+    min-width: 0; // Allow shrinking
+  }
+
+  .metricLabel {
+    display: block;
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .metricValue {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 4px;
+    flex-wrap: wrap; // Allow wrapping if needed
+  }
+
+  .metricSubtext {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #6c757d;
+    flex-wrap: wrap; // Allow wrapping if needed
+  }
+
+  .arrow {
+    color: #6c757d;
+    font-weight: normal;
+  }
+
+  .separator {
+    color: #6c757d;
+    font-weight: normal;
+  }
+
+  .potential {
+    color: #6c5ce7;
+    font-weight: 600;
   }
