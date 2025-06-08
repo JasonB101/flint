@@ -1,26 +1,30 @@
 import React, { useState } from "react"
 import Styles from "./Sales.module.scss"
-import SalesHeader from "./SalesHeader/SalesHeader"
 import SalesChart from "./SalesChart/SalesChart"
 import {
   YearSalesChart,
   YearSalesChartByWeek,
   YearSalesChartByMonth,
+  MultiYearSalesChart,
 } from "./SalesChart/ChartTemplates/chartOptions"
 
 const Sales = (props) => {
   const [dateType, setDateType] = useState("week")
   const [year, setYear] = useState(new Date().getFullYear())
-
   const [profitTrue, setProfitState] = useState(true)
 
-  //dateType is day week year
   const { items, expenses } = props
   const soldItems = items.filter((x) => x.sold)
 
   const salesInfo = assembleSalesInfo(items, expenses)
-  //day, week, month, year
-  const options = () => {
+
+  // Get available years from sold items
+  const availableYears = [...new Set(soldItems.map(item => 
+    new Date(item.dateSold).getFullYear()
+  ))].sort((a, b) => b - a)
+
+  // Chart options based on selected period
+  const getChartOptions = () => {
     switch (dateType) {
       case "day":
         return new YearSalesChart(year, soldItems, profitTrue)
@@ -29,101 +33,168 @@ const Sales = (props) => {
       case "month":
         return new YearSalesChartByMonth(year, soldItems, profitTrue)
       case "year":
-        return {}
+        return new MultiYearSalesChart(availableYears, soldItems, profitTrue)
       default:
+        return new YearSalesChartByWeek(year, soldItems, profitTrue)
     }
   }
 
-  const currencyFormatter = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  })
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(value)
+  }
 
-  const sales = soldItems.reduce((sales, item) => {
+  // Calculate current year metrics
+  const currentYearSales = soldItems.reduce((sales, item) => {
     let isThisYear = new Date(item.dateSold).getFullYear() === year
-    return (sales += isThisYear ? Number(item.priceSold) : 0)
+    return sales + (isThisYear ? Number(item.priceSold) : 0)
   }, 0)
 
-  const profit = soldItems.reduce((profit, item) => {
+  const currentYearProfit = soldItems.reduce((profit, item) => {
     let isThisYear = new Date(item.dateSold).getFullYear() === year
-    return (profit += isThisYear ? Number(item.profit) : 0)
+    return profit + (isThisYear ? Number(item.profit) : 0)
   }, 0)
 
-  function getProjected(profitOrSales) {
+  const currentYearItemsSold = soldItems.filter(item => 
+    new Date(item.dateSold).getFullYear() === year
+  ).length
+
+  // Projection calculation
+  function getProjected(value) {
     const now = new Date()
     const start = new Date(now.getFullYear(), 0, 0)
     const diff = now - start
     const oneDay = 1000 * 60 * 60 * 24
-    const day = Math.floor(diff / oneDay)
-    const average = (+profitOrSales / day).toFixed(2)
-    const difference = 366 - day
-    const projected = Number(+profitOrSales + difference * average)
-    return currencyFormatter.format(projected)
+    const dayOfYear = Math.floor(diff / oneDay)
+    const average = (value / dayOfYear)
+    const remainingDays = 366 - dayOfYear
+    const projected = value + (remainingDays * average)
+    return formatCurrency(projected)
   }
+
+  const renderPeriodButton = (period, label) => (
+    <button
+      key={period}
+      onClick={() => setDateType(period)}
+      className={`${Styles.periodButton} ${dateType === period ? Styles.active : ''}`}
+    >
+      {label}
+    </button>
+  )
+
+  // Get chart options once to avoid multiple calls
+  const chartOptions = getChartOptions()
 
   return (
     <div className={Styles.wrapper}>
-      <SalesHeader salesInfo={salesInfo} />
-      <hr></hr>
-      <div className={Styles.annualChartContainer}>
-        <div>
-          <span
-            onClick={() => setDateType("day")}
-            className={dateType === "day" ? Styles.glowSpan : ""}
-          >
-            Day
-          </span>
-          <span
-            onClick={() => setDateType("week")}
-            className={dateType === "week" ? Styles.glowSpan : ""}
-          >
-            Week
-          </span>
-          <span
-            onClick={() => setDateType("month")}
-            className={dateType === "month" ? Styles.glowSpan : ""}
-          >
-            Month
-          </span>
-          <span
-            onClick={() => setDateType("year")}
-            className={dateType === "year" ? Styles.glowSpan : ""}
-          >
-            Year
-          </span>
+      {/* Chart Section - Moved to top */}
+      <div className={Styles.chartCard}>
+        <div className={Styles.chartHeader}>
+          <h2>Sales Trends</h2>
+          <div className={Styles.chartControls}>
+            <div className={Styles.periodSelector}>
+              {renderPeriodButton("day", "Daily")}
+              {renderPeriodButton("week", "Weekly")}
+              {renderPeriodButton("month", "Monthly")}
+              {renderPeriodButton("year", "Yearly")}
+            </div>
+            
+            {dateType !== "year" && (
+              <div className={Styles.yearSelector}>
+                <select 
+                  value={year} 
+                  onChange={(e) => setYear(Number(e.target.value))}
+                  className={Styles.yearSelect}
+                >
+                  {availableYears.map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            <div className={Styles.dataTypeToggle}>
+              <button
+                onClick={() => setProfitState(false)}
+                className={`${Styles.toggleButton} ${!profitTrue ? Styles.active : ''}`}
+              >
+                Revenue
+              </button>
+              <button
+                onClick={() => setProfitState(true)}
+                className={`${Styles.toggleButton} ${profitTrue ? Styles.active : ''}`}
+              >
+                Profit
+              </button>
+            </div>
+          </div>
         </div>
-        <SalesChart options={options()} />
-        <br></br>
-        <h4>
-          {`Annual Sales: ${currencyFormatter.format(
-            soldItems
-              .reduce((sales, item) => {
-                if (new Date(item.dateSold).getFullYear() === year) {
-                  return (sales += Number(item.priceSold))
-                } else {
-                  return sales
-                }
-              }, 0)
-              .toFixed(2)
-          )}`}
-        </h4>
-        <h4>
-          {`Annual Net Sales: ${currencyFormatter.format(
-            soldItems
-              .reduce((sales, item) => {
-                if (new Date(item.dateSold).getFullYear() === year) {
-                  return (sales += Number(item.profit))
-                } else {
-                  return sales
-                }
-              }, 0)
-              .toFixed(2)
-          )}`}
-        </h4>
-        <br></br>
-        <h5>{`Projected ${year} Sales: ${getProjected(sales)}`}</h5>
-        <h5>{`Projected ${year} Net Sales: ${getProjected(profit)}`}</h5>
+
+        <div className={Styles.chartContainer}>
+          <SalesChart options={chartOptions} />
+        </div>
       </div>
+
+      {/* Key Metrics Cards - Moved below chart */}
+      <div className={Styles.metricsGrid}>
+        <div className={Styles.metricCard}>
+          <div className={Styles.metricIcon}>📊</div>
+          <div className={Styles.metricContent}>
+            <span className={Styles.metricLabel}>Items Sold</span>
+            <span className={Styles.metricValue}>{currentYearItemsSold}</span>
+          </div>
+        </div>
+        
+        <div className={Styles.metricCard}>
+          <div className={Styles.metricIcon}>💰</div>
+          <div className={Styles.metricContent}>
+            <span className={Styles.metricLabel}>Revenue</span>
+            <span className={Styles.metricValue}>{formatCurrency(currentYearSales)}</span>
+          </div>
+        </div>
+        
+        <div className={Styles.metricCard}>
+          <div className={Styles.metricIcon}>📈</div>
+          <div className={Styles.metricContent}>
+            <span className={Styles.metricLabel}>Profit ({year})</span>
+            <span className={`${Styles.metricValue} ${Styles.profit}`}>
+              {formatCurrency(currentYearProfit)}
+            </span>
+          </div>
+        </div>
+        
+        <div className={Styles.metricCard}>
+          <div className={Styles.metricIcon}>🎯</div>
+          <div className={Styles.metricContent}>
+            <span className={Styles.metricLabel}>Avg ROI</span>
+            <span className={`${Styles.metricValue} ${Styles.roi}`}>
+              {salesInfo.roi}%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className={Styles.projectionSection}>
+        <div className={Styles.projectionCard}>
+          <div className={Styles.projectionContent}>
+            <span className={Styles.projectionLabel}>Projected {year} Revenue</span>
+            <span className={Styles.projectionValue}>{getProjected(currentYearSales)}</span>
+          </div>
+        </div>
+        <div className={Styles.projectionCard}>
+          <div className={Styles.projectionContent}>
+            <span className={Styles.projectionLabel}>Projected {year} Profit</span>
+            <span className={`${Styles.projectionValue} ${Styles.profit}`}>
+              {getProjected(currentYearProfit)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Add bottom padding */}
+      <div className={Styles.bottomPadding}></div>
     </div>
   )
 
@@ -138,14 +209,12 @@ const Sales = (props) => {
       inventoryCost: 0,
     }
 
-    const expenseTotal = expenses[0]
+    const expenseTotal = expenses.length
       ? expenses.reduce((sum, x) => {
           const isThisYear = new Date(x.date).getFullYear() === year
           return isThisYear ? sum + x.amount : sum
         }, 0)
       : 0
-    console.log(expenseTotal)
-
 
     const info = items.reduce((salesInfo, x) => {
       const { purchasePrice, ebayFees, shippingCost } = x

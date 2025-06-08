@@ -121,92 +121,107 @@ const Overview = ({ items, expenses }) => {
 
   return (
     <div className={Styles.overviewWrapper}>
-      <h1 className={Styles.title}>Business Overview</h1>
+      <div className={Styles.pageHeader}>
+        <h1>Business Overview</h1>
+        <p>Comprehensive dashboard of your reselling business performance</p>
+      </div>
 
-      {/* Trip Report Component - Now at the top */}
+      {/* Trip Report Component */}
       <TripReport items={items} expenses={expenses} />
 
-      {/* Metrics grid now below the Trip Report */}
+      {/* Business Metrics */}
       <div className={Styles.metricsGrid}>
         <div className={Styles.card}>
-          <h2>Inventory Status</h2>
-          <div className={Styles.metric}>
-            <span>Active Listings:</span>
-            <span>{metrics.activeListings}</span>
+          <div className={Styles.cardHeader}>
+            <h2>📦 Inventory Status</h2>
           </div>
-          <div className={Styles.metric}>
-            <span>Inventory Cost:</span>
-            <span>{metrics.inventoryValue}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Total Listed Value:</span>
-            <span>{metrics.totalListedValue}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Expected Revenue:</span>
-            <span>{metrics.expectedRevenue}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Potential Profit:</span>
-            <span>{metrics.potentialProfit}</span>
-          </div>
-        </div>
-
-        <div className={Styles.card}>
-          <h2>Sales Performance</h2>
-          <div className={Styles.metric}>
-            <span>Items Sold:</span>
-            <span>{metrics.soldItems}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Total Revenue:</span>
-            <span>{metrics.totalRevenue}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Average ROI:</span>
-            <span>{metrics.averageROI}%</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Avg Days to Sell:</span>
-            <span>{metrics.averageDaysListed}</span>
+          <div className={Styles.cardBody}>
+            <div className={Styles.metric}>
+              <span>Active Listings:</span>
+              <span>{metrics.activeListings}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Inventory Cost:</span>
+              <span>{metrics.inventoryValue}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Total Listed Value:</span>
+              <span>{metrics.totalListedValue}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Expected Revenue:</span>
+              <span>{metrics.expectedRevenue}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Potential Profit:</span>
+              <span className={Styles.positive}>{metrics.potentialProfit}</span>
+            </div>
           </div>
         </div>
 
         <div className={Styles.card}>
-          <h2>Profit Analysis</h2>
-          <div className={Styles.metric}>
-            <span>Total Revenue:</span>
-            <span>{metrics.totalRevenue}</span>
+          <div className={Styles.cardHeader}>
+            <h2>📈 Sales Performance</h2>
           </div>
-          <div className={Styles.metric}>
-            <span>Cost of Goods Sold:</span>
-            <span>{metrics.costOfInventorySold}</span>
+          <div className={Styles.cardBody}>
+            <div className={Styles.metric}>
+              <span>Items Sold:</span>
+              <span>{metrics.soldItems}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Total Revenue:</span>
+              <span>{metrics.totalRevenue}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Average ROI:</span>
+              <span>{metrics.averageROI}%</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Avg Days to Sell:</span>
+              <span>{metrics.averageDaysListed}</span>
+            </div>
           </div>
-          <div className={Styles.metric}>
-            <span>eBay Fees:</span>
-            <span>{metrics.totalEbayFees}</span>
+        </div>
+
+        <div className={Styles.card}>
+          <div className={Styles.cardHeader}>
+            <h2>💰 Profit Analysis</h2>
           </div>
-          <div className={Styles.metric}>
-            <span>Shipping Costs:</span>
-            <span>{metrics.totalShippingCosts}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Business Expenses:</span>
-            <span>{metrics.totalExpenses}</span>
-          </div>
-          <div className={Styles.metric}>
-            <span>Business Investment:</span>
-            <span>{metrics.totalCost}</span>
-          </div>
-          <div className={`${Styles.metric} ${Styles.highlight}`}>
-            <span>Net Profit:</span>
-            <span
-              className={
-                metrics.netProfitValue >= 0 ? Styles.positive : Styles.negative
-              }
-            >
-              {metrics.netProfit}
-            </span>
+          <div className={Styles.cardBody}>
+            <div className={Styles.metric}>
+              <span>Total Revenue:</span>
+              <span>{metrics.totalRevenue}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Cost of Goods Sold:</span>
+              <span>{metrics.costOfInventorySold}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>eBay Fees:</span>
+              <span>{metrics.totalEbayFees}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Shipping Costs:</span>
+              <span>{metrics.totalShippingCosts}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Business Expenses:</span>
+              <span>{metrics.totalExpenses}</span>
+            </div>
+            <div className={Styles.metric}>
+              <span>Business Investment:</span>
+              <span>{metrics.totalCost}</span>
+            </div>
+            <div className={`${Styles.metric} ${Styles.highlight}`}>
+              <span>Net Profit:</span>
+              <span
+                className={
+                  metrics.netProfitValue >= 0 ? Styles.positive : Styles.negative
+                }
+              >
+                {metrics.netProfit}
+              </span>
+            </div>
           </div>
         </div>
       </div>

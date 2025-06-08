@@ -8,7 +8,7 @@ const expenseSchema = new Schema({
    category: {
        type: String,
        required: true,
-       enum: ['Travel', 'Food', 'Shipping', 'Equipment', 'Software', 'Legal', 'Environmental', 'Core', 'Waste', 'Taxes', 'Other'],
+       enum: ['Travel', 'Food', 'Shipping', 'Equipment', 'Software', 'Legal', 'Environmental', 'Core', 'Waste', 'Taxes', 'Clothing', 'Other'],
        default: 'Other'
    },
    userId: {

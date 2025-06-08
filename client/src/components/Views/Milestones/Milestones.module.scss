@@ -4,65 +4,161 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    text-align: center;
+    position: relative;
+    grid-area: vv;
+    min-height: calc(100vh - 90px);
+    background: #f8f9fa;
+    padding: 20px;
+    gap: 20px;
+}
 
-    .stats_wrapper {
+// Page header styling to match Expense page
+.pageHeader {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    
+    h1 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
         display: flex;
-        justify-content: space-between;
-        width: 100%;
+        align-items: center;
+        gap: 10px;
+        
+        &::before {
+            content: "🏆";
+            font-size: 28px;
+        }
+    }
+    
+    p {
+        margin: 8px 0 0 0;
+        color: #6c757d;
+        font-size: 14px;
+    }
+}
 
-        .sub-section {
-            flex: 1;
-            margin: 10px;
-            padding: 20px;
-            background-color: #26303f;
-            border-radius: 10px;
-            text-align: left;
+// Grid layout for metric cards
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
 
-            span {
-                color: #fffcfc;
+// Individual metric card styling
+.metricCard {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.cardHeader {
+    background: linear-gradient(135deg, #26303f 0%, #3a4a5c 100%);
+    padding: 16px 20px;
+    
+    h3 {
+        margin: 0;
+        color: white;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+    }
+}
+
+.cardBody {
+    padding: 20px;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+    
+    &:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+}
+
+.metricInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metricLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.metricDate {
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.metricValue {
+    font-size: 16px;
+    font-weight: 700;
+    color: #26303f;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    
+    &.currency {
+        color: #28a745;
+    }
+}
+
+// Responsive design
+@media (max-width: 1200px) {
+    .metricsGrid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .pageHeader {
+        padding: 15px;
+        
+        h1 {
+            font-size: 20px;
+            
+            &::before {
+                font-size: 24px;
             }
-
-            h1 {
-                font-size: 40px;
-                /* Increased font size for h1 */
-                margin-bottom: 10px;
-                color: #333;
-                font-family: 'Montserrat', sans-serif;
-                /* Apply Montserrat font to h1 */
-            }
-
         }
-
-        h4 {
-            font-size: 25px;
-            margin-bottom: 8px;
-            color: #fffcfc;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            /* Apply Montserrat font to h4 */
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-
-
-        .list-item {
-            display: flex;
-            justify-content: space-between;
+    }
+    
+    .cardBody {
+        padding: 15px;
+    }
+    
+    .cardHeader {
+        padding: 12px 15px;
+        
+        h3 {
             font-size: 16px;
-            margin-bottom: 6px;
-            color: #333;
-        }
-
-        strong {
-            font-weight: bold;
-            color: #fac515;
         }
     }
 }

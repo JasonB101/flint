@@ -5,7 +5,8 @@ import DisplayCongrats from "../../Notifications/DisplayCongrats/DisplayCongrats
 
 const Milestones = (props) => {
     const {items, checkNewScores} = props
-    const report = CreateReport(items, true, 2025) //Manually set to this year
+    const currentYear = new Date().getFullYear();
+    const report = CreateReport(items, true, currentYear) // Use current year instead of hardcoded 2025
     const [prepObject, changePrepObject] = useState({
         day:{
             listed: {}, //Entry that has 'listed' in competition array
@@ -35,6 +36,10 @@ const Milestones = (props) => {
     
 
     useEffect(() => {
+        console.log("Raw report data:", JSON.stringify(report, null, 2));
+        console.log("Items passed to CreateReport:", items?.length || 0, "items");
+        console.log("Current year:", currentYear);
+        
         let tempObject = {...prepObject}
         for (let category in report){
             for (let date in report[category]){
@@ -47,106 +52,114 @@ const Milestones = (props) => {
             }
         }
 
-  if (tempObject.day.sold.sold) {
-    checkNewScores(tempObject);
-  }
-               console.log(JSON.stringify(tempObject))
+        if (tempObject.day.sold.sold) {
+            checkNewScores(tempObject);
+        }
+        console.log("Processed milestone data:", JSON.stringify(tempObject, null, 2))
         changePrepObject(tempObject)
 
-    }, [])
+    }, [items, report])
 
-    
-    let content = (
-        <div className={Styles.wrapper}>
-      <h1>Milestones</h1>
-      <div className={Styles.stats_wrapper}>
-        <div className={Styles['sub-section']}>
-          <h4>Day</h4>
-          <ul>
-            <li className={Styles['list-item']}>
-              <span>Purchased: <strong>{prepObject.day.pulled.pulled}</strong></span>
-              <span>{prepObject.day.pulled.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Sold: <strong>{prepObject.day.sold.sold}</strong></span>
-              <span>{prepObject.day.sold.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Profit: <strong>{formatCurrency(prepObject.day.sales.sales)}</strong></span>
-              <span>{prepObject.day.sales.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Spent: <strong>{formatCurrency(prepObject.day.spent.spent)}</strong></span>
-              <span>{prepObject.day.spent.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Listed: <strong>{prepObject.day.listed.listed}</strong></span>
-              <span>{prepObject.day.listed.dateTitle}</span>
-            </li>
-          </ul>
-        </div>
-
-        <div className={Styles['sub-section']}>
-          <h4>Week</h4>
-          <ul>
-            <li className={Styles['list-item']}>
-              <span>Purchased: <strong>{prepObject.week.pulled.pulled}</strong></span>
-              <span>{prepObject.week.pulled.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Sold: <strong>{prepObject.week.sold.sold}</strong></span>
-              <span>{prepObject.week.sold.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Profit: <strong>{formatCurrency(prepObject.week.sales.sales)}</strong></span>
-              <span>{prepObject.week.sales.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Spent: <strong>{formatCurrency(prepObject.week.spent.spent)}</strong></span>
-              <span>{prepObject.week.spent.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Listed: <strong>{prepObject.week.listed.listed}</strong></span>
-              <span>{prepObject.week.listed.dateTitle}</span>
-            </li>
-          </ul>
-        </div>
-
-        <div className={Styles['sub-section']}>
-          <h4>Month</h4>
-          <ul>
-            <li className={Styles['list-item']}>
-              <span>Purchased: <strong>{prepObject.month.pulled.pulled}</strong></span>
-              <span>{prepObject.month.pulled.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Sold: <strong>{prepObject.month.sold.sold}</strong></span>
-              <span>{prepObject.month.sold.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Profit: <strong>{formatCurrency(prepObject.month.sales.sales)}</strong></span>
-              <span>{prepObject.month.sales.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Spent: <strong>{formatCurrency(prepObject.month.spent.spent)}</strong></span>
-              <span>{prepObject.month.spent.dateTitle}</span>
-            </li>
-            <li className={Styles['list-item']}>
-              <span>Listed: <strong>{prepObject.month.listed.listed}</strong></span>
-              <span>{prepObject.month.listed.dateTitle}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      {/* <DisplayCongrats/> */}
-    </div>
-      );
-      
-      function formatCurrency(amount = 0) {
+    function formatCurrency(amount = 0) {
         return amount.toLocaleString("en-US", { style: "currency", currency: "USD" });
-      }
+    }
 
-return content
+    // Helper function to safely get metric data
+    const getMetricData = (period, metric) => {
+        const data = prepObject[period]?.[metric];
+        if (!data || Object.keys(data).length === 0) {
+            return { value: 0, date: 'No data available' };
+        }
+        
+        switch(metric) {
+            case 'pulled':
+                return { value: data.pulled || 0, date: data.dateTitle || 'N/A' };
+            case 'sold':
+                return { value: data.sold || 0, date: data.dateTitle || 'N/A' };
+            case 'sales':
+                return { value: data.sales || 0, date: data.dateTitle || 'N/A' };
+            case 'spent':
+                return { value: data.spent || 0, date: data.dateTitle || 'N/A' };
+            case 'listed':
+                return { value: data.listed || 0, date: data.dateTitle || 'N/A' };
+            default:
+                return { value: 0, date: 'N/A' };
+        }
+    };
+
+    const renderMetricCard = (title, period) => {
+        const purchasedData = getMetricData(period, 'pulled');
+        const soldData = getMetricData(period, 'sold');
+        const profitData = getMetricData(period, 'sales');
+        const spentData = getMetricData(period, 'spent');
+        const listedData = getMetricData(period, 'listed');
+
+        return (
+            <div className={Styles.metricCard}>
+                <div className={Styles.cardHeader}>
+                    <h3>{title}</h3>
+                </div>
+                <div className={Styles.cardBody}>
+                    <div className={Styles.metric}>
+                        <div className={Styles.metricInfo}>
+                            <span className={Styles.metricLabel}>Purchased</span>
+                            <span className={Styles.metricDate}>{purchasedData.date}</span>
+                        </div>
+                        <span className={Styles.metricValue}>{purchasedData.value}</span>
+                    </div>
+                    <div className={Styles.metric}>
+                        <div className={Styles.metricInfo}>
+                            <span className={Styles.metricLabel}>Sold</span>
+                            <span className={Styles.metricDate}>{soldData.date}</span>
+                        </div>
+                        <span className={Styles.metricValue}>{soldData.value}</span>
+                    </div>
+                    <div className={Styles.metric}>
+                        <div className={Styles.metricInfo}>
+                            <span className={Styles.metricLabel}>Profit</span>
+                            <span className={Styles.metricDate}>{profitData.date}</span>
+                        </div>
+                        <span className={`${Styles.metricValue} ${Styles.currency}`}>
+                            {formatCurrency(profitData.value)}
+                        </span>
+                    </div>
+                    <div className={Styles.metric}>
+                        <div className={Styles.metricInfo}>
+                            <span className={Styles.metricLabel}>Spent</span>
+                            <span className={Styles.metricDate}>{spentData.date}</span>
+                        </div>
+                        <span className={Styles.metricValue}>
+                            {formatCurrency(spentData.value)}
+                        </span>
+                    </div>
+                    <div className={Styles.metric}>
+                        <div className={Styles.metricInfo}>
+                            <span className={Styles.metricLabel}>Listed</span>
+                            <span className={Styles.metricDate}>{listedData.date}</span>
+                        </div>
+                        <span className={Styles.metricValue}>{listedData.value}</span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+    
+    return (
+        <div className={Styles.wrapper}>
+            <div className={Styles.pageHeader}>
+                <h1>Performance Milestones</h1>
+                <p>Track your best performance records across different time periods for {currentYear}</p>
+            </div>
+            
+            <div className={Styles.metricsGrid}>
+                {renderMetricCard("Daily Records", "day")}
+                {renderMetricCard("Weekly Records", "week")}
+                {renderMetricCard("Monthly Records", "month")}
+            </div>
+            
+            {/* <DisplayCongrats/> */}
+        </div>
+    );
 }
 
 export default Milestones

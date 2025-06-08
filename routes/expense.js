@@ -34,6 +34,34 @@ expenseRouter.get("/", (req, res, next) => {
     });
 })
 
+expenseRouter.put("/:id", (req, res, next) => {
+    const userId = req.auth._id;
+    const expenseId = req.params.id;
+    const updateData = { ...req.body };
+    
+    // Remove the _id from updateData if it exists to prevent conflicts
+    delete updateData._id;
+    
+    Expense.findOneAndUpdate(
+        { _id: expenseId, userId: userId }, 
+        updateData, 
+        { new: true, runValidators: true },
+        (err, expense) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send({success: false, error: err});
+            }
+            if (!expense) {
+                return res.status(404).send({
+                    success: false,
+                    message: "Expense not found or does not belong to this user",
+                });
+            }
+            return res.send({ success: true, expense });
+        }
+    );
+});
+
 expenseRouter.delete("/:id", (req, res, next) => {
     const userId = req.auth._id;
     Expense.findOneAndDelete({ _id: req.params.id, userId: userId }, (err, expense) => {

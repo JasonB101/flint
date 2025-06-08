@@ -1,0 +1,227 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.chartTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #26303f;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.chartContainer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 80px 10px 10px 10px;
+  z-index: 1;
+}
+
+.chart {
+  max-width: 100%;
+  height: auto;
+  
+  .bar {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    
+    &.positive {
+      fill: #26303f;
+      
+      &:hover,
+      &.hovered {
+        fill: #1a2332;
+        filter: drop-shadow(0 4px 8px rgba(38, 48, 63, 0.4));
+      }
+    }
+    
+    &.negative {
+      fill: #dc3545;
+      
+      &:hover,
+      &.hovered {
+        fill: #c82333;
+        filter: drop-shadow(0 4px 8px rgba(220, 53, 69, 0.4));
+      }
+    }
+  }
+  
+  .axisLabel {
+    font-size: 11px;
+    fill: #6c757d;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-weight: 500;
+  }
+  
+  .barLabel {
+    font-size: 10px;
+    fill: #495057;
+    font-weight: 500;
+    
+    @media (max-width: 768px) {
+      font-size: 9px;
+    }
+  }
+}
+
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  
+  .tooltipLabel {
+    font-size: 11px;
+    color: #ccc;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+  
+  .tooltipValue {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Monaco', 'Menlo', monospace;
+    color: white;
+    text-align: center;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+  }
+}
+
+.axisTitle {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
+  text-align: center;
+  font-style: italic;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.insights {
+  margin-top: 20px;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.insightItem {
+  font-size: 13px;
+  color: #495057;
+  font-weight: 500;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.noData {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  font-size: 16px;
+  color: #6c757d;
+  font-style: italic;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #dee2e6;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+// Responsive design
+@media (max-width: 1200px) {
+  .chartContainer {
+    padding: 70px 5px 5px 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 10px 0;
+  }
+  
+  .chartContainer {
+    padding: 60px 0 0 0;
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+  
+  .chart {
+    min-width: 400px; // Ensure minimum readable width on mobile
+  }
+  
+  .chartTitle {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .tooltip {
+    font-size: 11px;
+    padding: 6px 10px;
+    
+    .tooltipValue {
+      font-size: 12px;
+    }
+  }
+  
+  .axisTitle {
+    font-size: 12px;
+    margin-top: 10px;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chartContainer {
+    padding: 50px 0 0 0;
+  }
+  
+  .chart {
+    min-width: 350px;
+  }
+  
+  .tooltip {
+    font-size: 10px;
+    padding: 4px 8px;
+    
+    .tooltipValue {
+      font-size: 11px;
+    }
+  }
+}

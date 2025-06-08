@@ -353,6 +353,26 @@ const Store = (props) => {
       .catch((err) => console.log(err))
   }
 
+  function updateExpense(expenseData) {
+    const expenseId = expenseData._id;
+    userAxios
+      .put(`/api/expense/${expenseId}`, expenseData)
+      .then((result) => {
+        if (result.data.success) {
+          const updatedExpenses = expenses.map((expense) =>
+            expense._id === expenseId ? result.data.expense : expense
+          )
+          changeState((prevState) => {
+            return { ...prevState, expenses: updatedExpenses }
+          })
+        }
+      })
+      .catch((err) => {
+        console.log("Update expense failed:", err);
+        alert("Failed to update expense. Please try again.");
+      })
+  }
+
   function getInventoryItems() {
     userAxios
       .get("/api/inventoryItems")
@@ -569,6 +589,7 @@ const Store = (props) => {
         submitNewItem,
         submitNewExpense,
         deleteExpense,
+        updateExpense,
         // newListings,
         editInventoryItem,
         returnInventoryItem,

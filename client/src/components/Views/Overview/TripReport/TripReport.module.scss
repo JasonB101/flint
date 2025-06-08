@@ -2,15 +2,15 @@
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-top: 20px;
+    padding: 15px;
+    margin-top: 15px;
     
     h2 {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       color: #333;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
       border-bottom: 1px solid #eee;
     }
   }
@@ -18,8 +18,8 @@
   // Trip Report header layout
   .tripReportHeader {
     display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 15px;
+    margin-bottom: 15px;
     
     @media (max-width: 768px) {
       flex-direction: column;
@@ -31,27 +31,27 @@
     flex: 0 0 250px;
     background-color: #f8f9fa;
     border-radius: 6px;
-    padding: 16px;
+    padding: 12px;
   }
   
   .datePickerGroup {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     
     label {
       width: 80px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #495057;
       margin-right: 10px;
     }
   }
   
   .datePicker {
-    padding: 8px 12px;
+    padding: 6px 10px;
     border: 1px solid #ced4da;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     width: 130px;
     
     &:focus {
@@ -63,13 +63,13 @@
   
   .dateFilterButtons {
     display: flex;
-    gap: 10px;
-    margin-top: 16px;
+    gap: 8px;
+    margin-top: 12px;
   }
   
   .applyButton, .resetButton {
-    padding: 8px 16px;
-    font-size: 14px;
+    padding: 6px 12px;
+    font-size: 13px;
     border-radius: 4px;
     border: none;
     cursor: pointer;
@@ -109,22 +109,22 @@
     flex: 1;
     background-color: #f8fafb;
     border-radius: 6px;
-    padding: 16px;
+    padding: 12px;
   }
   
   .summaryHeader {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     color: #495057;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
     border-bottom: 1px solid #dee2e6;
   }
   
   .summaryMetrics {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
   }
   
   .summaryMetric {
@@ -132,25 +132,25 @@
     flex-direction: column;
     
     span:first-child {
-      font-size: 13px;
+      font-size: 12px;
       color: #6c757d;
     }
     
     span:last-child {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       color: #212529;
-      margin-top: 4px;
+      margin-top: 3px;
     }
   }
   
   // Trip report content
   .tripReportContent {
-    padding-top: 8px;
+    padding-top: 6px;
   }
   
   .noFilterMessage, .noDataMessage {
-    padding: 20px 0;
+    padding: 15px 0;
     text-align: center;
     font-style: italic;
   }
@@ -167,7 +167,7 @@
   .tripMetricsGrid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 15px;
     
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
@@ -180,11 +180,11 @@
   }
   
   .columnHeader {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     color: #495057;
-    margin-bottom: 12px;
-    padding-bottom: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
     border-bottom: 1px solid #dee2e6;
   }
   
@@ -192,8 +192,8 @@
   .metric {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
     
     span:first-child {
       color: #555;
@@ -239,14 +239,14 @@
     border-radius: 8px;
     border: 1px solid #e9ecef;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    padding: 20px;
-    margin-top: 20px;
+    padding: 15px;
+    margin-top: 15px;
   }
   
   .expenseList {
-    max-height: 320px;
+    max-height: 200px;
     overflow-y: auto;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     
     &::-webkit-scrollbar {
       width: 6px;
@@ -271,8 +271,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    margin-bottom: 8px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
     background: #f8f9fa;
     border-radius: 6px;
     border: 1px solid #e9ecef;
@@ -291,7 +291,7 @@
   
   .expenseTitle {
     color: #495057;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     flex: 1;
     
@@ -300,12 +300,12 @@
       display: inline-block;
       background: #6c757d;
       color: white;
-      border-radius: 12px;
-      padding: 2px 8px;
-      font-size: 11px;
+      border-radius: 10px;
+      padding: 1px 6px;
+      font-size: 10px;
       font-weight: 500;
-      margin-left: 8px;
-      min-width: 20px;
+      margin-left: 6px;
+      min-width: 18px;
       text-align: center;
     }
   }
@@ -313,18 +313,18 @@
   .expenseAmount {
     color: #495057;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
     font-family: 'Monaco', 'Menlo', monospace;
     text-align: right;
-    min-width: 80px;
+    min-width: 70px;
   }
   
   .totalExpenses {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    margin: 16px -20px -20px -20px;
+    padding: 12px 15px;
+    margin: 12px -15px -15px -15px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-top: 2px solid #dee2e6;
     border-radius: 0 0 8px 8px;
@@ -332,14 +332,14 @@
     
     span:first-child {
       color: #495057;
-      font-size: 16px;
+      font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     
     span:last-child {
       color: #495057;
-      font-size: 18px;
+      font-size: 16px;
       font-family: 'Monaco', 'Menlo', monospace;
     }
   }
@@ -348,7 +348,7 @@
     color: #6c757d;
     font-style: italic;
     text-align: center;
-    padding: 40px 20px;
+    padding: 30px 15px;
     background: #f8f9fa;
     border-radius: 6px;
     border: 2px dashed #dee2e6;
@@ -356,8 +356,8 @@
     &::before {
       content: "💰";
       display: block;
-      font-size: 32px;
-      margin-bottom: 12px;
+      font-size: 28px;
+      margin-bottom: 10px;
     }
   }
 

@@ -5,7 +5,7 @@ import $ from "jquery"
 import ExpenseOptions from "./ExpenseOptions/ExpenseOptions"
 
 const ExpenseTable = (props) => {
-  const { expenses, deleteExpense } = props
+  const { expenses, deleteExpense, onEditExpense } = props
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -64,7 +64,12 @@ const ExpenseTable = (props) => {
       <tr key={_id}>
         <td className={Styles["titleTd"]}>
           <span className={Styles["expense-options"]}>
-            <ExpenseOptions deleteExpense={deleteExpense} expenseId={_id} />
+            <ExpenseOptions 
+              deleteExpense={deleteExpense} 
+              expenseId={_id} 
+              onEdit={onEditExpense}
+              expense={expenseObject}
+            />
           </span>{" "}
           {title}
         </td>

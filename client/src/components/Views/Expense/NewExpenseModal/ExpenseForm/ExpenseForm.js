@@ -4,38 +4,50 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const ExpenseForm = (props) => {
-    const { toggleModal, submitNewExpense } = props;
-    const [purchaseDate, changePurchaseDate] = useState(new Date())
+    const { toggleModal, submitNewExpense, editingExpense, isEditing } = props;
     
-    // Get saved category from localStorage or default to 'Other'
-    const savedCategory = localStorage.getItem('lastExpenseCategory') || 'Other';
+    // Initialize date based on editing mode
+    const initialDate = isEditing && editingExpense?.date 
+        ? new Date(editingExpense.date) 
+        : new Date();
+    
+    const [purchaseDate, changePurchaseDate] = useState(initialDate);
+    
+    // Get saved category from localStorage or use editing expense category or default to 'Other'
+    const savedCategory = isEditing && editingExpense?.category 
+        ? editingExpense.category 
+        : localStorage.getItem('lastExpenseCategory') || 'Other';
     
     const [inputForm, setInput] = useState({
-        title: "",
-        date: purchaseDate,
-        amount: 0,
+        title: isEditing && editingExpense?.title ? editingExpense.title : "",
+        date: initialDate,
+        amount: isEditing && editingExpense?.amount ? editingExpense.amount : 0,
         category: savedCategory
-    })
+    });
 
     const categories = [
-        'Travel', 'Food', 'Shipping', 'Equipment', 'Software', 
-        'Legal', 'Environmental', 'Core', 'Waste', 'Taxes', 'Other'
+        'Clothing', 'Core', 'Environmental', 'Equipment', 'Food', 'Legal', 
+        'Shipping', 'Software', 'Taxes', 'Travel', 'Waste', 'Other'
     ];
 
-    // Auto-fill description based on category selection
+    // Auto-fill description based on category selection (only for new expenses)
     useEffect(() => {
-        if (inputForm.category === 'Environmental' && inputForm.title === "") {
-            setInput(prev => ({ ...prev, title: "Enviro Charge" }));
-        } else if (inputForm.category === 'Taxes' && inputForm.title === "") {
-            setInput(prev => ({ ...prev, title: "Sales Tax" }));
+        if (!isEditing) {
+            if (inputForm.category === 'Environmental') {
+                setInput(prev => ({ ...prev, title: "Enviro Charge" }));
+            } else if (inputForm.category === 'Taxes') {
+                setInput(prev => ({ ...prev, title: "Sales Tax" }));
+            } else if (inputForm.category === 'Travel') {
+                setInput(prev => ({ ...prev, title: "Gas" }));
+            }
         }
-    }, [inputForm.category]);
+    }, [inputForm.category, isEditing]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         
-        // Save category to localStorage when changed
-        if (name === 'category') {
+        // Save category to localStorage when changed (only for new expenses)
+        if (name === 'category' && !isEditing) {
             localStorage.setItem('lastExpenseCategory', value);
         }
         
@@ -47,10 +59,18 @@ const ExpenseForm = (props) => {
 
     function saveChanges(e) {
         e.preventDefault();
-        let form = inputForm;
+        let form = { ...inputForm };
         form.date = purchaseDate.toLocaleDateString();
-        submitNewExpense(form)
-        toggleModal(false)
+        
+        // If editing, include the expense ID for the update operation
+        if (isEditing && editingExpense?._id) {
+            form._id = editingExpense._id;
+        }
+        
+        // submitNewExpense will either add new expense or update existing one
+        // depending on how it was passed from the parent component
+        submitNewExpense(form);
+        toggleModal(false);
     }
 
     return (
@@ -116,7 +136,9 @@ const ExpenseForm = (props) => {
 
             <Modal.Footer>
                 <Button onClick={() => toggleModal(false)} variant="secondary">Cancel</Button>
-                <Button type="submit" variant="primary">Add Expense</Button>
+                <Button type="submit" variant="primary">
+                    {isEditing ? 'Update Expense' : 'Add Expense'}
+                </Button>
             </Modal.Footer>
         </Form>
     );

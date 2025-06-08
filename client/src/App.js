@@ -34,6 +34,7 @@ function App() {
     importItemsFromCVS,
     logout,
     deleteExpense,
+    updateExpense,
     saveChurnSettings,
     churnSettings
   } = storeData
@@ -69,6 +70,7 @@ function App() {
               expenses={expenses}
               deleteExpense={deleteExpense}
               submitNewExpense={submitNewExpense}
+              updateExpense={updateExpense}
             />
           )}
         />

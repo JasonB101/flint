@@ -3,24 +3,25 @@
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   border: 1px solid #e9ecef;
-  overflow: visible;
   max-height: 60vh;
   overflow-y: auto;
+  overflow-x: hidden;
   
   // Override Bootstrap table styling
   :global(.table) {
     margin: 0;
     background: white;
     border-radius: 8px;
-    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
     
     thead {
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      position: sticky;
-      top: 0;
-      z-index: 10;
       
       th {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
         border: none;
         border-bottom: 2px solid #dee2e6;
         padding: 12px 16px;
@@ -31,9 +32,10 @@
         letter-spacing: 0.5px;
         cursor: pointer;
         transition: all 0.2s ease;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
         
         &:hover {
-          background: rgba(0, 123, 255, 0.1);
+          background: linear-gradient(135deg, rgba(0, 123, 255, 0.1) 0%, rgba(0, 123, 255, 0.05) 100%) !important;
           color: #007bff;
         }
         
@@ -87,7 +89,8 @@
     align-items: center;
     gap: 10px;
     padding: 10px 16px 10px 16px !important;
-    overflow: visible;
+    overflow: visible !important;
+    position: relative;
     
     .expense-options {
       opacity: 0;

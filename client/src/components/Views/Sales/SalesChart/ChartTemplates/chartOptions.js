@@ -1,4 +1,3 @@
-
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -23,6 +22,42 @@ class ChartOptions {
     }
 }
 
+export class MultiYearSalesChart extends ChartOptions {
+    constructor(years, soldItems, profitSetToTrue) {
+        super(`${profitSetToTrue ? "Profits" : "Sales"} by Year`);
+        this.axisY = {
+            title: profitSetToTrue ? "Profit" : "Sales",
+            includeZero: true,
+            prefix: "$"
+        }
+        this.data = [{
+            type: "column",
+            toolTipContent: "{label}: ${y}",
+            dataPoints: getYearlyDataPoints(years, soldItems, profitSetToTrue),
+        }]
+        this.axisX = {
+            title: "Year",
+            interval: 1
+        }
+
+        function getYearlyDataPoints(years, soldItems, profitSetToTrue) {
+            return years.map(year => {
+                const yearItems = soldItems.filter(item => 
+                    new Date(item.dateSold).getFullYear() === year
+                );
+                
+                const totalValue = yearItems.reduce((sum, item) => {
+                    return sum + (profitSetToTrue ? Number(item.profit) : Number(item.priceSold));
+                }, 0);
+
+                return {
+                    label: year.toString(),
+                    y: Number(totalValue.toFixed(2))
+                };
+            }).sort((a, b) => Number(a.label) - Number(b.label));
+        }
+    }
+}
 
 export class YearSalesChart extends ChartOptions {
     constructor(year, soldItems, profitSetToTrue) {
