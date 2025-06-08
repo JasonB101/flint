@@ -1,44 +1,473 @@
-
 .wrapper {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
+    align-items: center;
     height: 90px !important;
     min-height: 90px !important;
     max-height: 90px !important;
     width: 100%;
     padding: 15px 20px;
-    text-align: center;
     background: rgba(255, 255, 255, 0.05);
     box-sizing: border-box;
     flex-shrink: 0;
+}
 
-    &>div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 0;
+.userControls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding-right: 0;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+// Notification System Styles
+.notificationWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.notificationIcon {
+    position: relative;
+    cursor: pointer;
+    font-size: 30px;
+    color: rgb(248, 246, 246);
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 48px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+        color: rgb(166, 203, 252);
+        background: rgba(166, 203, 252, 0.1);
+        border-color: rgba(166, 203, 252, 0.2);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(166, 203, 252, 0.15);
     }
-
-    .logo {
-        height: 50px;
-        filter: brightness(1.1);
-        transition: transform 0.2s ease;
+    
+    &.hasNotifications {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.15);
+        border-color: rgba(255, 107, 107, 0.3);
+        animation: notificationPulse 2s infinite;
+        box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
         
         &:hover {
-            transform: scale(1.05);
+            color: #ff5252;
+            background: rgba(255, 82, 82, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+        
+        i {
+            color: inherit;
+        }
+        
+        // Special styling if there are milestone notifications
+        &.hasMilestones {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            border-color: rgba(255, 215, 0, 0.3);
+            animation: milestoneGlow 1.5s infinite;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            
+            &:hover {
+                color: #ffed4a;
+                background: rgba(255, 237, 74, 0.2);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
         }
     }
+}
 
-    h1 {
-        font-family: "Neucha", cursive;
-        color: rgb(240, 240, 240);
-        margin-left: 12px;
-        margin-bottom: 0;
-        padding: 0;
-        font-size: 24px;
+@keyframes notificationPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+    }
+}
+
+.notificationBadge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border: 2px solid #26303f;
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes milestoneGlow {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+    33% {
+        transform: scale(1.08);
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+    }
+    66% {
+        transform: scale(1.03);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+}
+
+.notificationDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    max-width: 240px;
+    z-index: 1000;
+    overflow: hidden;
+    margin-top: 4px;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 16px;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid white;
+    }
+}
+
+.notificationHeader {
+    padding: 6px 10px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    span {
         font-weight: 600;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        letter-spacing: 0.5px;
+        font-size: 11px;
+        color: #26303f;
+    }
+}
+
+.markAllBtn {
+    background: none;
+    border: none;
+    color: #26303f;
+    font-size: 9px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    
+    &:hover {
+        background: rgba(38, 48, 63, 0.1);
+    }
+}
+
+.notificationList {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.notificationItem {
+    padding: 6px 10px;
+    border-bottom: 1px solid #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    
+    &:hover {
+        background: #f8f9fa;
+    }
+    
+    &.unviewed {
+        background: #e3f2fd;
+        border-left: 2px solid #26303f;
+        
+        &:hover {
+            background: #ddeffe;
+        }
+    }
+    
+    &:last-child {
+        border-bottom: none;
+    }
+    
+    &.milestone {
+        background: #fff3cd;
+        border-left: 2px solid #ffc107;
+        
+        &:hover {
+            background: #fff2b8;
+        }
+        
+        &.unviewed {
+            background: #ffc107;
+            border-left: 2px solid #e67e22;
+            
+            &:hover {
+                background: #ffb300;
+            }
+        }
+    }
+}
+
+.notificationContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notificationMessage {
+    font-size: 11px;
+    font-weight: 500;
+    color: #212529;
+    line-height: 1.2;
+}
+
+.notificationDate {
+    font-size: 9px;
+    color: #6c757d;
+    font-weight: 400;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 1px;
+    border-radius: 3px;
+    font-size: 10px;
+    
+    &:hover {
+        background: #dc3545;
+        color: white;
+    }
+    
+    i {
+        font-size: 10px !important;
+    }
+}
+
+.emptyNotifications {
+    padding: 20px 12px;
+    text-align: center;
+    color: #6c757d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    
+    i {
+        font-size: 24px !important;
+        opacity: 0.5;
+    }
+    
+    span {
+        font-size: 11px;
+        font-weight: 500;
+    }
+}
+
+// User Profile Dropdown
+.userProfile {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.userSection {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 150px;
+    max-width: 210px;
+    height: 48px;
+    box-sizing: border-box;
+    
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(166, 203, 252, 0.3);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.userName {
+    color: rgb(248, 246, 246);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 30px;
+        padding: 1px;
+        background: linear-gradient(45deg, transparent, rgba(166, 203, 252, 0.2), transparent);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask-composite: xor;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .userSection:hover &::before {
+        opacity: 1;
+    }
+}
+
+.userIcon {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 25px !important;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: rgb(248, 246, 246);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    
+    .userSection:hover & {
+        background: linear-gradient(135deg, rgba(166, 203, 252, 0.3) 0%, rgba(166, 203, 252, 0.2) 100%);
+        color: rgb(166, 203, 252);
+        border-color: rgba(166, 203, 252, 0.4);
+        box-shadow: 0 4px 12px rgba(166, 203, 252, 0.2);
+        transform: scale(1.05);
+    }
+}
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    z-index: 1000;
+    overflow: hidden;
+    margin-top: 4px;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 40px;
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid white;
+    }
+}
+
+.dropdownHeader {
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    
+    .userNameFull {
+        display: block;
+        font-weight: 600;
+        font-size: 12px;
+        color: #26303f;
+        margin-bottom: 2px;
+    }
+    
+    .userEmail {
+        display: block;
+        font-size: 10px;
+        color: #6c757d;
+        font-weight: 400;
+    }
+}
+
+.dropdownItem {
+    width: 100%;
+    padding: 6px 12px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #495057;
+    font-weight: 500;
+    
+    &:hover {
+        background: #f8f9fa;
+        color: #dc3545;
+    }
+    
+    i {
+        font-size: 12px !important;
+        color: #6c757d;
+    }
+    
+    &:hover i {
+        color: #dc3545;
     }
 }

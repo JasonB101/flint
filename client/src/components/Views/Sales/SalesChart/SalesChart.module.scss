@@ -33,12 +33,12 @@
     cursor: pointer;
     
     &.positive {
-      fill: #26303f;
+      fill: #3b82c7;
       
       &:hover,
       &.hovered {
-        fill: #1a2332;
-        filter: drop-shadow(0 4px 8px rgba(38, 48, 63, 0.4));
+        fill: #2563eb;
+        filter: drop-shadow(0 4px 8px rgba(59, 130, 199, 0.4));
       }
     }
     

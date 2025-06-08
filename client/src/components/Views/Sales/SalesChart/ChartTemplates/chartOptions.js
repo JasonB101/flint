@@ -61,7 +61,7 @@ export class MultiYearSalesChart extends ChartOptions {
 
 export class YearSalesChart extends ChartOptions {
     constructor(year, soldItems, profitSetToTrue) {
-        super(`${profitSetToTrue ? "Profits" : "Sales"} for year ${year}`);
+        super("");
         this.axisY = {
             title: "Sales",
             includeZero: false,

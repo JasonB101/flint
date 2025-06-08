@@ -12,7 +12,7 @@ const SideBar = (props) => {
 
     return (
         <div className={Styles.wrapper}>
-            <SideBarHeader />
+            <SideBarHeader user={user} />
 
 
             {user?.token && <>

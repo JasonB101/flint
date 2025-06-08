@@ -31,18 +31,26 @@
 
 .bar {
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: all 0.3s ease;
   
   &.positive {
-    fill: #26303f;
+    fill: #3b82c7;
+    
+    &:hover,
+    &.hovered {
+      fill: #2563eb;
+      filter: drop-shadow(0 4px 8px rgba(59, 130, 199, 0.4));
+    }
   }
   
   &.negative {
     fill: #dc3545;
-  }
-  
-  &.hovered {
-    opacity: 0.8;
+    
+    &:hover,
+    &.hovered {
+      fill: #c82333;
+      filter: drop-shadow(0 4px 8px rgba(220, 53, 69, 0.4));
+    }
   }
 }
 

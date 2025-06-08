@@ -7,7 +7,6 @@ import Sourcing from "./components/Views/Sourcing/Sourcing"
 import Listing from "./components/Views/Listing/Listing"
 import VerifyUserToken from "./components/ServiceComponents/VerifyUserToken"
 import "./global.scss"
-import Header from "./components/Header/Header"
 import SideBar from "./components/SideBar/SideBar"
 import { storeContext } from "./Store"
 import SoldItems from "./components/Views/SoldItems/SoldItems"
@@ -41,7 +40,6 @@ function App() {
 
   return (
     <div className="appWrapper">
-      <Header user={user} />
       <SideBar
         importItemsFromCVS={importItemsFromCVS}
         login={login}

@@ -139,7 +139,7 @@ const SalesChart = ({ options }) => {
 
   return (
     <div className={Styles.wrapper} ref={containerRef}>
-      <div className={Styles.chartTitle}>{options.title?.text}</div>
+      {options.title?.text && <div className={Styles.chartTitle}>{options.title?.text}</div>}
       
       <div 
         className={Styles.chartContainer}

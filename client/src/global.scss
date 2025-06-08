@@ -7,9 +7,8 @@
 .appWrapper {
   display: grid;
   grid-template-columns: 270px 1fr;
-  grid-template-rows: 90px calc(100vh - 90px);
+  grid-template-rows: 1fr;
   grid-template-areas:
-  "sb hh"
   "sb vv";
   
   width: 100%;
