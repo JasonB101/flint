@@ -1,32 +1,42 @@
 .itemOptionsWrapper {
   position: relative;
   overflow: visible;
-  z-index: 1000;
+  z-index: 10001;
   .optionsModal {
     overflow: visible;
-    position: absolute; // Make it absolute
-    top: 75%; // Align it to the bottom of the parent
-    left: 10px; // Align it to the left of the parent
-    background-color: white; // Modal background color
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Shadow for depth
-    padding: 0 5px; // Padding
-    z-index: 1000; // Keep it on top of other content
-    border-radius: 3px;
+    position: absolute;
+    top: 100%; // Position below the button
+    left: 0px; // Align to the left edge
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); // Better shadow for depth
+    padding: 8px 0; // Better padding
+    z-index: 10001; // Much higher than sticky headers (z-index: 10)
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    min-width: 80px;
     p {
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
       line-height: 1;
-      margin: 12px 2px;
+      margin: 8px 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
       &:hover {
+        background-color: #f8f9fa;
         color: #007bff;
       }
     }
   }
   i {
     text-align: center;
-    padding: 0;
-    font-size: 20px;
+    padding: 4px;
+    font-size: 18px;
     cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
   }
-  
 }

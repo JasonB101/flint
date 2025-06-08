@@ -5,34 +5,97 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    color: white;
-    font-size: 24px;
-    font-weight: normal;
-    padding: 10px 5px 10px 30px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 18px;
+    font-weight: 500;
+    padding: 12px 24px;
     text-align: left;
-    font-family: Raleway;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    position: relative;
+    
+    &:hover {
+      background: rgba(166, 203, 252, 0.1);
+      color: rgb(166, 203, 252);
+      border-left-color: rgb(166, 203, 252);
+      transform: translateX(2px);
+    }
+    
+    &::after {
+      content: '▼';
+      margin-left: auto;
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+    
+    &.menuOpen::after {
+      transform: rotate(180deg);
+    }
   }
 
   .subMenu {
-    transition: max-height 0.5s ease-in-out;
+    background: rgba(0, 0, 0, 0.1);
+    transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .subMenuClosed {
     width: 100%;
     max-height: 0;
+    opacity: 0;
     visibility: hidden;
-    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+    transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .subMenuOpen {
     width: 100%;
     max-height: 500px;
+    opacity: 1;
+    visibility: visible;
     overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     a {
       display: flex;
-      padding-left: 60px;
-      font-size: 20px; // Adjust the size here for smaller font in subMenu
+      padding: 10px 24px 10px 48px;
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.8);
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+      
+      &:hover {
+        background: rgba(166, 203, 252, 0.08);
+        color: rgb(166, 203, 252);
+        border-left-color: rgba(166, 203, 252, 0.5);
+        padding-left: 52px;
+      }
+      
+      &[style*="background-color: #353a42"] {
+        background: rgba(166, 203, 252, 0.12) !important;
+        color: rgb(166, 203, 252) !important;
+        border-left-color: rgb(166, 203, 252);
+        font-weight: 500;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          left: 32px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 4px;
+          height: 4px;
+          background: rgb(166, 203, 252);
+          border-radius: 50%;
+        }
+      }
     }
   }
 }

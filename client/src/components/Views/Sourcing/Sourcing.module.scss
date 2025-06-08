@@ -1,5 +1,8 @@
 .wrapper {
-    padding: 10px;
+    padding: 5px;
+    background-color: #f8f9fa;
+    height: calc(100vh - 90px);
+    overflow-y: auto;
 
     h4{ 
         font-size: 14px;
@@ -16,4 +19,277 @@
         background-color: #a8cafd;
         box-shadow: 0px 3px 7px 5px #a8cafd;        
     }
+}
+
+// Chart Card
+.chartCard {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+    margin-bottom: 8px;
+}
+
+.chartHeader {
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    h2 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        
+        &::before {
+            content: '📊';
+            font-size: 16px;
+        }
+    }
+}
+
+.chartControls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    
+    @media (max-width: 768px) {
+        gap: 8px;
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+.periodSelector {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+}
+
+.periodButton {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+    
+    &.active {
+        background: white;
+        color: #26303f;
+        font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+}
+
+.yearSelector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.yearSelect {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    
+    &:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    
+    option {
+        background: #26303f;
+        color: white;
+    }
+}
+
+.chartContainer {
+    padding: 8px 8px 8px 8px;
+    min-height: 240px;
+    
+    @media (max-width: 768px) {
+        padding: 6px 6px 6px 6px;
+        min-height: 220px;
+    }
+}
+
+// Metrics Grid
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 6px;
+    margin-bottom: 8px;
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+.metricCard {
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.metricIcon {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(38, 48, 63, 0.3);
+}
+
+.metricContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.metricLabel {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metricValue {
+    font-size: 18px;
+    font-weight: 700;
+    color: #212529;
+    font-family: 'Monaco', 'Menlo', monospace;
+    
+    &.shipping {
+        color: #fd7e14;
+    }
+    
+    &.average {
+        color: #17a2b8;
+    }
+}
+
+// Projection Section
+.projectionSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 0;
+    margin-top: 8px;
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+.projectionCard {
+    background: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    &::before {
+        content: '📊';
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(23, 162, 184, 0.3);
+        flex-shrink: 0;
+    }
+}
+
+.projectionCard:last-child::before {
+    content: '💰';
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.projectionContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.projectionLabel {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.projectionValue {
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+    font-family: 'Monaco', 'Menlo', monospace;
+    
+    &.cost {
+        color: #dc3545;
+    }
+}
+
+.bottomPadding {
+    height: 2px;
 }

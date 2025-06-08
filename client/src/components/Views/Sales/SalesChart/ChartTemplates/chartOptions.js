@@ -1,4 +1,4 @@
-const currencyFormatter = new Intl.NumberFormat('en-US', {
+﻿const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
 });
@@ -67,27 +67,30 @@ export class YearSalesChart extends ChartOptions {
             includeZero: false,
             prefix: "$"
         }
+        
+        const dataPoints = fillInMissingDays(getYearDataPoints(soldItems), year);
+        
         this.data = [{
             type: "column",
             toolTipContent: " {x}: ${y}",
-            dataPoints: getYearDataPoints(soldItems),
+            dataPoints: dataPoints,
             backgroundColor: customColors
         }]
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(fillInMissingDays(this.data[0].dataPoints))}`,
+            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(dataPoints)}`,
             interval: 7,
             xValueType: "date",
             xValueFormatString: "MM/dd"
-
         }
 
-
         function getYearDataPoints(soldItems) {
+            // Better date filtering - check actual year instead of string includes
             const filteredItems = soldItems.filter(item => {
                 try {
-                    return item.dateSold.includes(year);
+                    const itemYear = new Date(item.dateSold).getFullYear();
+                    return itemYear === year;
                 } catch (e) {
-                    console.log("Item with no Date Sold", item);
+                    console.log("Item with invalid Date Sold", item);
                     return false;
                 }
             });
@@ -95,38 +98,51 @@ export class YearSalesChart extends ChartOptions {
             const dataPoints = filteredItems.reduce((dataPoints, item) => {
                 const dateSold = standardDate(item.dateSold);
                 const price = profitSetToTrue ? +item.profit : +item.priceSold;
-                const itemFoundIndex = dataPoints.findIndex(x => x.x === dateSold);
+                const itemFoundIndex = dataPoints.findIndex(x => x.x.getTime() === new Date(dateSold).getTime());
+                
                 if (itemFoundIndex !== -1) {
-                    dataPoints[itemFoundIndex] = { x: dateSold, y: dataPoints[itemFoundIndex].y + price };
+                    dataPoints[itemFoundIndex] = { 
+                        x: new Date(dateSold), 
+                        y: dataPoints[itemFoundIndex].y + price 
+                    };
                     return dataPoints;
                 } else {
-                    dataPoints.push({ x: dateSold, y: price });
+                    dataPoints.push({ x: new Date(dateSold), y: price });
                     return dataPoints;
                 }
-            }, []).map(j => ({ x: new Date(j.x), y: +j.y.toFixed(2) }));
+            }, []);
 
-            return dataPoints;
-
-
+            // Sort by date before returning
+            return dataPoints.sort((a, b) => a.x.getTime() - b.x.getTime())
+                            .map(j => ({ x: j.x, y: +j.y.toFixed(2) }));
         }
     }
-
 }
 
 export class YearSalesChartByWeek extends YearSalesChart {
     constructor(year, soldItems, profitSetToTrue) {
         super(year, soldItems, true);
 
+        // Define week calculation for Sunday-Saturday weeks
         Date.prototype.getWeek = function () {
-            var onejan = new Date(this.getFullYear(), 0, 1);
-            return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()) / 7);
+            const onejan = new Date(this.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((this - onejan) / 86400000) + 1;
+            
+            // Adjust for Sunday start (getDay() returns 0 for Sunday)
+            const janFirst = onejan.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            const daysToFirstSunday = (7 - janFirst) % 7;
+            
+            if (dayOfYear <= daysToFirstSunday) {
+                return 1; // First partial week
+            }
+            
+            return Math.ceil((dayOfYear - daysToFirstSunday) / 7) + 1;
         }
 
         this.data = [{
             type: "column",
             toolTipContent: " {label}: ${y}",
-            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems)),
-            // .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1])
+            dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems), year),
         }]
 
         this.axisX = {
@@ -140,12 +156,14 @@ export class YearSalesChartByWeek extends YearSalesChart {
         function getYearDataPointsByWeek(soldItems) {
             const filteredItems = soldItems.filter(item => {
                 try {
-                    return item.dateSold.includes(year);
+                    const itemYear = new Date(item.dateSold).getFullYear();
+                    return itemYear === year;
                 } catch (e) {
-                    console.log("Item with no Date Sold", item);
+                    console.log("Item with invalid Date Sold", item);
                     return false;
                 }
             });
+            
             filteredItems.sort((a, b) => {
                 let valA = a.dateSold
                 let valB = b.dateSold
@@ -161,21 +179,21 @@ export class YearSalesChartByWeek extends YearSalesChart {
                 const week = new Date(dateSold).getWeek()
                 const month = new Date(dateSold).toLocaleString('default', { month: 'short' });
 
-                const itemFoundIndex = dataPoints.findIndex(x => x.label.split(" ")[0] === String(week));
+                const itemFoundIndex = dataPoints.findIndex(x => +x.label.replace('W', '') === week);
                 if (itemFoundIndex !== -1) {
                     const dP = dataPoints[itemFoundIndex];
-                    dataPoints[itemFoundIndex] = { label: `${week} ${checkAndMergeMonths(dP.label.split(" ")[1], month)}`, y: dataPoints[itemFoundIndex].y + price };
+                    dataPoints[itemFoundIndex] = { 
+                        label: `W${week}`, 
+                        y: dataPoints[itemFoundIndex].y + price 
+                    };
                     return dataPoints;
                 } else {
-                    dataPoints.push({ label: `${week} ${month}`, y: price });
+                    dataPoints.push({ label: `W${week}`, y: price });
                     return dataPoints;
                 }
-            }, [])
-                .map(j => ({ label: `W${j.label}`, y: +j.y.toFixed(2) }));
-
+            }, []);
 
             return dataPoints;
-
         }
     }
 }
@@ -186,9 +204,11 @@ export class YearSalesChartByMonth extends YearSalesChart {
         this.data = [{
             type: "column",
             toolTipContent: " {label}: ${y}",
-            dataPoints: fillInMissingMonths(getYearDataPointsByMonth(soldItems))
-                .sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]),
-            // color: customColors[ Math.floor(Math.random() * customColors.length)]
+            dataPoints: fillInMissingMonths(getYearDataPointsByMonth(soldItems), year)
+                .sort((a, b) => {
+                    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    return months.indexOf(a.label) - months.indexOf(b.label);
+                }),
         }]
 
         this.axisX = {
@@ -197,16 +217,23 @@ export class YearSalesChartByMonth extends YearSalesChart {
         }
         this.axisY = {
             includeZero: true,
-
         }
-        function fillInMissingMonths(dataPoints) {
+        
+        function fillInMissingMonths(dataPoints, year) {
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const newDataPoints = [];
-            const maxMonth = dataPoints.reduce((highestMonth, dp) => {
-                if (highestMonth < months.indexOf(dp.label)) return months.indexOf(dp.label);
-                return highestMonth;
-            }, 0)
-
+            
+            // Determine maximum month to show
+            let maxMonth;
+            if (year < new Date().getFullYear()) {
+                // For past years, show all 12 months
+                maxMonth = 11; // December (0-indexed)
+            } else {
+                // For current year, show up to current month
+                maxMonth = new Date().getMonth();
+            }
+            
+            // Show months up to maxMonth
             for (let i = 0; i <= maxMonth; i++) {
                 const foundIndex = dataPoints.findIndex(x => x.label === months[i])
                 if (foundIndex !== -1) {
@@ -217,15 +244,16 @@ export class YearSalesChartByMonth extends YearSalesChart {
             }
 
             return newDataPoints;
-
         }
 
         function getYearDataPointsByMonth(soldItems) {
+            // Better date filtering - check actual year instead of string includes
             const filteredItems = soldItems.filter(item => {
                 try {
-                    return item.dateSold.includes(year);
+                    const itemYear = new Date(item.dateSold).getFullYear();
+                    return itemYear === year;
                 } catch (e) {
-                    console.log("Item with no Date Sold", item);
+                    console.log("Item with invalid Date Sold", item);
                     return false;
                 }
             });
@@ -237,7 +265,6 @@ export class YearSalesChartByMonth extends YearSalesChart {
 
                 const itemFoundIndex = dataPoints.findIndex(x => x.label === month);
                 if (itemFoundIndex !== -1) {
-                    const dP = dataPoints[itemFoundIndex];
                     dataPoints[itemFoundIndex] = { label: month, y: dataPoints[itemFoundIndex].y + price };
                     return dataPoints;
                 } else {
@@ -247,9 +274,7 @@ export class YearSalesChartByMonth extends YearSalesChart {
             }, [])
                 .map(j => ({ label: j.label, y: +j.y.toFixed(2) }));
 
-
             return dataPoints;
-
         }
     }
 }
@@ -261,61 +286,145 @@ function checkAndMergeMonths(originalMonth, newMonth) {
     if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;
     return `${originalMonth}/${newMonth}`
 }
-function fillInMissingDays(dataArray) {
-    //get day  for i < length - day
-    const newArray = [...dataArray];
-    const maxDay = newArray.reduce((highestDay, dp) => {
-        if (highestDay < getDay(dp.x)) return getDay(dp.x);
-        return highestDay;
-    }, 1)
-    // console.log(maxDay)
-    const difference = maxDay - newArray.length;
-    const difference2 = new Date().getDay() - newArray.length;
-
-    // console.log(difference, difference2)
-
-    for (let i = 0; i < difference; i++) {
-        newArray.push({ y: 0 })
+function fillInMissingDays(dataArray, year) {
+    // If no year provided, return empty array
+    if (!year) {
+        console.log('No year provided to fillInMissingDays');
+        return dataArray;
+    }
+    
+    const currentYear = new Date().getFullYear();
+    const today = new Date();
+    
+    // Determine how many days to show
+    let maxDay;
+    if (year < currentYear) {
+        // For past years, show all 365/366 days
+        const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        maxDay = isLeapYear ? 366 : 365;
+    } else {
+        // For current year, calculate days from Jan 1 to today
+        const jan1 = new Date(year, 0, 1); // January 1st
+        const diffTime = today.getTime() - jan1.getTime();
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        maxDay = diffDays + 1; // +1 to include today
     }
 
-    return newArray;
+    // Create a map of existing days for easy lookup
+    const existingDaysMap = {};
+    dataArray.forEach(dp => {
+        const dayNum = getDay(dp.x);
+        existingDaysMap[dayNum] = dp;
+    });
+    
+    // Create complete year data
+    const completeYear = [];
+    for (let day = 1; day <= maxDay; day++) {
+        if (existingDaysMap[day]) {
+            completeYear.push(existingDaysMap[day]);
+        } else {
+            // Create missing day with zero value and proper date
+            const date = new Date(year, 0, day);
+            completeYear.push({ x: date, y: 0 });
+        }
+    }
+
+
+
+    // Sort by date to ensure proper order
+    return completeYear.sort((a, b) => a.x.getTime() - b.x.getTime());
 }
 
 function getDay(date) {
-    // console.log(typeof(date))
     if (typeof (date) === "string") date = new Date(date);
-    // console.log(date)
-    const start = new Date(date.getFullYear(), 0, 0);
-    const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+    const start = new Date(date.getFullYear(), 0, 1); // January 1st of the year
+    const diff = date - start;
     const oneDay = 1000 * 60 * 60 * 24;
-    const day = Math.floor(diff / oneDay);
+    const day = Math.floor(diff / oneDay) + 1; // +1 because Jan 1st should be day 1
     return day;
 }
-function fillInMissingWeeks(dataArray) {
-    const allWeeks = [];
-    const sorted = dataArray.sort((a, b) => +a.label.split(" ")[1] - +b.label.split(" ")[1]);
-    if (sorted.length > 1 && sorted[0].label.split(" ")[0] !== "W1") {
-        sorted.unshift({ label: "Week 1 ", y: 0 });
+function fillInMissingWeeks(data, year) {
+    const filledData = [];
+    
+    // Determine maximum week to show
+    let maxWeek;
+    if (year < new Date().getFullYear()) {
+        // For past years, show all 52 weeks
+        maxWeek = 52;
+    } else {
+        // For current year, show up to current week
+        const now = new Date();
+        maxWeek = now.getWeek ? now.getWeek() : getCurrentWeek();
     }
-    sorted.forEach((dataPoint, index) => {
-        const firstPoint = sorted[index - 1] ? +sorted[index - 1].label.split(" ")[1] : 1;
-        const secondPoint = +dataPoint.label.split(" ")[1];
-
-        if (secondPoint - firstPoint !== 1) {
-            insertWeeks(firstPoint, secondPoint);
+    
+    let lastMonth = null;
+    
+    // Create weeks up to maxWeek
+    for (let week = 1; week <= maxWeek; week++) {
+        const existingWeek = data.find(item => +item.label.replace('W', '') === week);
+        
+        // Get the month for this week (approximate middle of week)
+        const weekMonth = getMonthForWeek(week, year);
+        
+        // Determine label format
+        let label;
+        if (lastMonth === null || weekMonth !== lastMonth) {
+            // First week or month changed - include month abbreviation
+            label = week === 1 ? `W${week}` : `${weekMonth} W${week}`;
+            lastMonth = weekMonth;
+        } else {
+            // Same month as previous week
+            label = `W${week}`;
         }
-
-        allWeeks.push(dataPoint);
-    })
-
-    function insertWeeks(low, high) {
-        for (let i = low + 1; i < high; i++) {
-            allWeeks.push({ label: `Week ${i} `, y: 0 });
+        
+        if (existingWeek) {
+            filledData.push({
+                label: label,
+                y: +existingWeek.y.toFixed(2)
+            });
+        } else {
+            filledData.push({
+                label: label,
+                y: 0
+            });
         }
     }
-
-    return allWeeks;
-
+    
+    return filledData;
+    
+    // Helper function to get current week if getWeek is not available
+    function getCurrentWeek() {
+        const now = new Date();
+        const onejan = new Date(now.getFullYear(), 0, 1);
+        const dayOfYear = Math.floor((now - onejan) / 86400000) + 1;
+        
+        // Adjust for Sunday start
+        const janFirst = onejan.getDay();
+        const daysToFirstSunday = (7 - janFirst) % 7;
+        
+        if (dayOfYear <= daysToFirstSunday) {
+            return 1;
+        }
+        
+        return Math.ceil((dayOfYear - daysToFirstSunday) / 7) + 1;
+    }
+    
+    // Helper function to get month abbreviation for a given week
+    function getMonthForWeek(weekNumber, year) {
+        // Calculate approximate date for middle of the week (Wednesday)
+        const firstSunday = getFirstSundayOfYear(year);
+        const weekStart = new Date(firstSunday.getTime() + (weekNumber - 1) * 7 * 24 * 60 * 60 * 1000);
+        const midWeek = new Date(weekStart.getTime() + 3 * 24 * 60 * 60 * 1000); // Wednesday
+        
+        return midWeek.toLocaleString('default', { month: 'short' });
+    }
+    
+    // Helper function to find the first Sunday of the year
+    function getFirstSundayOfYear(year) {
+        const jan1 = new Date(year, 0, 1);
+        const daysToFirstSunday = (7 - jan1.getDay()) % 7;
+        return new Date(year, 0, 1 + daysToFirstSunday);
+    }
 }
 
 function standardDate(value) {
@@ -328,7 +437,6 @@ function standardDate(value) {
     }
 
     return value;
-
 }
 
 function getAverage(dataPoints) {
@@ -340,8 +448,8 @@ function getAverage(dataPoints) {
     }
 
     return result;
-
 }
+
 function daysIntoYear(dateString) {
     const date = new Date(dateString);
     return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000;

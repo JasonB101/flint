@@ -40,20 +40,33 @@ const SoldItems = (props) => {
 
   return (
     <div className={Styles.wrapper}>
-      <Toolbar
-        changeSearchTerm={changeSearchTerm}
-        searchTerm={soldItemsSearchTerm}
-        items={soldItems}
-        setToggleSummaryModal={setToggleSummaryModal}
-      />
-      <SoldTable
-        updateItem={updateItem}
-        soldItems={itemsToShow}
-        ebayListings={ebayListings}
-        getShippingLabels={getShippingLabels}
-        returnInventoryItem={returnInventoryItem}
-        user={user}
-      />
+      {/* Main Content Card */}
+      <div className={Styles.contentCard}>
+        <div className={Styles.toolbarSection}>
+          <Toolbar
+            changeSearchTerm={changeSearchTerm}
+            searchTerm={soldItemsSearchTerm}
+            items={soldItems}
+            setToggleSummaryModal={setToggleSummaryModal}
+          />
+        </div>
+        
+        <div className={Styles.tableSection}>
+          <SoldTable
+            updateItem={updateItem}
+            soldItems={itemsToShow}
+            ebayListings={ebayListings}
+            getShippingLabels={getShippingLabels}
+            returnInventoryItem={returnInventoryItem}
+            user={user}
+          />
+        </div>
+      </div>
+
+      {/* Bottom Padding */}
+      <div className={Styles.bottomPadding}></div>
+
+      {/* Modal */}
       {toggleSummaryModal && (
         <SoldSummaryModal
           soldItems={soldItems}

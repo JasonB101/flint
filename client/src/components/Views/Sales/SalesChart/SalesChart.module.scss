@@ -3,14 +3,14 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 20px 0;
+  padding: 5px 0;
 }
 
 .chartTitle {
   font-size: 18px;
   font-weight: 600;
   color: #26303f;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   text-align: center;
 }
 
@@ -19,9 +19,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  overflow-x: auto;
-  overflow-y: visible;
-  padding: 80px 10px 10px 10px;
+  overflow: visible;
+  padding: 0;
   z-index: 1;
 }
 
@@ -116,35 +115,118 @@
 
 .axisTitle {
   margin-top: 15px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
   font-size: 14px;
-  color: #6c757d;
-  font-weight: 500;
+  color: #495057;
+  font-weight: 600;
   text-align: center;
-  font-style: italic;
   max-width: 100%;
   word-wrap: break-word;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  
+  &::before {
+    content: '📊';
+    font-size: 16px;
+    margin-right: 8px;
+    display: inline-block;
+  }
+  
+  // Highlight the currency value
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    border-radius: 1px;
+  }
 }
 
 .insights {
-  margin-top: 20px;
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 .insightItem {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:first-child {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    
+    &::before {
+      content: '📅';
+      font-size: 18px;
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
+  
+  &:last-child {
+    background: linear-gradient(135deg, #e8f5e8 0%, #fff3e0 100%);
+    
+    &::before {
+      content: '🏆';
+      font-size: 18px;
+      display: block;
+      margin-bottom: 4px;
+    }
+  }
+  
   font-size: 13px;
   color: #495057;
-  font-weight: 500;
-  text-align: center;
+  font-weight: 600;
+  line-height: 1.4;
+  
+  // Make the numbers/values stand out
+  strong {
+    display: block;
+    font-size: 16px;
+    color: #26303f;
+    font-family: 'Monaco', 'Menlo', monospace;
+    margin-top: 2px;
+  }
   
   @media (max-width: 768px) {
+    padding: 10px 12px;
     font-size: 12px;
+    
+    strong {
+      font-size: 14px;
+    }
+    
+    &:first-child::before,
+    &:last-child::before {
+      font-size: 16px;
+    }
   }
 }
 
@@ -167,19 +249,18 @@
 // Responsive design
 @media (max-width: 1200px) {
   .chartContainer {
-    padding: 70px 5px 5px 5px;
+    padding: 0;
   }
 }
 
 @media (max-width: 768px) {
   .wrapper {
-    padding: 10px 0;
+    padding: 5px 0;
   }
   
   .chartContainer {
-    padding: 60px 0 0 0;
-    overflow-x: auto;
-    overflow-y: visible;
+    padding: 0;
+    overflow: visible;
   }
   
   .chart {
@@ -188,7 +269,7 @@
   
   .chartTitle {
     font-size: 16px;
-    margin-bottom: 15px;
+    margin-bottom: 6px;
   }
   
   .tooltip {
@@ -202,14 +283,14 @@
   
   .axisTitle {
     font-size: 12px;
-    margin-top: 10px;
-    padding: 0 10px;
+    margin-top: 8px;
+    padding: 8px 12px;
   }
 }
 
 @media (max-width: 480px) {
   .chartContainer {
-    padding: 50px 0 0 0;
+    padding: 0;
   }
   
   .chart {

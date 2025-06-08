@@ -1,8 +1,240 @@
 .wrapper {
+    padding: 20px;
+    background-color: #f8f9fa;
+    height: calc(100vh - 90px);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    position: relative;
-    grid-area: vv;
-    height: calc(100vh - 90px);
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+// Page Header
+.pageHeader {
+    text-align: center;
+    margin-bottom: 20px;
+    
+    h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #26303f;
+        margin-bottom: 6px;
+        background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    p {
+        font-size: 14px;
+        color: #6c757d;
+        margin: 0;
+    }
+}
+
+// Content Card - wraps the toolbar and table
+.contentCard {
     background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex overflow
+    
+    &:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+}
+
+// Toolbar Section
+.toolbarSection {
+    background: #f8f9fa;
+    color: #26303f;
+    padding: 12px 20px;
+    border-bottom: 1px solid #e9ecef;
+    flex-shrink: 0; // Don't let toolbar shrink
+}
+
+// Table Section
+.tableSection {
+    padding: 0;
+    background: white;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    // Make the table container scrollable
+    :global {
+        .table-responsive {
+            flex: 1;
+            max-height: calc(100vh - 280px);
+            overflow-y: auto;
+            overflow-x: auto;
+            border: none;
+            
+            // Smooth scrolling
+            scroll-behavior: smooth;
+            
+            // Custom scrollbar styling
+            &::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            
+            &::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+            
+            &::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 4px;
+                
+                &:hover {
+                    background: #a8a8a8;
+                }
+            }
+        }
+        
+        // Make table headers sticky
+        table thead th {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 10 !important;
+            background: #26303f !important;
+            color: white !important;
+            border-bottom: 2px solid #1a1f2e !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            padding: 12px 8px !important;
+            
+            &:first-child {
+                border-top-left-radius: 0 !important;
+            }
+            
+            &:last-child {
+                border-top-right-radius: 0 !important;
+            }
+        }
+        
+        // Style table rows for better readability
+        table tbody tr {
+            transition: all 0.2s ease !important;
+            
+            &:hover {
+                background: #f8f9fa !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+            }
+            
+            &:nth-child(even) {
+                background: #fdfdfd !important;
+            }
+        }
+        
+        // Table cell styling
+        table td {
+            padding: 10px 8px !important;
+            border-bottom: 1px solid #e9ecef !important;
+            font-size: 13px !important;
+            vertical-align: middle !important;
+        }
+        
+        // Table styling
+        table {
+            margin-bottom: 0 !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            width: 100% !important;
+            min-width: 800px !important; // Ensure horizontal scroll if needed
+        }
+    }
+}
+
+// Stats Cards (for inventory summary)
+.inventoryStats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+    
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+.statCard {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.statIcon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(38, 48, 63, 0.3);
+}
+
+.statContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statValue {
+    font-size: 20px;
+    font-weight: 700;
+    color: #212529;
+    font-family: 'Monaco', 'Menlo', monospace;
+    
+    &.count {
+        color: #17a2b8;
+    }
+    
+    &.value {
+        color: #28a745;
+    }
+}
+
+// Bottom padding
+.bottomPadding {
+    height: 20px;
 }

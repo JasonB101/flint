@@ -1,36 +1,13 @@
 .wrapper {
-  height: 100%;
+  position: relative;
   padding-bottom: 5px;
   border-top: 1px solid rgb(206, 204, 204);
-  overflow-y: auto; /* Enable vertical scrolling */
-  table {
-    border-collapse: separate;
-  border-spacing: 0;
-  }
-
-  th::before {
-    content: "";
-    width: 100%;
-    height: 1px;
-    position: absolute;
-    top: -1px;
-    left: 0;
-    background: rgb(175, 175, 175);
-    
-  }
- 
-tr{
-  &:hover {
-    background: #748eff !important;
-  }
-}
-  td {
-    text-align: center;
-    vertical-align: middle !important;
-    padding: 3px 10px !important;
-    border: 0 !important ;
-    cursor: default !important;
-
+  overflow: auto;
+  height: 100%;
+  tr {
+    &:hover {
+      background: #748eff !important;
+    }
   }
 
   .titleTd {
@@ -38,11 +15,17 @@ tr{
     text-align: left;
     align-items: center;
     padding-left: 0px !important;
-    box-sizing: border-box;
+    overflow: visible;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+
     .item-options {
       visibility: hidden;
       opacity: 0;
       transition: visibility 0s, opacity 0.2s linear;
+      position: relative;
+      z-index: 9999;
     }
 
     &:hover {
@@ -50,19 +33,129 @@ tr{
         visibility: visible;
         opacity: 1;
       }
+      z-index: 9999;
+    }
+  }
+
+  td {
+    padding: 3px !important;
+    position: relative;
+    text-align: center;
+    vertical-align: middle !important;
+    border: 0 !important ;
+    cursor: default !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    // Title column - wider with ellipsis truncation
+    &:nth-child(1) {
+      width: 400px;
+      max-width: 400px;
+      min-width: 400px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: visible; // Allow dropdown to show
+      text-overflow: ellipsis;
+      position: relative;
+      z-index: 1;
+      
+      .titleText {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+      }
+    }
+    
+    // Part No
+    &:nth-child(2) {
+      width: 120px;
+      max-width: 120px;
+    }
+    
+    // SKU
+    &:nth-child(3) {
+      width: 80px;
+      max-width: 80px;
+    }
+    
+    // Location
+    &:nth-child(4) {
+      width: 100px;
+      max-width: 100px;
+    }
+    
+    // Days in Inventory
+    &:nth-child(5) {
+      width: 120px;
+      max-width: 120px;
+    }
+    
+    // Watchers
+    &:nth-child(6) {
+      width: 80px;
+      max-width: 80px;
+    }
+    
+    // Purchase Price
+    &:nth-child(7) {
+      width: 100px;
+      max-width: 100px;
+    }
+    
+    // Listed Price
+    &:nth-child(8) {
+      width: 120px;
+      max-width: 120px;
+    }
+    
+    // Expected Profit
+    &:nth-child(9) {
+      width: 120px;
+      max-width: 120px;
     }
   }
 
   th {
+    position: -webkit-sticky;
+    padding: 10px 6px !important;
     position: sticky;
+    background: #26303f;
+    color: white;
     top: 0;
-    z-index: 2;
-    background: white;
-    box-sizing: border-box;
+    margin-top: -4px;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border: none !important;
     background-clip: padding-box;
-    /* Remove negative margins that might offset the sticky element */
-    margin-top: 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    // Match column widths with data cells
+    &:nth-child(1) { 
+      width: 400px; 
+      max-width: 400px; 
+      min-width: 400px;
+      text-align: left; 
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    } // Title
+    &:nth-child(2) { width: 120px; max-width: 120px; } // Part No
+    &:nth-child(3) { width: 80px; max-width: 80px; } // SKU
+    &:nth-child(4) { width: 100px; max-width: 100px; } // Location
+    &:nth-child(5) { width: 120px; max-width: 120px; } // Days in Inventory
+    &:nth-child(6) { width: 80px; max-width: 80px; } // Watchers
+    &:nth-child(7) { width: 100px; max-width: 100px; } // Purchase Price
+    &:nth-child(8) { width: 120px; max-width: 120px; } // Listed Price
+    &:nth-child(9) { width: 120px; max-width: 120px; } // Expected Profit
   }
 
   & > div > table > thead > tr {
@@ -70,8 +163,6 @@ tr{
   }
 
   thead {
-    // background: #b1b7c0;
-    // color: rgb(17, 17, 17);
     text-align: center;
     font-weight: normal;
   }
@@ -80,13 +171,21 @@ tr{
     button {
       max-height: 30px;
       font-size: 12px;
-      text-align: center;
-      vertical-align: middle !important;
+      padding: 4px 8px;
       color: #20adb2 !important;
+      border: 1px solid #20adb2;
+      background: transparent;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #20adb2;
+        color: white !important;
+      }
     }
   }
 }
 
 .itemsList {
-  background: white;
-}
+  background-color: white;
+} 

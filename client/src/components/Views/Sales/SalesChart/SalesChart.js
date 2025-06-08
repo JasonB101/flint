@@ -29,6 +29,7 @@ const SalesChart = ({ options }) => {
   }
 
   const dataPoints = options.data[0].dataPoints;
+  
   const maxValue = Math.max(...dataPoints.map(d => d.y));
   const minValue = Math.min(...dataPoints.map(d => d.y));
   const range = maxValue - minValue;
@@ -38,8 +39,29 @@ const SalesChart = ({ options }) => {
   const chartHeight = 350;
   const padding = { top: 30, right: 50, bottom: 80, left: 100 };
   const availableWidth = chartWidth - padding.left - padding.right;
-  const barSpacing = Math.max(8, availableWidth * 0.02); // 2% of available width or minimum 8px
-  const barWidth = Math.max(20, (availableWidth - (barSpacing * (dataPoints.length - 1))) / dataPoints.length);
+  
+  // Improved bar sizing for daily charts with many data points
+  let barWidth, barSpacing, actualChartWidth;
+  
+  if (dataPoints.length > 100) {
+    // For daily charts with many data points, calculate required width based on actual data
+    barSpacing = 2; // Better spacing for readability
+    barWidth = 5; // Slightly wider bars for better visibility
+    const requiredWidth = (barWidth + barSpacing) * dataPoints.length + padding.left + padding.right;
+    actualChartWidth = requiredWidth; // Use exact width needed for data points
+
+    
+  } else if (dataPoints.length > 50) {
+    // Medium number of data points
+    barSpacing = 2;
+    barWidth = Math.max(6, (availableWidth - (barSpacing * (dataPoints.length - 1))) / dataPoints.length);
+    actualChartWidth = chartWidth;
+  } else {
+    // Original logic for smaller datasets (weekly, monthly, yearly)
+    barSpacing = Math.max(8, availableWidth * 0.02); // 2% of available width or minimum 8px
+    barWidth = Math.max(20, (availableWidth - (barSpacing * (dataPoints.length - 1))) / dataPoints.length);
+    actualChartWidth = chartWidth;
+  }
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -91,19 +113,13 @@ const SalesChart = ({ options }) => {
     
     if (!svgElement || !containerElement) return;
     
-    // Get the container's padding from CSS (we know it's 80px top, 10px left/right)
-    const containerPadding = {
-      top: 80,
-      left: 10
-    };
-    
     // Calculate position in SVG coordinates
     const svgX = padding.left + (index * (barWidth + barSpacing)) + barWidth / 2;
-    const barY = getBarY(point.y);
+    const barY = getBarY(point.y); // This is the top of the bar
     
-    // Convert to container-relative coordinates accounting for container padding
-    const containerX = svgX + containerPadding.left;
-    const containerY = barY + containerPadding.top - 15; // Raise by 15px
+    // Position tooltip 8px above the top of the bar
+    const containerX = svgX;
+    const containerY = barY - 8;
     
     setHoveredBar(index);
     setTooltip({
@@ -125,12 +141,24 @@ const SalesChart = ({ options }) => {
     <div className={Styles.wrapper} ref={containerRef}>
       <div className={Styles.chartTitle}>{options.title?.text}</div>
       
-      <div className={Styles.chartContainer}>
+      <div 
+        className={Styles.chartContainer}
+        style={dataPoints.length > 100 ? { 
+          overflowX: 'auto',
+          overflowY: 'visible', // Allow tooltip to show above chart
+          width: '100%',
+          position: 'relative'
+        } : {}}
+      >
         <svg 
-          width={chartWidth} 
+          width={actualChartWidth} 
           height={chartHeight + 20}
           className={Styles.chart}
-          viewBox={`0 0 ${chartWidth} ${chartHeight + 20}`}
+          viewBox={`0 0 ${actualChartWidth} ${chartHeight + 20}`}
+          style={dataPoints.length > 100 ? { 
+            minWidth: actualChartWidth,
+            display: 'block'
+          } : {}}
         >
           {/* Grid lines */}
           {yTicks.map((tick, index) => (
@@ -138,7 +166,7 @@ const SalesChart = ({ options }) => {
               <line
                 x1={padding.left}
                 y1={tick.y}
-                x2={chartWidth - padding.right}
+                x2={actualChartWidth - padding.right}
                 y2={tick.y}
                 stroke="#e9ecef"
                 strokeWidth="1"
@@ -175,12 +203,16 @@ const SalesChart = ({ options }) => {
                 />
                 <text
                   x={x + barWidth / 2}
-                  y={chartHeight - padding.bottom + 20}
+                  y={chartHeight - padding.bottom + 40}
                   textAnchor="middle"
                   className={Styles.barLabel}
-                  transform={dataPoints.length > 12 ? `rotate(-45, ${x + barWidth / 2}, ${chartHeight - padding.bottom + 20})` : ''}
+                  transform={dataPoints.length > 12 ? `rotate(-45, ${x + barWidth / 2}, ${chartHeight - padding.bottom + 40})` : ''}
                 >
-                  {formatLabel(point)}
+                  {/* For daily charts (>100 data points), only show labels for Sundays */}
+                  {dataPoints.length > 100 ? 
+                    (point.x instanceof Date && point.x.getDay() === 0 ? formatLabel(point) : '') :
+                    formatLabel(point)
+                  }
                 </text>
               </g>
             );
@@ -198,7 +230,7 @@ const SalesChart = ({ options }) => {
           <line
             x1={padding.left}
             y1={chartHeight - padding.bottom}
-            x2={chartWidth - padding.right}
+            x2={actualChartWidth - padding.right}
             y2={chartHeight - padding.bottom}
             stroke="#333"
             strokeWidth="2"
@@ -231,14 +263,20 @@ const SalesChart = ({ options }) => {
       {options.data[0].dataPoints.length > 1 && options.title?.text?.includes('by Year') && (
         <div className={Styles.insights}>
           <div className={Styles.insightItem}>
-            Total Years: {options.data[0].dataPoints.length}
+            Total Years
+            <strong>{options.data[0].dataPoints.length}</strong>
           </div>
           <div className={Styles.insightItem}>
-            Best Year: {options.data[0].dataPoints.reduce((best, current) => 
-              current.y > best.y ? current : best
-            ).label} ({formatCurrency(options.data[0].dataPoints.reduce((best, current) => 
-              current.y > best.y ? current : best
-            ).y)})
+            Best Year
+            <strong>
+              {options.data[0].dataPoints.reduce((best, current) => 
+                current.y > best.y ? current : best
+              ).label}
+              <br />
+              {formatCurrency(options.data[0].dataPoints.reduce((best, current) => 
+                current.y > best.y ? current : best
+              ).y)}
+            </strong>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Styles from "./Sales.module.scss"
 import SalesChart from "./SalesChart/SalesChart"
 import {
@@ -9,9 +9,18 @@ import {
 } from "./SalesChart/ChartTemplates/chartOptions"
 
 const Sales = (props) => {
-  const [dateType, setDateType] = useState("week")
+  // Initialize dateType from localStorage or default to "week"
+  const [dateType, setDateType] = useState(() => {
+    const savedDateType = localStorage.getItem('salesDateType')
+    return savedDateType ? savedDateType : "week"
+  })
   const [year, setYear] = useState(new Date().getFullYear())
   const [profitTrue, setProfitState] = useState(true)
+
+  // Save dateType to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('salesDateType', dateType)
+  }, [dateType])
 
   const { items, expenses } = props
   const soldItems = items.filter((x) => x.sold)

@@ -41,7 +41,7 @@ function App() {
 
   return (
     <div className="appWrapper">
-      <Header />
+      <Header user={user} />
       <SideBar
         importItemsFromCVS={importItemsFromCVS}
         login={login}

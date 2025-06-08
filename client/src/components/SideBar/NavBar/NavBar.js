@@ -119,14 +119,6 @@ const NavBar = ({fname}) => {
       <Menu id="reports" {...navMenu.reports} />
       <Menu id="tools" {...navMenu.tools} /> {/* Add Tools menu */}
       <div className="spacer"></div>
-      <NavLink
-        to="/auth/signin"
-        activeStyle={{
-          backgroundColor: "#353a42",
-        }}
-      >
-       {`Sign Out of ${fname}` }
-      </NavLink>
     </div>
   )
 }

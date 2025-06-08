@@ -254,11 +254,11 @@
 }
 
 .chartContainer {
-    padding: 8px;
+    padding: 8px 8px 30px 8px;
     min-height: 240px;
     
     @media (max-width: 768px) {
-        padding: 6px;
+        padding: 6px 6px 25px 6px;
         min-height: 220px;
     }
 }
@@ -373,19 +373,47 @@
 }
 
 .averagesSection {
-    margin-top: 8px;
-    padding: 8px;
-    background: #f8f9fa;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+    margin-top: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 2px;
+        background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+        border-radius: 1px;
+    }
 }
 
 .averageDisplay {
-    font-size: 12px;
+    font-size: 14px;
     color: #495057;
-    font-weight: 500;
-    font-style: italic;
+    font-weight: 600;
+    line-height: 1.4;
+    
+    &::before {
+        content: '📊';
+        font-size: 16px;
+        margin-right: 8px;
+        display: inline-block;
+    }
+    
+    // Highlight currency values
+    strong {
+        color: #26303f;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-weight: 700;
+    }
 }
 
 .bottomPadding {

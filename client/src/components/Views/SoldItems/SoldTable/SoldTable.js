@@ -81,7 +81,18 @@ const SoldTable = (props) => {
               itemObject={itemObject}
             />
           </span>{" "}
-          {title}
+          <span 
+            className={Styles["titleText"]}
+            ref={(el) => {
+              if (el && el.scrollWidth > el.clientWidth) {
+                el.setAttribute('title', title);
+              } else if (el) {
+                el.removeAttribute('title');
+              }
+            }}
+          >
+            {title}
+          </span>
         </td>
         <td>{partNo}</td>
         <td>{sku}</td>
@@ -185,12 +196,12 @@ const SoldTable = (props) => {
             <th>Title</th>
             <th>Part No</th>
             <th>SKU</th>
-            <th>Date Purchased</th>
-            <th>Date Sold</th>
-            <th>Days Listed</th>
-            <th>Purchase Price</th>
-            <th>Price Sold</th>
-            <th>Shipping Cost</th>
+            <th>Purchased</th>
+            <th>Sold</th>
+            <th>Days</th>
+            <th>Cost</th>
+            <th>Sale</th>
+            <th>Shipping</th>
             <th>Fees</th>
             <th>Profit</th>
             <th>ROI</th>

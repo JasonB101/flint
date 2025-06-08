@@ -1,27 +1,25 @@
 .overviewWrapper {
+  padding: 5px;
+  background-color: #f8f9fa;
+  height: calc(100vh - 90px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  position: relative;
-  grid-area: vv;
-  min-height: calc(100vh - 90px);
-  background: #f8f9fa;
-  padding: 20px;
-  gap: 20px;
-  overflow-y: auto;
+  gap: 8px;
 
   /* Clean scrollbar styling */
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
     background: #f1f3f4;
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb {
     background: #bdc3c7;
-    border-radius: 4px;
+    border-radius: 3px;
 
     &:hover {
       background: #95a5a6;
@@ -31,45 +29,41 @@
 
 // Page header styling to match other pages
 .pageHeader {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  padding: 20px;
+  text-align: center;
+  margin-bottom: 12px;
   
   h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #212529;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    
-    &::before {
-      content: "📊";
-      font-size: 28px;
-    }
+    font-size: 28px;
+    font-weight: 700;
+    color: #26303f;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   p {
-    margin: 8px 0 0 0;
-    color: #6c757d;
     font-size: 14px;
+    color: #6c757d;
+    margin: 0;
   }
 }
 
 // Grid layout for metric cards
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
   
   @media (max-width: 1200px) {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 6px;
   }
 }
 
@@ -77,71 +71,76 @@
 .card {
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e9ecef;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
   
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
 .cardHeader {
-  background: linear-gradient(135deg, #26303f 0%, #3a4a5c 100%);
-  padding: 16px 20px;
+  background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+  padding: 12px 16px;
   
   h2 {
     margin: 0;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 }
 
 .cardBody {
-  padding: 20px;
+  padding: 16px;
 }
 
 .metric {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  font-size: 14px;
-  border-bottom: 1px solid #f1f3f4;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #f8f9fa;
   
   &:last-child {
     border-bottom: none;
   }
 
   span:first-child {
-    color: #495057;
+    color: #6c757d;
     font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   span:last-child {
-    font-weight: 600;
-    color: #26303f;
+    font-weight: 700;
+    color: #212529;
     font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 14px;
   }
 
   &.highlight {
     margin-top: 8px;
-    padding-top: 12px;
-    border-top: 2px solid #26303f;
+    padding: 8px 0;
     border-bottom: none;
     
     span {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
     }
     
     span:first-child {
-      color: #212529;
+      color: #26303f;
+      font-size: 13px;
     }
   }
 }
@@ -149,19 +148,27 @@
 // Compact styling for profit analysis card
 .card:nth-child(3) {
   .cardBody {
-    padding: 15px 20px;
+    padding: 12px 16px;
   }
   
   .metric {
     padding: 4px 0;
-    font-size: 13px;
+    font-size: 12px;
+    
+    span:last-child {
+      font-size: 13px;
+    }
     
     &.highlight {
       margin-top: 6px;
-      padding-top: 8px;
+      padding: 6px 0;
       
       span {
-        font-size: 15px;
+        font-size: 14px;
+      }
+      
+      span:first-child {
+        font-size: 12px;
       }
     }
   }
@@ -184,45 +191,64 @@
   color: #6c757d;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e9ecef;
+}
+
+// Add bottom padding
+.bottomPadding {
+  height: 2px;
 }
 
 // Responsive design
 @media (max-width: 768px) {
   .overviewWrapper {
-    padding: 15px;
-    gap: 15px;
+    padding: 5px;
+    gap: 6px;
   }
   
   .pageHeader {
-    padding: 15px;
+    margin-bottom: 10px;
     
     h1 {
-      font-size: 20px;
-      
-      &::before {
-        font-size: 24px;
-      }
+      font-size: 24px;
+    }
+    
+    p {
+      font-size: 13px;
     }
   }
   
   .cardBody {
-    padding: 15px;
+    padding: 12px;
   }
   
   .cardHeader {
-    padding: 12px 15px;
+    padding: 10px 12px;
     
     h2 {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
   
   .metric {
-    font-size: 13px;
+    font-size: 12px;
+    padding: 5px 0;
+    
+    span:first-child {
+      font-size: 11px;
+    }
+    
+    span:last-child {
+      font-size: 13px;
+    }
     
     &.highlight span {
-      font-size: 15px;
+      font-size: 14px;
+    }
+    
+    &.highlight span:first-child {
+      font-size: 11px;
     }
   }
 }

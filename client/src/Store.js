@@ -86,27 +86,28 @@ const Store = (props) => {
   }, [user, isAuthRoute])
 
   async function checkNewScores(newScores) {
-    console.log("Checking New Scores is Disabled")
-    // try {
-    //   // Call the backend API to initiate checking of new scores and pass the newScores data
-    //   const response = await userAxios.post("/api/milestones/updateMilestones", newScores)
+    try {
+      // Call the backend API to initiate checking of new scores and pass the newScores data
+      const response = await userAxios.post("/api/milestones/updateMilestones", newScores)
 
-    //   const { success } = response.data
+      const { success } = response.data
 
-    //   if (success === true) {
-    //     // Handle success, e.g., display a success message
-    //     console.log("New scores checked successfully")
-    //     return true
-    //   } else {
-    //     // Handle failure, e.g., display an error message
-    //     console.error("Checking new scores failed:", response.data.message)
-    //     return false
-    //   }
-    // } catch (error) {
-    //   // Handle error, e.g., display an error message or log the error
-    //   console.error("Error checking new scores:", error)
-    //   return false
-    // }
+      if (success === true) {
+        // Handle success, e.g., display a success message
+        console.log("New scores checked successfully")
+        // Refresh notification count after checking milestones
+        await getNotificationCount()
+        return true
+      } else {
+        // Handle failure, e.g., display an error message
+        console.error("Checking new scores failed:", response.data.message)
+        return false
+      }
+    } catch (error) {
+      // Handle error, e.g., display an error message or log the error
+      console.error("Error checking new scores:", error)
+      return false
+    }
   }
 
   async function getEbayListing(itemId) {
@@ -133,6 +134,79 @@ const Store = (props) => {
       }
     }
   }
+
+  // Notification management functions
+  async function getNotifications() {
+    try {
+      const response = await userAxios.get("/api/notifications")
+      if (response.data.success) {
+        return response.data.notifications
+      } else {
+        console.error("Failed to fetch notifications:", response.data.error)
+        return []
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error)
+      return []
+    }
+  }
+
+  async function getNotificationCount() {
+    try {
+      const response = await userAxios.get("/api/notifications/unviewed-count")
+      if (response.data.success) {
+        return response.data.count
+      } else {
+        console.error("Failed to fetch notification count:", response.data.error)
+        return 0
+      }
+    } catch (error) {
+      console.error("Error fetching notification count:", error)
+      return 0
+    }
+  }
+
+  async function markNotificationAsViewed(notificationId) {
+    try {
+      const response = await userAxios.put(`/api/notifications/${notificationId}/viewed`)
+      return response.data.success
+    } catch (error) {
+      console.error("Error marking notification as viewed:", error)
+      return false
+    }
+  }
+
+  async function markAllNotificationsAsViewed() {
+    try {
+      const response = await userAxios.put("/api/notifications/mark-all-viewed")
+      return response.data.success
+    } catch (error) {
+      console.error("Error marking all notifications as viewed:", error)
+      return false
+    }
+  }
+
+  async function deleteNotification(notificationId) {
+    try {
+      const response = await userAxios.delete(`/api/notifications/${notificationId}`)
+      return response.data.success
+    } catch (error) {
+      console.error("Error deleting notification:", error)
+      return false
+    }
+  }
+
+  async function clearAllNotifications() {
+    try {
+      const response = await userAxios.delete("/api/notifications")
+      return response.data.success
+    } catch (error) {
+      console.error("Error clearing all notifications:", error)
+      return false
+    }
+  }
+
+
 
   async function saveChurnSettings(newChurnSettings) {
     try {
@@ -613,7 +687,14 @@ const Store = (props) => {
         getCarPartOptions,
         getPartSearchOptions,
         getAllParts,
-        getEbayListing
+        getEbayListing,
+        // Notification functions
+        getNotifications,
+        getNotificationCount,
+        markNotificationAsViewed,
+        markAllNotificationsAsViewed,
+        deleteNotification,
+        clearAllNotifications
       }}
     >
       {props.children}

@@ -92,47 +92,70 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
   }
 
   const sortBestPerforming = (data) => {
-    // Threshold constants - adjusted based on data patterns
-    const MIN_PROFIT = 80 // Lowered to account for quick-turn items
-    const MIN_ROI = 500 // Adjusted for faster sales focus
-    const GOOD_DAYS = 20 // Reduced to emphasize very quick sales
-    const MAX_DAYS = 90 // Cap for very old items
+    if (data.length === 0) return data;
+
+    // Calculate dataset statistics for adaptive scoring
+    const stats = {
+      avgDays: data.reduce((sum, item) => sum + item.daysListed, 0) / data.length,
+      avgROI: data.reduce((sum, item) => sum + item.roi, 0) / data.length,
+      avgProfit: data.reduce((sum, item) => sum + item.profit, 0) / data.length,
+      avgCount: data.reduce((sum, item) => sum + item.count, 0) / data.length,
+      maxDays: Math.max(...data.map(item => item.daysListed)),
+      maxROI: Math.max(...data.map(item => item.roi)),
+      maxProfit: Math.max(...data.map(item => item.profit)),
+      maxCount: Math.max(...data.map(item => item.count)),
+      minDays: Math.min(...data.map(item => item.daysListed)),
+    };
 
     return data.sort((a, b) => {
-      // Days listed scoring - exponential decay with cap
-      const daysA = Math.min(a.daysListed, MAX_DAYS)
-      const daysB = Math.min(b.daysListed, MAX_DAYS)
-      const daysScoreA = Math.exp(-daysA / GOOD_DAYS)
-      const daysScoreB = Math.exp(-daysB / GOOD_DAYS)
+      // 1. VELOCITY SCORE (30%) - Speed relative to your average
+      const velocityA = Math.max(0, (stats.avgDays - a.daysListed) / stats.avgDays);
+      const velocityB = Math.max(0, (stats.avgDays - b.daysListed) / stats.avgDays);
+      
+      // 2. PROFITABILITY SCORE (25%) - ROI relative to your average, with diminishing returns
+      const roiNormA = Math.min(a.roi / stats.avgROI, 3); // Cap at 3x average to prevent outliers
+      const roiNormB = Math.min(b.roi / stats.avgROI, 3);
+      const profitabilityA = Math.sqrt(roiNormA); // Square root for diminishing returns
+      const profitabilityB = Math.sqrt(roiNormB);
+      
+      // 3. CONSISTENCY SCORE (20%) - Based on profit predictability and volume
+      const profitConsistencyA = Math.min(a.profit / stats.avgProfit, 2); // Cap at 2x average
+      const profitConsistencyB = Math.min(b.profit / stats.avgProfit, 2);
+      const volumeBoostA = Math.log(a.count + 1) / Math.log(stats.avgCount + 1);
+      const volumeBoostB = Math.log(b.count + 1) / Math.log(stats.avgCount + 1);
+      const consistencyA = (profitConsistencyA + volumeBoostA) / 2;
+      const consistencyB = (profitConsistencyB + volumeBoostB) / 2;
+      
+      // 4. MARKET DEMAND SCORE (15%) - High count suggests reliable demand
+      const demandA = Math.sqrt(a.count / Math.max(stats.avgCount, 1));
+      const demandB = Math.sqrt(b.count / Math.max(stats.avgCount, 1));
+      
+      // 5. OPPORTUNITY SCORE (10%) - Considers both speed and profit together
+      const opportunityA = (a.profit * a.count) / Math.max(a.daysListed, 1);
+      const opportunityB = (b.profit * b.count) / Math.max(b.daysListed, 1);
+      const maxOpportunity = Math.max(...data.map(item => 
+        (item.profit * item.count) / Math.max(item.daysListed, 1)
+      ));
+      const opportunityScoreA = opportunityA / maxOpportunity;
+      const opportunityScoreB = opportunityB / maxOpportunity;
 
-      // ROI scoring - logarithmic scale to reduce extreme values' impact
-      const roiScoreA =
-        a.roi > MIN_ROI ? Math.log(a.roi) / Math.log(MIN_ROI) : 0
-      const roiScoreB =
-        b.roi > MIN_ROI ? Math.log(b.roi) / Math.log(MIN_ROI) : 0
+      // Weighted final score
+      const scoreA = 
+        0.30 * velocityA +          // Speed is king
+        0.25 * profitabilityA +     // Profitability matters
+        0.20 * consistencyA +       // Reliability is valuable
+        0.15 * demandA +            // Market demand
+        0.10 * opportunityScoreA;   // Overall opportunity
 
-      // Profit scoring - linear with minimum threshold
-      const profitScoreA = a.profit > MIN_PROFIT ? a.profit / MIN_PROFIT : 0
-      const profitScoreB = b.profit > MIN_PROFIT ? b.profit / MIN_PROFIT : 0
+      const scoreB = 
+        0.30 * velocityB +
+        0.25 * profitabilityB +
+        0.20 * consistencyB +
+        0.15 * demandB +
+        0.10 * opportunityScoreB;
 
-      // Count scoring - logarithmic scale
-      const countScoreA = Math.log(a.count + 1)
-      const countScoreB = Math.log(b.count + 1)
-
-      // Final score with adjusted weights
-      const scoreA =
-        0.4 * daysScoreA + // Quick sales are highest priority
-        0.25 * roiScoreA + // ROI still important
-        0.25 * profitScoreA + // Profit maintains importance
-        0.1 * countScoreA // Multiple sales indicator
-
-      const scoreB =
-        0.4 * daysScoreB +
-        0.25 * roiScoreB +
-        0.25 * profitScoreB +
-        0.1 * countScoreB
-      return scoreB - scoreA // Descending order
-    })
+      return scoreB - scoreA; // Descending order
+    });
   }
 
   const summaryData = useMemo(() => {
@@ -164,8 +187,11 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
     // Remove objects with count < filters.minCount
     const filteredData = data.filter((item) => item.count >= filters.minCount)
     data = filteredData
+    
     if (sortMethod === "bestPerforming") {
       return sortBestPerforming(data)
+    } else if (sortMethod === "worstPerforming") {
+      return sortBestPerforming(data).reverse() // Reverse the best performing to get worst
     }
 
     return data.sort((a, b) => {
@@ -194,9 +220,23 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
   }, [soldItems])
 
   const handleSortBestPerforming = () => {
-    setSortMethod(
-      sortMethod === "bestPerforming" ? "default" : "bestPerforming"
-    )
+    if (sortMethod === "bestPerforming") {
+      setSortMethod("worstPerforming")
+    } else if (sortMethod === "worstPerforming") {
+      setSortMethod("default")
+    } else {
+      setSortMethod("bestPerforming")
+    }
+  }
+
+  const getButtonText = () => {
+    if (sortMethod === "bestPerforming") {
+      return "Show Worst Performing"
+    } else if (sortMethod === "worstPerforming") {
+      return "Show Default Sort"
+    } else {
+      return "Show Best Performing"
+    }
   }
 
   return (
@@ -210,78 +250,79 @@ const SoldSummaryModal = ({ soldItems, setToggleSummaryModal }) => {
         </button>
         <div className={Styles.header}>
           <h2>Sold Summary</h2>
-          <div className={Styles["filter-inputs"]}>
-            <select
-              name="year"
-              value={filters.year}
-              onChange={handleInputChange}
-              className={Styles["yearSelect"]}
-            >
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              name="titleKeyword"
-              value={filters.titleKeyword}
-              onChange={handleInputChange}
-              placeholder="Title Keyword"
-              className={Styles["keywordFilter"]}
-            />
+          <div className={Styles.headerControls}>
             <div className={Styles["filter-inputs"]}>
-              <div className={Styles["filter-group"]}>
-                <label htmlFor="minPurchasePrice">Min Price</label>
-                <input
-                  id="minPurchasePrice"
-                  type="number"
-                  name="minPurchasePrice"
-                  value={filters.minPurchasePrice}
-                  onChange={handleInputChange}
-                  placeholder="Enter minimum price"
-                />
-              </div>
-              <div className={Styles["filter-group"]}>
-                <label htmlFor="minProfit">Min Profit</label>
-                <input
-                  id="minProfit"
-                  type="number"
-                  name="minProfit"
-                  value={filters.minProfit}
-                  onChange={handleInputChange}
-                  placeholder="Enter minimum profit"
-                />
-              </div>
-              <div className={Styles["filter-group"]}>
-                <label htmlFor="minCount">Min Count</label>
-                <input
-                  id="minCount"
-                  type="number"
-                  name="minCount"
-                  value={filters.minCount}
-                  onChange={handleInputChange}
-                  placeholder="Enter minimum count"
-                />
-              </div>
-              <div className={Styles["filter-group"]}>
-                <label htmlFor="maxDaysListed">Max Days</label>
-                <input
-                  id="maxDaysListed"
-                  type="number"
-                  name="maxDaysListed"
-                  value={filters.maxDaysListed}
-                  onChange={handleInputChange}
-                  placeholder="Enter maximum days listed"
-                />
+              <select
+                name="year"
+                value={filters.year}
+                onChange={handleInputChange}
+                className={Styles["yearSelect"]}
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                name="titleKeyword"
+                value={filters.titleKeyword}
+                onChange={handleInputChange}
+                placeholder="Title Keyword"
+                className={Styles["keywordFilter"]}
+              />
+              <div className={Styles["filter-inputs"]}>
+                <div className={Styles["filter-group"]}>
+                  <label htmlFor="minPurchasePrice">Min Price</label>
+                  <input
+                    id="minPurchasePrice"
+                    type="number"
+                    name="minPurchasePrice"
+                    value={filters.minPurchasePrice}
+                    onChange={handleInputChange}
+                    placeholder="Enter minimum price"
+                  />
+                </div>
+                <div className={Styles["filter-group"]}>
+                  <label htmlFor="minProfit">Min Profit</label>
+                  <input
+                    id="minProfit"
+                    type="number"
+                    name="minProfit"
+                    value={filters.minProfit}
+                    onChange={handleInputChange}
+                    placeholder="Enter minimum profit"
+                  />
+                </div>
+                <div className={Styles["filter-group"]}>
+                  <label htmlFor="minCount">Min Count</label>
+                  <input
+                    id="minCount"
+                    type="number"
+                    name="minCount"
+                    value={filters.minCount}
+                    onChange={handleInputChange}
+                    placeholder="Enter minimum count"
+                  />
+                </div>
+                <div className={Styles["filter-group"]}>
+                  <label htmlFor="maxDaysListed">Max Days</label>
+                  <input
+                    id="maxDaysListed"
+                    type="number"
+                    name="maxDaysListed"
+                    value={filters.maxDaysListed}
+                    onChange={handleInputChange}
+                    placeholder="Enter maximum days listed"
+                  />
+                </div>
               </div>
             </div>
-            
+            <button onClick={handleSortBestPerforming}>
+              {getButtonText()}
+            </button>
           </div>
-          <button onClick={handleSortBestPerforming}>
-            Sort by Best Performing
-          </button>
         </div>
         <div className={Styles.tableContainer}>
           <table>

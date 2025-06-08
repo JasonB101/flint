@@ -5,12 +5,14 @@ import Styles from "./Toolbar.module.scss"
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
 });
 
 const Toolbar = (props) => {
   const { toggleModal, searchTerm, changeSearchTerm, items } = props
   const listingsDetails = assembleListingInfo(items)
-  const {totalListed, activeListings, inventoryCost} = listingsDetails
+  const {totalListed, inventoryCost, expectedRevenue, expectedProfit} = listingsDetails
 
   return (
     <div className={Styles.wrapper}>
@@ -20,46 +22,52 @@ const Toolbar = (props) => {
         value={searchTerm}
         placeholder={"Search Inventory"}
       />
-       <h5>Listed
-                <span>{totalListed}</span>
-            </h5>
-            <h5>Listings Value
-                <span>{`${currencyFormatter.format(activeListings[0].toFixed(2))} /`}
-                    <span style={{ color: "green", display: "inline" }}>{currencyFormatter.format(activeListings[1].toFixed(2))}
-                    </span>
-                </span>
-            </h5>
-       <h5>Inventory Cost
-                <span>{currencyFormatter.format(inventoryCost)}</span>
-            </h5>
-            
+      <h5>
+        Total Listed
+        <span>{totalListed}</span>
+      </h5>
+      <h5>
+        Inventory Cost
+        <span>{inventoryCost}</span>
+      </h5>
+      <h5>
+        Expected Revenue
+        <span>{expectedRevenue}</span>
+      </h5>
+      <h5>
+        Expected Profit
+        <span>{expectedProfit}</span>
+      </h5>
       <div className="spacer"></div>
       <Button onClick={() => toggleModal(true)}>New Item</Button>
     </div>
   )
-
-  
 }
 
 function assembleListingInfo(items) {
     const salesObj = {
-      activeListings: [0, 0],
       totalListed: 0,
       inventoryCost: 0,
+      expectedRevenue: 0,
+      expectedProfit: 0,
     }
 
-    const info = items.reduce((listingInfo, x) => {
-      const { listedPrice, expectedProfit, purchasePrice } = x
-      if (x.listed) {
-        listingInfo.totalListed++
-        listingInfo.inventoryCost += purchasePrice
-        listingInfo.activeListings[0] += purchasePrice + expectedProfit
-        listingInfo.activeListings[1] += expectedProfit
+    items.forEach((x) => {
+      const { listedPrice, expectedProfit, purchasePrice, listed } = x
+      if (listed) {
+        salesObj.totalListed++
+        salesObj.inventoryCost += purchasePrice || 0
+        salesObj.expectedRevenue += (purchasePrice || 0) + (expectedProfit || 0)
+        salesObj.expectedProfit += expectedProfit || 0
       }
-    
-      return listingInfo
-    }, salesObj)
-    return info
-  }
+    })
+
+    return {
+      totalListed: salesObj.totalListed.toLocaleString("en-US"),
+      inventoryCost: currencyFormatter.format(salesObj.inventoryCost),
+      expectedRevenue: currencyFormatter.format(salesObj.expectedRevenue),
+      expectedProfit: currencyFormatter.format(salesObj.expectedProfit),
+    }
+}
 
 export default Toolbar

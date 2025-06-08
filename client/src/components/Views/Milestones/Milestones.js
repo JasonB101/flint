@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Styles from "./Milestones.module.scss";
 import CreateReport from "./CreateReport";
-import DisplayCongrats from "../../Notifications/DisplayCongrats/DisplayCongrats"
+import DisplayCongrats from "../../Notifications/DisplayCongrats/DisplayCongrats";
+import { storeContext } from "../../../Store";
 
 const Milestones = (props) => {
-    const {items, checkNewScores} = props
+    const {items, checkNewScores} = props;
+    const { getNotifications, markNotificationAsViewed } = useContext(storeContext);
     const currentYear = new Date().getFullYear();
     const report = CreateReport(items, true, currentYear) // Use current year instead of hardcoded 2025
     const [prepObject, changePrepObject] = useState({
@@ -30,10 +32,25 @@ const Milestones = (props) => {
             spent: {}
         },
 
-    })
+    });
     
+    const [showCongrats, setShowCongrats] = useState(false);
+    const [latestMilestone, setLatestMilestone] = useState(null);
+    const [lastCheckedData, setLastCheckedData] = useState(null);
+    const [isCheckingMilestones, setIsCheckingMilestones] = useState(false);
+    
+    // Function to show milestone congrats - called from Header when notification is clicked
+    useEffect(() => {
+        window.showMilestoneCongrats = (milestone) => {
+            setLatestMilestone(milestone);
+            setShowCongrats(true);
+        };
         
-    
+        // Cleanup function on unmount
+        return () => {
+            delete window.showMilestoneCongrats;
+        };
+    }, []);
 
     useEffect(() => {
         console.log("Raw report data:", JSON.stringify(report, null, 2));
@@ -41,6 +58,15 @@ const Milestones = (props) => {
         console.log("Current year:", currentYear);
         
         let tempObject = {...prepObject}
+        let todaysMilestones = { day: {}, week: {}, month: {} }
+        
+        // Get today's date for comparison
+        const today = new Date().toLocaleDateString('en-US', { 
+            month: '2-digit', 
+            day: '2-digit', 
+            year: 'numeric' 
+        });
+        
         for (let category in report){
             for (let date in report[category]){
                 let competitions = report[category][date]['competition']
@@ -48,14 +74,36 @@ const Milestones = (props) => {
                     let newObject = report[category][date]
                     newObject.dateTitle = date
                     tempObject[category][winningStat] = newObject
+                    
+                    // Only include today's records for milestone checking
+                    if (date === today) {
+                        todaysMilestones[category][winningStat] = newObject
+                    }
                 })
             }
         }
 
-        if (tempObject.day.sold.sold) {
-            checkNewScores(tempObject);
+        // Only check milestones for today's records if we have valid data and we're not already checking
+        const todaysDataString = JSON.stringify(todaysMilestones);
+        const hasTodaysData = Object.values(todaysMilestones).some(category => Object.keys(category).length > 0);
+        
+        if (hasTodaysData && todaysDataString !== lastCheckedData && !isCheckingMilestones) {
+            console.log("Checking today's milestones against existing records");
+            setIsCheckingMilestones(true);
+            checkNewScores(todaysMilestones).finally(() => {
+                setIsCheckingMilestones(false);
+            });
+            setLastCheckedData(todaysDataString);
+        } else if (!hasTodaysData) {
+            console.log("No milestone data for today");
+        } else if (todaysDataString === lastCheckedData) {
+            console.log("Today's milestone data unchanged");
+        } else if (isCheckingMilestones) {
+            console.log("Skipping milestone check - already in progress");
         }
+        
         console.log("Processed milestone data:", JSON.stringify(tempObject, null, 2))
+        console.log("Today's milestones for checking:", JSON.stringify(todaysMilestones, null, 2))
         changePrepObject(tempObject)
 
     }, [items, report])
@@ -157,7 +205,22 @@ const Milestones = (props) => {
                 {renderMetricCard("Monthly Records", "month")}
             </div>
             
-            {/* <DisplayCongrats/> */}
+            {showCongrats && latestMilestone && (
+                <div className={Styles.congratsOverlay} onClick={() => {
+                    setShowCongrats(false);
+                    setLatestMilestone(null);
+                }}>
+                    <div className={Styles.congratsModal} onClick={(e) => e.stopPropagation()}>
+                        <DisplayCongrats 
+                            milestone={latestMilestone}
+                            onClose={() => {
+                                setShowCongrats(false);
+                                setLatestMilestone(null);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

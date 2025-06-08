@@ -102,7 +102,18 @@ const InventoryTable = (props) => {
           <span className={Styles["item-options"]}>
             <ItemOptions setEditItem={setEditItem} itemObject={itemObject} />
           </span>{" "}
-          {title}
+          <span 
+            className={Styles["titleText"]}
+            ref={(el) => {
+              if (el && el.scrollWidth > el.clientWidth) {
+                el.setAttribute('title', title);
+              } else if (el) {
+                el.removeAttribute('title');
+              }
+            }}
+          >
+            {title}
+          </span>
         </td>
         <td>{partNo || "n/a"}</td>
         <td>{sku || "n/a"}</td>

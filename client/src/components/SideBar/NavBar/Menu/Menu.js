@@ -5,25 +5,22 @@ const Menu = (props) => {
     const { title, subMenu, id } = props;
     
     function toggleSubMenu(e){
-        let arrowIcon = document.querySelector(`#${id} > p > .material-icons`);
+        let menuTitle = document.querySelector(`#${id} > p`);
         let subMenu = document.querySelector(`#${id} > #subMenu`);
 
-        if (arrowIcon.textContent === "keyboard_arrow_up"){
-            arrowIcon.textContent = "keyboard_arrow_down";
-            subMenu.classList = `${Styles.subMenu} ${Styles.subMenuClosed}`
+        if (subMenu.classList.contains(Styles.subMenuOpen)){
+            subMenu.classList = `${Styles.subMenu} ${Styles.subMenuClosed}`;
+            menuTitle.classList.remove(Styles.menuOpen);
         } else {
-            arrowIcon.textContent = "keyboard_arrow_up";
-            subMenu.classList = `${Styles.subMenu} ${Styles.subMenuOpen}`
+            subMenu.classList = `${Styles.subMenu} ${Styles.subMenuOpen}`;
+            menuTitle.classList.add(Styles.menuOpen);
         }
-
     }
 
     return (
         <div id={id} className={Styles.wrapper}>
                 <p onClick={toggleSubMenu}>
                     {title}
-                    <span className="spacer"></span>
-                    <i className="material-icons">keyboard_arrow_down</i>
                 </p>
             <div id="subMenu" className={Styles.subMenuClosed}>
                 {subMenu}

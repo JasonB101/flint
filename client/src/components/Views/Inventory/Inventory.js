@@ -11,6 +11,8 @@ const Inventory = (props) => {
     const [inventoryList] = useState(items.filter(x => x.listed))
     const [itemsToShow, filterItems] = useState(inventoryList);
     const [showNewItemModal, toggleNewItemModal] = useState(false);
+
+
     const nextSku = items.reduce((highest, x) => {
         if (+x.sku > highest) {
             highest = +x.sku
@@ -42,18 +44,60 @@ const Inventory = (props) => {
 
 
     }, [inventorySearchTerm, inventoryList]);
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+        }).format(value);
+    };
+
     return (
         <div className={Styles.wrapper}>
-            <Toolbar changeSearchTerm={changeSearchTerm}
-                searchTerm={inventorySearchTerm}
-                toggleModal={toggleNewItemModal}
-                items={items} />
-            <InventoryTable editInventoryItem={editInventoryItem} openLinkModal={openLinkModal} ebayListings={ebayListings} inventoryList={itemsToShow} />
+
+
+            {/* Main Content Card */}
+            <div className={Styles.contentCard}>
+                <div className={Styles.toolbarSection}>
+                    <Toolbar 
+                        changeSearchTerm={changeSearchTerm}
+                        searchTerm={inventorySearchTerm}
+                        toggleModal={toggleNewItemModal}
+                        items={items} 
+                    />
+                </div>
+                
+                <div className={Styles.tableSection}>
+                    <InventoryTable 
+                        editInventoryItem={editInventoryItem} 
+                        openLinkModal={openLinkModal} 
+                        ebayListings={ebayListings} 
+                        inventoryList={itemsToShow} 
+                    />
+                </div>
+            </div>
+
+            {/* Bottom Padding */}
+            <div className={Styles.bottomPadding}></div>
+
+            {/* Modals */}
             {/* {inventoryId && <LinkItemModal inventoryId={inventoryId}
                 linkItem={linkItem}
                 newListings={newListings}
                 setInventoryId={setInventoryId} />} */}
-            {showNewItemModal && <NewItemModal getEbayListing={getEbayListing} items={items} nextSku={nextSku} submitNewItem={submitNewItem} toggleModal={toggleNewItemModal} averageShippingCost={averageShippingCost} ebayFeePercent={ebayFeePercent} getActiveListings={getActiveListings} getCompatibility={getCompatibility} ebayListings={ebayListings} />}
+            {showNewItemModal && (
+                <NewItemModal 
+                    getEbayListing={getEbayListing} 
+                    items={items} 
+                    nextSku={nextSku} 
+                    submitNewItem={submitNewItem} 
+                    toggleModal={toggleNewItemModal} 
+                    averageShippingCost={averageShippingCost} 
+                    ebayFeePercent={ebayFeePercent} 
+                    getActiveListings={getActiveListings} 
+                    getCompatibility={getCompatibility} 
+                    ebayListings={ebayListings} 
+                />
+            )}
         </div>
     );
 }

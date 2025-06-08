@@ -225,6 +225,9 @@ const Overview = ({ items, expenses }) => {
           </div>
         </div>
       </div>
+
+      {/* Add bottom padding */}
+      <div className={Styles.bottomPadding}></div>
     </div>
   )
 }

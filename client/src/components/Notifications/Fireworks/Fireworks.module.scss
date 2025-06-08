@@ -1,13 +1,648 @@
-.fireworksCanvas {
+.fireworksContainer {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     z-index: -1;
-    /* Place the canvas behind the h3 element */
-    background-color: #27292c;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    overflow: hidden;
 }
-   
-  
-  
-  
-  
+
+.firework {
+    position: absolute;
+    pointer-events: none;
+}
+
+.explosion {
+    position: relative;
+    width: 8px;
+    height: 8px;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    top: -2px;
+    left: -2px;
+}
+
+.secondaryExplosion {
+    position: relative;
+    width: 6px;
+    height: 6px;
+}
+
+.spark {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    top: -1px;
+    left: -1px;
+}
+
+.trail {
+    position: absolute;
+    width: 3px;
+    height: 20px;
+    top: -10px;
+    left: 2.5px;
+    border-radius: 2px;
+}
+
+// SPECTACULAR FIREWORK 1 - Golden Burst
+.firework1 {
+    top: 40%;
+    left: 50%;
+    animation: firework1Launch 4s infinite;
+    animation-delay: 0.3s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #fac515, transparent);
+        animation: trail1 4s infinite;
+        animation-delay: 0.3s;
+    }
+    
+    .particle {
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, #ffeb3b 0%, #ffc107 50%, #ff9800 100%);
+        box-shadow: 0 0 8px #ffc107, 0 0 16px #ffc107;
+        animation: explode1 3s infinite;
+        animation-delay: 1.5s;
+    }
+    
+    .spark {
+        background: #ffd700;
+        box-shadow: 0 0 4px #ffd700;
+        animation: spark1 2.5s infinite;
+        animation-delay: 1.8s;
+    }
+}
+
+// MAGNIFICENT FIREWORK 2 - Blue Thunder
+.firework2 {
+    top: 25%;
+    left: 20%;
+    animation: firework2Launch 5s infinite;
+    animation-delay: 1s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #26303f, transparent);
+        animation: trail2 5s infinite;
+        animation-delay: 1s;
+    }
+    
+    .particle {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, #64b5f6 0%, #2196f3 50%, #1976d2 100%);
+        box-shadow: 0 0 10px #2196f3, 0 0 20px #2196f3;
+        animation: explode2 3.5s infinite;
+        animation-delay: 2.2s;
+    }
+    
+    .spark {
+        background: #00bcd4;
+        box-shadow: 0 0 6px #00bcd4;
+        animation: spark2 3s infinite;
+        animation-delay: 2.5s;
+    }
+}
+
+// DAZZLING FIREWORK 3 - White Brilliance
+.firework3 {
+    top: 30%;
+    left: 80%;
+    animation: firework3Launch 4.5s infinite;
+    animation-delay: 2.2s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #ffffff, transparent);
+        animation: trail3 4.5s infinite;
+        animation-delay: 2.2s;
+    }
+    
+    .particle {
+        width: 7px;
+        height: 7px;
+        background: radial-gradient(circle, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%);
+        box-shadow: 0 0 12px #ffffff, 0 0 24px #ffffff;
+        animation: explode3 2.8s infinite;
+        animation-delay: 3.5s;
+    }
+    
+    .spark {
+        background: #ffffff;
+        box-shadow: 0 0 8px #ffffff;
+        animation: spark3 2.2s infinite;
+        animation-delay: 3.8s;
+    }
+}
+
+// SPECTACULAR FIREWORK 4 - Purple Magic
+.firework4 {
+    top: 50%;
+    left: 30%;
+    animation: firework4Launch 5.5s infinite;
+    animation-delay: 0.8s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #9c27b0, transparent);
+        animation: trail4 5.5s infinite;
+        animation-delay: 0.8s;
+    }
+    
+    .particle {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, #e91e63 0%, #9c27b0 50%, #673ab7 100%);
+        box-shadow: 0 0 10px #9c27b0, 0 0 20px #9c27b0;
+        animation: explode4 3.2s infinite;
+        animation-delay: 2.8s;
+    }
+    
+    .spark {
+        background: #e91e63;
+        box-shadow: 0 0 6px #e91e63;
+        animation: spark4 2.8s infinite;
+        animation-delay: 3.1s;
+    }
+}
+
+// EXPLOSIVE FIREWORK 5 - Red Power
+.firework5 {
+    top: 60%;
+    left: 70%;
+    animation: firework5Launch 4.2s infinite;
+    animation-delay: 1.8s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #f44336, transparent);
+        animation: trail5 4.2s infinite;
+        animation-delay: 1.8s;
+    }
+    
+    .particle {
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, #ff5722 0%, #f44336 50%, #d32f2f 100%);
+        box-shadow: 0 0 8px #f44336, 0 0 16px #f44336;
+        animation: explode5 3s infinite;
+        animation-delay: 3s;
+    }
+    
+    .spark {
+        background: #ff5722;
+        box-shadow: 0 0 5px #ff5722;
+        animation: spark5 2.5s infinite;
+        animation-delay: 3.3s;
+    }
+}
+
+// BRILLIANT FIREWORK 6 - Green Emerald
+.firework6 {
+    top: 35%;
+    left: 65%;
+    animation: firework6Launch 4.8s infinite;
+    animation-delay: 2.8s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #4caf50, transparent);
+        animation: trail6 4.8s infinite;
+        animation-delay: 2.8s;
+    }
+    
+    .particle {
+        width: 5px;
+        height: 5px;
+        background: radial-gradient(circle, #8bc34a 0%, #4caf50 50%, #388e3c 100%);
+        box-shadow: 0 0 10px #4caf50, 0 0 20px #4caf50;
+        animation: explode6 3.5s infinite;
+        animation-delay: 4s;
+    }
+    
+    .spark {
+        background: #8bc34a;
+        box-shadow: 0 0 6px #8bc34a;
+        animation: spark6 3s infinite;
+        animation-delay: 4.3s;
+    }
+}
+
+// MAJESTIC FIREWORK 7 - Orange Blaze
+.firework7 {
+    top: 20%;
+    left: 45%;
+    animation: firework7Launch 5.2s infinite;
+    animation-delay: 1.5s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #ff9800, transparent);
+        animation: trail7 5.2s infinite;
+        animation-delay: 1.5s;
+    }
+    
+    .particle {
+        width: 6px;
+        height: 6px;
+        background: radial-gradient(circle, #ffb74d 0%, #ff9800 50%, #f57c00 100%);
+        box-shadow: 0 0 12px #ff9800, 0 0 24px #ff9800;
+        animation: explode7 3.2s infinite;
+        animation-delay: 3.2s;
+    }
+    
+    .spark {
+        background: #ffb74d;
+        box-shadow: 0 0 8px #ffb74d;
+        animation: spark7 2.8s infinite;
+        animation-delay: 3.5s;
+    }
+}
+
+// COSMIC FIREWORK 8 - Cyan Galaxy
+.firework8 {
+    top: 55%;
+    left: 15%;
+    animation: firework8Launch 4.7s infinite;
+    animation-delay: 3.2s;
+    
+    .trail {
+        background: linear-gradient(to bottom, #00bcd4, transparent);
+        animation: trail8 4.7s infinite;
+        animation-delay: 3.2s;
+    }
+    
+    .particle {
+        width: 7px;
+        height: 7px;
+        background: radial-gradient(circle, #4dd0e1 0%, #00bcd4 50%, #0097a7 100%);
+        box-shadow: 0 0 14px #00bcd4, 0 0 28px #00bcd4;
+        animation: explode8 3.8s infinite;
+        animation-delay: 4.5s;
+    }
+    
+    .spark {
+        background: #4dd0e1;
+        box-shadow: 0 0 10px #4dd0e1;
+        animation: spark8 3.2s infinite;
+        animation-delay: 4.8s;
+    }
+}
+
+// Particle positioning - 20 particles in various directions
+.particle1 { transform: rotate(0deg) translateX(40px); }
+.particle2 { transform: rotate(18deg) translateX(45px); }
+.particle3 { transform: rotate(36deg) translateX(38px); }
+.particle4 { transform: rotate(54deg) translateX(42px); }
+.particle5 { transform: rotate(72deg) translateX(46px); }
+.particle6 { transform: rotate(90deg) translateX(41px); }
+.particle7 { transform: rotate(108deg) translateX(43px); }
+.particle8 { transform: rotate(126deg) translateX(39px); }
+.particle9 { transform: rotate(144deg) translateX(44px); }
+.particle10 { transform: rotate(162deg) translateX(40px); }
+.particle11 { transform: rotate(180deg) translateX(47px); }
+.particle12 { transform: rotate(198deg) translateX(42px); }
+.particle13 { transform: rotate(216deg) translateX(38px); }
+.particle14 { transform: rotate(234deg) translateX(45px); }
+.particle15 { transform: rotate(252deg) translateX(41px); }
+.particle16 { transform: rotate(270deg) translateX(43px); }
+.particle17 { transform: rotate(288deg) translateX(39px); }
+.particle18 { transform: rotate(306deg) translateX(46px); }
+.particle19 { transform: rotate(324deg) translateX(44px); }
+.particle20 { transform: rotate(342deg) translateX(40px); }
+
+// Spark positioning - 12 sparks
+.spark1 { transform: rotate(0deg) translateX(25px); }
+.spark2 { transform: rotate(30deg) translateX(28px); }
+.spark3 { transform: rotate(60deg) translateX(22px); }
+.spark4 { transform: rotate(90deg) translateX(26px); }
+.spark5 { transform: rotate(120deg) translateX(24px); }
+.spark6 { transform: rotate(150deg) translateX(27px); }
+.spark7 { transform: rotate(180deg) translateX(23px); }
+.spark8 { transform: rotate(210deg) translateX(29px); }
+.spark9 { transform: rotate(240deg) translateX(25px); }
+.spark10 { transform: rotate(270deg) translateX(21px); }
+.spark11 { transform: rotate(300deg) translateX(28px); }
+.spark12 { transform: rotate(330deg) translateX(26px); }
+
+// Background sparkles
+.backgroundSparkles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.backgroundSparkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #ffffff;
+    opacity: 0;
+}
+
+.sparkle1 { top: 10%; left: 15%; animation: twinkle 3s infinite; animation-delay: 0.2s; }
+.sparkle2 { top: 20%; left: 85%; animation: twinkle 2.5s infinite; animation-delay: 1s; }
+.sparkle3 { top: 70%; left: 10%; animation: twinkle 3.2s infinite; animation-delay: 1.8s; }
+.sparkle4 { top: 80%; left: 90%; animation: twinkle 2.8s infinite; animation-delay: 0.5s; }
+.sparkle5 { top: 15%; left: 60%; animation: twinkle 3.5s infinite; animation-delay: 2.2s; }
+.sparkle6 { top: 65%; left: 40%; animation: twinkle 2.3s infinite; animation-delay: 1.5s; }
+.sparkle7 { top: 45%; left: 5%; animation: twinkle 3.8s infinite; animation-delay: 0.8s; }
+.sparkle8 { top: 25%; left: 95%; animation: twinkle 2.7s infinite; animation-delay: 2.5s; }
+.sparkle9 { top: 85%; left: 25%; animation: twinkle 3.1s infinite; animation-delay: 1.2s; }
+.sparkle10 { top: 5%; left: 75%; animation: twinkle 2.9s infinite; animation-delay: 1.9s; }
+.sparkle11 { top: 40%; left: 85%; animation: twinkle 3.3s infinite; animation-delay: 0.3s; }
+.sparkle12 { top: 75%; left: 55%; animation: twinkle 2.6s infinite; animation-delay: 2.1s; }
+.sparkle13 { top: 30%; left: 30%; animation: twinkle 3.7s infinite; animation-delay: 0.9s; }
+.sparkle14 { top: 90%; left: 70%; animation: twinkle 2.4s infinite; animation-delay: 1.6s; }
+.sparkle15 { top: 12%; left: 45%; animation: twinkle 3.4s infinite; animation-delay: 2.3s; }
+
+// Floating embers
+.embers {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.ember {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: radial-gradient(circle, #ff6b35 0%, #ff4500 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 6px #ff6b35;
+}
+
+.ember1 { top: 95%; left: 20%; animation: float 8s infinite; animation-delay: 1s; }
+.ember2 { top: 95%; left: 40%; animation: float 9s infinite; animation-delay: 2s; }
+.ember3 { top: 95%; left: 60%; animation: float 7s infinite; animation-delay: 3s; }
+.ember4 { top: 95%; left: 80%; animation: float 8.5s infinite; animation-delay: 1.5s; }
+.ember5 { top: 95%; left: 10%; animation: float 9.5s infinite; animation-delay: 2.5s; }
+.ember6 { top: 95%; left: 50%; animation: float 7.5s infinite; animation-delay: 0.5s; }
+.ember7 { top: 95%; left: 70%; animation: float 8.2s infinite; animation-delay: 3.5s; }
+.ember8 { top: 95%; left: 30%; animation: float 9.2s infinite; animation-delay: 1.8s; }
+.ember9 { top: 95%; left: 90%; animation: float 7.8s infinite; animation-delay: 2.8s; }
+.ember10 { top: 95%; left: 5%; animation: float 8.8s infinite; animation-delay: 0.8s; }
+
+// LAUNCH ANIMATIONS
+@keyframes firework1Launch {
+    0%, 30% { opacity: 0; transform: scale(0) translateY(50px); }
+    35% { opacity: 1; transform: scale(0.5) translateY(0); }
+    40% { opacity: 1; transform: scale(1) translateY(-10px); }
+    80% { opacity: 1; transform: scale(1.2) translateY(-10px); }
+    85% { opacity: 0; transform: scale(0.8) translateY(-10px); }
+    100% { opacity: 0; transform: scale(0) translateY(-10px); }
+}
+
+@keyframes firework2Launch {
+    0%, 20% { opacity: 0; transform: scale(0) translateY(60px); }
+    25% { opacity: 1; transform: scale(0.3) translateY(0); }
+    30% { opacity: 1; transform: scale(1) translateY(-15px); }
+    75% { opacity: 1; transform: scale(1.3) translateY(-15px); }
+    80% { opacity: 0; transform: scale(0.6) translateY(-15px); }
+    100% { opacity: 0; transform: scale(0) translateY(-15px); }
+}
+
+@keyframes firework3Launch {
+    0%, 50% { opacity: 0; transform: scale(0) translateY(40px); }
+    55% { opacity: 1; transform: scale(0.4) translateY(0); }
+    60% { opacity: 1; transform: scale(1) translateY(-8px); }
+    85% { opacity: 1; transform: scale(1.1) translateY(-8px); }
+    90% { opacity: 0; transform: scale(0.7) translateY(-8px); }
+    100% { opacity: 0; transform: scale(0) translateY(-8px); }
+}
+
+@keyframes firework4Launch {
+    0%, 15% { opacity: 0; transform: scale(0) translateY(55px); }
+    20% { opacity: 1; transform: scale(0.2) translateY(0); }
+    25% { opacity: 1; transform: scale(1) translateY(-12px); }
+    70% { opacity: 1; transform: scale(1.4) translateY(-12px); }
+    75% { opacity: 0; transform: scale(0.5) translateY(-12px); }
+    100% { opacity: 0; transform: scale(0) translateY(-12px); }
+}
+
+@keyframes firework5Launch {
+    0%, 45% { opacity: 0; transform: scale(0) translateY(45px); }
+    50% { opacity: 1; transform: scale(0.6) translateY(0); }
+    55% { opacity: 1; transform: scale(1) translateY(-5px); }
+    80% { opacity: 1; transform: scale(1.2) translateY(-5px); }
+    85% { opacity: 0; transform: scale(0.8) translateY(-5px); }
+    100% { opacity: 0; transform: scale(0) translateY(-5px); }
+}
+
+@keyframes firework6Launch {
+    0%, 60% { opacity: 0; transform: scale(0) translateY(35px); }
+    65% { opacity: 1; transform: scale(0.5) translateY(0); }
+    70% { opacity: 1; transform: scale(1) translateY(-18px); }
+    90% { opacity: 1; transform: scale(1.3) translateY(-18px); }
+    95% { opacity: 0; transform: scale(0.4) translateY(-18px); }
+    100% { opacity: 0; transform: scale(0) translateY(-18px); }
+}
+
+@keyframes firework7Launch {
+    0%, 25% { opacity: 0; transform: scale(0) translateY(65px); }
+    30% { opacity: 1; transform: scale(0.3) translateY(0); }
+    35% { opacity: 1; transform: scale(1) translateY(-20px); }
+    75% { opacity: 1; transform: scale(1.5) translateY(-20px); }
+    80% { opacity: 0; transform: scale(0.3) translateY(-20px); }
+    100% { opacity: 0; transform: scale(0) translateY(-20px); }
+}
+
+@keyframes firework8Launch {
+    0%, 70% { opacity: 0; transform: scale(0) translateY(30px); }
+    75% { opacity: 1; transform: scale(0.7) translateY(0); }
+    80% { opacity: 1; transform: scale(1) translateY(-25px); }
+    95% { opacity: 1; transform: scale(1.4) translateY(-25px); }
+    100% { opacity: 0; transform: scale(0.2) translateY(-25px); }
+}
+
+// TRAIL ANIMATIONS
+@keyframes trail1 {
+    0%, 30% { opacity: 0; transform: scaleY(0); }
+    35% { opacity: 1; transform: scaleY(1); }
+    40% { opacity: 0; transform: scaleY(0.3); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail2 {
+    0%, 20% { opacity: 0; transform: scaleY(0); }
+    25% { opacity: 1; transform: scaleY(1.2); }
+    30% { opacity: 0; transform: scaleY(0.2); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail3 {
+    0%, 50% { opacity: 0; transform: scaleY(0); }
+    55% { opacity: 1; transform: scaleY(1.1); }
+    60% { opacity: 0; transform: scaleY(0.4); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail4 {
+    0%, 15% { opacity: 0; transform: scaleY(0); }
+    20% { opacity: 1; transform: scaleY(1.3); }
+    25% { opacity: 0; transform: scaleY(0.1); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail5 {
+    0%, 45% { opacity: 0; transform: scaleY(0); }
+    50% { opacity: 1; transform: scaleY(1); }
+    55% { opacity: 0; transform: scaleY(0.3); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail6 {
+    0%, 60% { opacity: 0; transform: scaleY(0); }
+    65% { opacity: 1; transform: scaleY(1.2); }
+    70% { opacity: 0; transform: scaleY(0.2); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail7 {
+    0%, 25% { opacity: 0; transform: scaleY(0); }
+    30% { opacity: 1; transform: scaleY(1.4); }
+    35% { opacity: 0; transform: scaleY(0.1); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+@keyframes trail8 {
+    0%, 70% { opacity: 0; transform: scaleY(0); }
+    75% { opacity: 1; transform: scaleY(1.1); }
+    80% { opacity: 0; transform: scaleY(0.4); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+// EXPLOSION ANIMATIONS - Much more dramatic!
+@keyframes explode1 {
+    0%, 35% { opacity: 0; transform: translateX(0) scale(0); }
+    40% { opacity: 1; transform: translateX(0) scale(1.5); }
+    60% { opacity: 0.8; transform: translateX(0) scale(0.8); }
+    100% { opacity: 0; transform: translateX(0) scale(0.2); }
+}
+
+@keyframes explode2 {
+    0%, 25% { opacity: 0; transform: translateX(0) scale(0); }
+    30% { opacity: 1; transform: translateX(0) scale(1.8); }
+    55% { opacity: 0.7; transform: translateX(0) scale(0.9); }
+    100% { opacity: 0; transform: translateX(0) scale(0.1); }
+}
+
+@keyframes explode3 {
+    0%, 55% { opacity: 0; transform: translateX(0) scale(0); }
+    60% { opacity: 1; transform: translateX(0) scale(2); }
+    80% { opacity: 0.6; transform: translateX(0) scale(0.7); }
+    100% { opacity: 0; transform: translateX(0) scale(0.3); }
+}
+
+@keyframes explode4 {
+    0%, 20% { opacity: 0; transform: translateX(0) scale(0); }
+    25% { opacity: 1; transform: translateX(0) scale(1.6); }
+    50% { opacity: 0.9; transform: translateX(0) scale(1); }
+    100% { opacity: 0; transform: translateX(0) scale(0.2); }
+}
+
+@keyframes explode5 {
+    0%, 50% { opacity: 0; transform: translateX(0) scale(0); }
+    55% { opacity: 1; transform: translateX(0) scale(1.7); }
+    75% { opacity: 0.8; transform: translateX(0) scale(0.8); }
+    100% { opacity: 0; transform: translateX(0) scale(0.1); }
+}
+
+@keyframes explode6 {
+    0%, 65% { opacity: 0; transform: translateX(0) scale(0); }
+    70% { opacity: 1; transform: translateX(0) scale(1.9); }
+    85% { opacity: 0.7; transform: translateX(0) scale(0.6); }
+    100% { opacity: 0; transform: translateX(0) scale(0.4); }
+}
+
+@keyframes explode7 {
+    0%, 30% { opacity: 0; transform: translateX(0) scale(0); }
+    35% { opacity: 1; transform: translateX(0) scale(2.2); }
+    65% { opacity: 0.5; transform: translateX(0) scale(0.5); }
+    100% { opacity: 0; transform: translateX(0) scale(0.1); }
+}
+
+@keyframes explode8 {
+    0%, 75% { opacity: 0; transform: translateX(0) scale(0); }
+    80% { opacity: 1; transform: translateX(0) scale(2.5); }
+    90% { opacity: 0.4; transform: translateX(0) scale(0.4); }
+    100% { opacity: 0; transform: translateX(0) scale(0.2); }
+}
+
+// SPARK ANIMATIONS
+@keyframes spark1 {
+    0%, 45% { opacity: 0; transform: translateX(0) scale(0); }
+    50% { opacity: 1; transform: translateX(0) scale(2); }
+    85% { opacity: 0; transform: translateX(0) scale(0.3); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark2 {
+    0%, 35% { opacity: 0; transform: translateX(0) scale(0); }
+    40% { opacity: 1; transform: translateX(0) scale(1.8); }
+    80% { opacity: 0; transform: translateX(0) scale(0.2); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark3 {
+    0%, 65% { opacity: 0; transform: translateX(0) scale(0); }
+    70% { opacity: 1; transform: translateX(0) scale(2.2); }
+    90% { opacity: 0; transform: translateX(0) scale(0.4); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark4 {
+    0%, 30% { opacity: 0; transform: translateX(0) scale(0); }
+    35% { opacity: 1; transform: translateX(0) scale(1.6); }
+    75% { opacity: 0; transform: translateX(0) scale(0.1); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark5 {
+    0%, 60% { opacity: 0; transform: translateX(0) scale(0); }
+    65% { opacity: 1; transform: translateX(0) scale(1.9); }
+    95% { opacity: 0; transform: translateX(0) scale(0.3); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark6 {
+    0%, 75% { opacity: 0; transform: translateX(0) scale(0); }
+    80% { opacity: 1; transform: translateX(0) scale(2.1); }
+    95% { opacity: 0; transform: translateX(0) scale(0.2); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark7 {
+    0%, 40% { opacity: 0; transform: translateX(0) scale(0); }
+    45% { opacity: 1; transform: translateX(0) scale(2.3); }
+    85% { opacity: 0; transform: translateX(0) scale(0.1); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+@keyframes spark8 {
+    0%, 85% { opacity: 0; transform: translateX(0) scale(0); }
+    90% { opacity: 1; transform: translateX(0) scale(2.4); }
+    98% { opacity: 0; transform: translateX(0) scale(0.4); }
+    100% { opacity: 0; transform: translateX(0) scale(0); }
+}
+
+// BACKGROUND EFFECTS
+@keyframes twinkle {
+    0%, 20% { opacity: 0; transform: scale(0); }
+    40% { opacity: 1; transform: scale(1); }
+    60% { opacity: 0.5; transform: scale(1.2); }
+    80% { opacity: 0.8; transform: scale(0.8); }
+    100% { opacity: 0; transform: scale(0); }
+}
+
+@keyframes float {
+    0% { opacity: 0; transform: translateY(0) scale(0); }
+    10% { opacity: 1; transform: translateY(-20px) scale(1); }
+    50% { opacity: 0.8; transform: translateY(-40%) scale(0.8); }
+    80% { opacity: 0.4; transform: translateY(-70%) scale(0.6); }
+    100% { opacity: 0; transform: translateY(-100%) scale(0.2); }
+}
