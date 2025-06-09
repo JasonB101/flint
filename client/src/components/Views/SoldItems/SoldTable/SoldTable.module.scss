@@ -9,6 +9,16 @@
     &:hover {
       background: #748eff !important;
     }
+    
+    // Highlight rows for items that are currently listed (potential returns)
+    &.returnedItem {
+      background: #fff3cd !important; // Light yellow background
+      border-left: 4px solid #ffc107 !important; // Orange left border
+      
+      &:hover {
+        background: #ffe69c !important; // Darker yellow on hover
+      }
+    }
   }
 
   .titleId {
@@ -27,6 +37,25 @@
       transition: visibility 0s, opacity 0.2s linear;
       position: relative;
       z-index: 9999; // Higher than sticky headers
+    }
+    
+    .returnIndicator {
+      background: #ff6b35;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 6px;
+      font-size: 11px;
+      margin-right: 8px;
+      display: inline-block;
+      cursor: help;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(255, 107, 53, 0.3);
+      
+      &:hover {
+        background: #e55a2b;
+        transform: scale(1.05);
+        box-shadow: 0 2px 6px rgba(255, 107, 53, 0.4);
+      }
     }
 
     &:hover {

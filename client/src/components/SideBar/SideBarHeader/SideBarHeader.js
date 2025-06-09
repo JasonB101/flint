@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect, useContext, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { storeContext } from "../../../Store";
 import Styles from "./SideBarHeader.module.scss";
@@ -23,14 +23,6 @@ const SideBarHeader = (props) => {
     const notificationDropdownRef = useRef(null);
     const history = useHistory();
 
-    // Fetch notification count only on component mount (page refresh)
-    useEffect(() => {
-        if (user?.token) {
-            // Only fetch count on mount/page refresh, no automatic polling
-            fetchNotificationCountOnly();
-        }
-    }, [user]);
-
     // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -47,7 +39,7 @@ const SideBarHeader = (props) => {
     }, []);
 
     // Optimized function that only fetches count (for polling)
-    const fetchNotificationCountOnly = async () => {
+    const fetchNotificationCountOnly = useCallback(async () => {
         try {
             const count = await getNotificationCount();
             setNotificationCount(count);
@@ -60,28 +52,17 @@ const SideBarHeader = (props) => {
         } catch (error) {
             console.error("Error fetching notification count:", error);
         }
-    };
+    }, [getNotificationCount]);
 
-    // Function to fetch full notifications and check milestone status
-    const fetchNotificationCount = async () => {
-        try {
-            const count = await getNotificationCount();
-            setNotificationCount(count);
-            
-            // Only fetch full notifications if count > 0
-            if (count > 0) {
-                const notifs = await getNotifications();
-                const unviewedMilestones = notifs.filter(n => 
-                    n.type === 'newMilestone' && !n.isViewed
-                );
-                setHasMilestoneNotifications(unviewedMilestones.length > 0);
-            } else {
-                setHasMilestoneNotifications(false);
-            }
-        } catch (error) {
-            console.error("Error fetching notification count:", error);
+    // Fetch notification count only on component mount (page refresh)
+    useEffect(() => {
+        if (user?.token) {
+            // Only fetch count on mount/page refresh, no automatic polling
+            fetchNotificationCountOnly();
         }
-    };
+    }, [user, fetchNotificationCountOnly]);
+
+
 
     const fetchNotifications = async () => {
         try {
@@ -167,6 +148,11 @@ const SideBarHeader = (props) => {
             return 'Milestone!';
         }
         
+        // For automatic return notifications
+        if (notification.type === 'automaticReturn') {
+            return notification.data.message || `Return processed for SKU ${notification.data.sku}`;
+        }
+        
         // For other notification types, show detailed message
         const { data } = notification;
         const period = data.category === 'day' ? 'Daily' : data.category === 'week' ? 'Weekly' : 'Monthly';
@@ -199,11 +185,6 @@ const SideBarHeader = (props) => {
                         
                         {showUserDropdown && (
                             <div className={Styles.dropdown}>
-                                <div className={Styles.dropdownHeader}>
-                                    <span className={Styles.userNameFull}>{user.fname}</span>
-                                    <span className={Styles.userEmail}>{user.email}</span>
-                                </div>
-                                <div className={Styles.dropdownDivider}></div>
                                 <button 
                                     className={Styles.dropdownItem}
                                     onClick={handleSignOut}
@@ -252,17 +233,19 @@ const SideBarHeader = (props) => {
                                         notifications.map((notification) => (
                                             <div 
                                                 key={notification._id}
-                                                className={`${Styles.notificationItem} ${!notification.isViewed ? Styles.unviewed : ''} ${notification.type === 'newMilestone' ? Styles.milestone : ''}`}
+                                                className={`${Styles.notificationItem} ${!notification.isViewed ? Styles.unviewed : ''} ${notification.type === 'newMilestone' ? Styles.milestone : ''} ${notification.type === 'automaticReturn' ? Styles.automaticReturn : ''}`}
                                                 onClick={() => handleNotificationClick(notification)}
                                             >
                                                 <div className={Styles.notificationContent}>
                                                     <div className={Styles.notificationMessage}>
-                                                        {notification.type === 'newMilestone' ? '🏆' : '🎉'} {formatNotificationMessage(notification)}
+                                                        {notification.type === 'newMilestone' ? '🏆' : notification.type === 'automaticReturn' ? '↩️' : '🎉'} {formatNotificationMessage(notification)}
                                                     </div>
                                                     <div className={Styles.notificationDate}>
                                                         {notification.type === 'newMilestone' 
                                                             ? `${formatDate(notification.date)} • Click to view details` 
-                                                            : `${notification.data.dateTitle} • ${formatDate(notification.date)}`
+                                                            : notification.type === 'automaticReturn'
+                                                                ? `Order ${notification.data.orderId} • ${formatDate(notification.date)}`
+                                                                : `${notification.data.dateTitle} • ${formatDate(notification.date)}`
                                                         }
                                                     </div>
                                                 </div>

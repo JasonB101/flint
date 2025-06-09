@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { SYNC_STEP_DESCRIPTIONS, SYNC_STEP_ICONS } from '../../utils/syncProgressTracker'
+import { SYNC_STEP_DESCRIPTIONS } from '../../utils/syncProgressTracker'
 import Styles from './SyncProgressIndicator.module.scss'
 
 /**

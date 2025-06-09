@@ -121,10 +121,7 @@ const Overview = ({ items, expenses }) => {
 
   return (
     <div className={Styles.overviewWrapper}>
-      <div className={Styles.pageHeader}>
-        <h1>Business Overview</h1>
-        <p>Comprehensive dashboard of your reselling business performance</p>
-      </div>
+
 
       {/* Trip Report Component */}
       <TripReport items={items} expenses={expenses} />

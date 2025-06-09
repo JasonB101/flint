@@ -121,6 +121,33 @@
 .wrapper h5:nth-child(4) span { color: #28a745; } // Profit
 .wrapper h5:nth-child(8) span { color: #28a745; } // Avg Profit
 
+// Returned Items Alert
+.returnedAlert {
+    background: #fff3cd !important;
+    border: 1px solid #ffc107 !important;
+    border-left: 4px solid #ff6b35 !important;
+    color: #856404 !important;
+    
+    &::before {
+        background: linear-gradient(135deg, #ff6b35 0%, #ffc107 100%) !important;
+    }
+    
+    &:hover {
+        background: #ffe69c !important;
+        border-color: #ff6b35 !important;
+    }
+}
+
+.returnedBadge {
+    background: #ff6b35 !important;
+    color: white !important;
+    border-radius: 12px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 3px rgba(255, 107, 53, 0.3) !important;
+}
+
 // Summary Button
 .wrapper button {
     flex: 0 0 auto;

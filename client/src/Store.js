@@ -168,6 +168,11 @@ const Store = (props) => {
   // Notification management functions
   async function getNotifications() {
     try {
+      // Ensure user is authenticated before making request
+      if (!user?.token) {
+        return []
+      }
+      
       const response = await userAxios.get("/api/notifications")
       if (response.data.success) {
         return response.data.notifications
@@ -176,13 +181,21 @@ const Store = (props) => {
         return []
       }
     } catch (error) {
-      console.error("Error fetching notifications:", error)
+      // Don't log 401 errors as they're expected when not authenticated
+      if (error.response?.status !== 401) {
+        console.error("Error fetching notifications:", error)
+      }
       return []
     }
   }
 
   async function getNotificationCount() {
     try {
+      // Ensure user is authenticated before making request
+      if (!user?.token) {
+        return 0
+      }
+      
       const response = await userAxios.get("/api/notifications/unviewed-count")
       if (response.data.success) {
         return response.data.count
@@ -191,7 +204,10 @@ const Store = (props) => {
         return 0
       }
     } catch (error) {
-      console.error("Error fetching notification count:", error)
+      // Don't log 401 errors as they're expected when not authenticated
+      if (error.response?.status !== 401) {
+        console.error("Error fetching notification count:", error)
+      }
       return 0
     }
   }
@@ -629,55 +645,26 @@ const Store = (props) => {
       .catch((err) => {
         console.error("eBay sync error:", err)
         
+        // Handle OAuth expiration by redirecting to re-authentication
         if (err.response && err.response.status === 402) {
-          return userAxios
-            .post("/api/ebay/refreshOToken")
-            .then((result) => {
-              localStorage.setItem(
-                "user",
-                JSON.stringify({ ...user, OAuthActive: true })
-              )
-              return userAxios
-                .get("/api/ebay/getebay", { timeout: 120000 })
-                .then((result) => {
-                  const data = result.data
-                  const { ebayListings = [], inventoryItems = [] } = data
-                  changeState((prevState) => {
-                    return {
-                      ...prevState,
-                      items: inventoryItems,
-                      ebayListings: ebayListings,
-                    }
-                  })
-                  return data // Return the data for chaining
-                })
-                .catch((err) => {
-                  console.log(err.message)
-                  localStorage.setItem(
-                    "user",
-                    JSON.stringify({ ...user, OAuthActive: false })
-                  )
-                  throw err // Re-throw the error for proper handling
-                })
-            })
-            .catch((err) => {
-              console.log("Oauth refresh catch")
-              const data = err.response.data
-              const { link } = data
-              if (link) {
-                localStorage.setItem(
-                  "user",
-                  JSON.stringify({ ...user, OAuthActive: false })
-                )
-                window.location.href = link
+          localStorage.setItem(
+            "user",
+            JSON.stringify({ ...user, OAuthActive: false })
+          )
+          
+          // Try to get the OAuth link for re-authentication
+          userAxios.post("/api/ebay/refreshOToken")
+            .catch((refreshErr) => {
+              const data = refreshErr.response?.data
+              if (data?.link) {
+                window.location.href = data.link
               } else {
-                console.log(err)
+                console.error("OAuth re-authentication required")
               }
-              throw err // Re-throw the error for proper handling
             })
-        } else {
-          throw err // Re-throw the error for proper handling
         }
+        
+        throw err // Re-throw the error for proper handling
       })
   }
 

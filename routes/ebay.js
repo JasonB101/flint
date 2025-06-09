@@ -198,9 +198,11 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     
     // Step 1: Get shipping transactions (most critical)
     let shippingTransactions = []
+    let refreshedOAuthToken = ebayOAuthToken
+    
     try {
       progress.fetchingShipping()
-      const shippingResult = await getShippingTransactions(ebayOAuthToken)
+      const shippingResult = await getShippingTransactions(refreshedOAuthToken)
       if (shippingResult.failedOAuth) throw new Error("OAuth expired")
       shippingTransactions = shippingResult.transactions
       syncResults.shipping.success = true
@@ -209,12 +211,50 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     } catch (error) {
       syncResults.shipping.error = error.message
       console.log(`[${userId}] ❌ Shipping failed: ${error.message}`)
+      
       if (error.message.includes("OAuth")) {
-        activeSync.delete(userId)
-        progress.complete(false, "Access Token Expired")
-        return res.status(402).send({ success: false, message: "Access Token Expired" })
+        // Attempt automatic token refresh within the same sync
+        try {
+          progress.emit('refreshing token', 10, 'Refreshing access token...')
+          console.log(`[${userId}] 🔄 Attempting OAuth token refresh`)
+          
+          const { refreshAccessToken } = require("../lib/oAuth")
+          const newTokenResult = await refreshAccessToken(ebayRefreshOAuthToken)
+          
+          if (!newTokenResult.success) {
+            throw new Error("Token refresh failed")
+          }
+          
+          refreshedOAuthToken = newTokenResult.token
+          
+          // Update user's token in database
+          await User.findOneAndUpdate(
+            { _id: userId },
+            { ebayOAuthToken: refreshedOAuthToken }
+          )
+          
+          console.log(`[${userId}] ✅ OAuth token refreshed successfully`)
+          progress.fetchingShipping()
+          
+          // Retry shipping transactions with new token
+          const retryShippingResult = await getShippingTransactions(refreshedOAuthToken)
+          if (retryShippingResult.failedOAuth) {
+            throw new Error("OAuth still expired after refresh")
+          }
+          
+          shippingTransactions = retryShippingResult.transactions
+          syncResults.shipping.success = true
+          progress.fetchingShipping(shippingTransactions.length)
+          console.log(`[${userId}] ✅ Shipping (after refresh): ${shippingTransactions.length} transactions`)
+          
+        } catch (refreshError) {
+          console.log(`[${userId}] ❌ OAuth refresh failed: ${refreshError.message}`)
+          activeSync.delete(userId)
+          progress.complete(false, "Access Token Expired - Please Re-authenticate")
+          return res.status(402).send({ success: false, message: "Access Token Expired" })
+        }
       }
-      // Continue without shipping data - not fatal
+      // Continue without shipping data if non-OAuth error
     }
 
     // Step 2: Parallel operations with individual error handling
@@ -224,7 +264,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     try {
       const results = await Promise.allSettled([
         updateAllZeroShippingCost(userId, shippingTransactions),
-        getCompletedSales(ebayOAuthToken),
+        getCompletedSales(refreshedOAuthToken),
         getEbayListings(ebayAuthToken, userId),
       ])
       

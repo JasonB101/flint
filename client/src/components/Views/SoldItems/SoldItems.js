@@ -19,7 +19,6 @@ const SoldItems = (props) => {
   const [toggleSummaryModal, setToggleSummaryModal] = useState(false)
 
   useEffect(() => {
-    console.log("useEffect")
     if (soldItemsSearchTerm === "") {
       filterItems(soldItems)
     } else {
@@ -47,6 +46,7 @@ const SoldItems = (props) => {
             changeSearchTerm={changeSearchTerm}
             searchTerm={soldItemsSearchTerm}
             items={soldItems}
+            ebayListings={ebayListings}
             setToggleSummaryModal={setToggleSummaryModal}
           />
         </div>

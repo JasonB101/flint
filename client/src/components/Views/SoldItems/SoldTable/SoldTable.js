@@ -15,11 +15,24 @@ const SoldTable = (props) => {
   const [returnItem, setReturnItem] = useState(null)
 
   soldItems.sort((a, b) => {
-    const { dateSold: aDate } = a
-    const { dateSold: bDate } = b
+    const { dateSold: aDate, shippingCost: aShipping = 0 } = a
+    const { dateSold: bDate, shippingCost: bShipping = 0 } = b
+    
+    // Primary sort: Date sold (newest first)
     const aTime = Number(new Date(String(aDate)).getTime())
     const bTime = Number(new Date(String(bDate)).getTime())
-    return bTime - aTime
+    const dateDiff = bTime - aTime
+    
+    // If dates are the same, secondary sort: Shipping cost (0 at top, then ascending)
+    if (dateDiff === 0) {
+      // Put 0 shipping costs first
+      if (aShipping === 0 && bShipping !== 0) return -1
+      if (bShipping === 0 && aShipping !== 0) return 1
+      // Then sort by shipping cost ascending
+      return aShipping - bShipping
+    }
+    
+    return dateDiff
   })
   const items = soldItems.map((x) => populateRow(x))
 
@@ -72,8 +85,12 @@ const SoldTable = (props) => {
       roi,
     } = itemObject
     const username = buyer ? buyer : "Unknown"
+    
+    // Check if this sold item is currently listed on eBay (potential return)
+    const isCurrentlyListed = ebayListings.some(listing => listing.sku === sku)
+    
     return (
-      <tr key={_id}>
+      <tr key={_id} className={isCurrentlyListed ? Styles.returnedItem : ""}>
         <td className={Styles["titleId"]}>
           <span className={Styles["item-options"]}>
             <ItemOptions
@@ -81,6 +98,14 @@ const SoldTable = (props) => {
               itemObject={itemObject}
             />
           </span>{" "}
+          {isCurrentlyListed && (
+            <span 
+              className={Styles["returnIndicator"]}
+              title="Item is currently listed on eBay - Potential Return"
+            >
+              ↩️
+            </span>
+          )}
           <span 
             className={Styles["titleText"]}
             ref={(el) => {

@@ -4,8 +4,8 @@ import { Button } from "react-bootstrap"
 
 
 const Toolbar = (props) => {
-  const { searchTerm, changeSearchTerm, items, setToggleSummaryModal } = props
-  const soldDetails = assembleSoldInfo(items)
+  const { searchTerm, changeSearchTerm, items, ebayListings = [], setToggleSummaryModal } = props
+  const soldDetails = assembleSoldInfo(items, ebayListings)
   const {
     soldAmount,
     totalProfit,
@@ -14,7 +14,8 @@ const Toolbar = (props) => {
     avgShipping,
     avgPriceSold,
     avgProfit,
-    avgDaysListed
+    avgDaysListed,
+    returnedCount
   } = soldDetails
 
   return (
@@ -57,13 +58,19 @@ const Toolbar = (props) => {
         Avg Days Listed
         <span>{avgDaysListed}</span>
       </h5>
+      {returnedCount > 0 && (
+        <h5 className={Styles.returnedAlert}>
+          Potential Returns
+          <span className={Styles.returnedBadge}>{returnedCount}</span>
+        </h5>
+      )}
       <div className="spacer"></div>
       <Button onClick={() => setToggleSummaryModal(true)}>Summary</Button>
     </div>
   )
 }
 
-function assembleSoldInfo(items) {
+function assembleSoldInfo(items, ebayListings = []) {
   const soldObj = {
     soldAmount: 0,
     totalProfit: 0,
@@ -73,10 +80,11 @@ function assembleSoldInfo(items) {
     avgPriceSold: 0,
     avgProfit: 0,
     avgDaysListed: 0,
+    returnedCount: 0,
   }
 
   items.forEach((x) => {
-    const { priceSold, shippingCost, profit, roi, purchasePrice } = x
+    const { priceSold, shippingCost, profit, roi, purchasePrice, sku } = x
     soldObj.soldAmount++
     soldObj.totalProfit += profit
     soldObj.totalSales += priceSold
@@ -85,6 +93,11 @@ function assembleSoldInfo(items) {
     soldObj.avgRoi += purchasePrice < 1 ? 100 : roi //Items that are sourced for free, and purchasePrice set to $0.01 throw off the avg, so they get recorded as 100% roi
     soldObj.avgProfit += profit
     soldObj.avgDaysListed += x.daysListed
+    
+    // Check if this sold item is currently listed on eBay (potential return)
+    if (ebayListings.some(listing => listing.sku === sku)) {
+      soldObj.returnedCount++
+    }
   })
 
   if (soldObj.soldAmount > 0) {
@@ -113,6 +126,7 @@ function assembleSoldInfo(items) {
     avgPriceSold: formatCurrency(Math.floor(soldObj.avgPriceSold)),
     avgProfit: formatCurrency(Math.floor(soldObj.avgProfit)),
     avgDaysListed: Math.floor(soldObj.avgDaysListed),
+    returnedCount: soldObj.returnedCount,
   }
 }
 

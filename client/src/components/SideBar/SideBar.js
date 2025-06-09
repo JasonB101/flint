@@ -8,7 +8,7 @@ import NavBar from "./NavBar/NavBar";
 
 const SideBar = (props) => {
 
-    const { syncWithEbay, user, importItemsFromCVS } = props;
+    const { syncWithEbay, user } = props;
 
     return (
         <div className={Styles.wrapper}>
@@ -22,18 +22,12 @@ const SideBar = (props) => {
                     !user.syncedWithEbay &&
                     <div className={Styles.syncWrapper}>
                         <Button onClick={() => syncWithEbay()}>Sync with eBay</Button>
-                        <p>Sync your Flint account with your eBay account.</p>
                     </div>
                 }
-                {/* <div className={Styles.cvsImportBox}>
-                    <h5>Import CSV File</h5>
-                    <input type="file" id="fileInput" onChange={(e) => importItemsFromCVS(e.target.files[0])}></input>
-                </div> */}
-
             </>}
 
         </div>
     );
-}
+};
 
 export default SideBar;
