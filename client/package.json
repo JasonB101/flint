@@ -18,7 +18,8 @@
     "react-md": "^5.1.4",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^5.0.1",
-    "sass": "^1.56.2"
+    "sass": "^1.56.2",
+    "socket.io-client": "^4.8.1"
   },
   "proxy": "http://localhost:3825",
   "scripts": {

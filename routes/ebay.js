@@ -20,6 +20,7 @@ const {
 } = require("../lib/inventoryMethods")
 const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
 const findCompatibilityList = require("../lib/ebayMethods/findCompatibilityList")
+const SocketProgressEmitter = require("../lib/socketProgressEmitter")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -128,6 +129,27 @@ ebayRouter.get("/getCompatibility", async (req, res, next) => {
   }
 })
 
+// Track active syncs to prevent concurrent syncs
+const activeSync = new Set()
+
+// Legacy sync status endpoint (for backward compatibility during transition)
+ebayRouter.get("/sync-status", async (req, res) => {
+  try {
+    const userId = req.auth._id
+    const isActive = activeSync.has(userId)
+    res.json({ 
+      active: isActive,
+      userId,
+      timestamp: new Date().toISOString()
+    })
+  } catch (error) {
+    res.status(500).json({ 
+      active: false, 
+      error: error.message 
+    })
+  }
+})
+
 ebayRouter.get("/getebay", async (req, res, next) => {
   const userObject = await getUserObject(req.auth._id)
   const {
@@ -139,60 +161,178 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     ebayFeePercent,
   } = userObject
 
-  try {
-    console.log("Starting Get Ebay")
-    let shippingTransactions = await getShippingTransactions(ebayOAuthToken)
-    if (shippingTransactions.failedOAuth)
-      throw new Error("Need to Update OAuth")
-    shippingTransactions = shippingTransactions.transactions
-    console.log(
-      `Got Transactions, making changes. ${shippingTransactions.length}`
-    )
-    const [shippingUpdates, completedSales, ebayListings] = await Promise.all([
-      updateAllZeroShippingCost(userId, shippingTransactions),
-      getCompletedSales(ebayOAuthToken),
-      getEbayListings(ebayAuthToken, userId),
-    ])
-    // console.log("Got Completed Sales", completedSales)
-    let inventoryItems = await getInventoryItems(userId, false) //True is setting to get items that are listed: true
-    const inventoryItemsMap = new Map(
-      inventoryItems.map((item) => [item.sku, item])
-    )
+  // Check if sync already in progress
+  if (activeSync.has(userId)) {
+    return res.status(409).send({ 
+      success: false, 
+      message: "Sync already in progress" 
+    })
+  }
 
-    const newSoldItems = await updateInventoryWithSales(
-      userId,
-      completedSales,
-      inventoryItemsMap,
-      shippingTransactions,
-      ebayFeePercent
-    )
-    if (newSoldItems.length > 0) {
-      updateSellerAvgShipping(userId)
-      newSoldItems.forEach((item) => {
-        inventoryItemsMap.set(item.sku, item)
-      })
+  // Set request timeout (2 minutes)
+  const SYNC_TIMEOUT = 120000
+  req.setTimeout(SYNC_TIMEOUT, () => {
+    console.log(`[${userId}] Sync timeout`)
+    activeSync.delete(userId)
+    if (!res.headersSent) {
+      res.status(408).send({ success: false, message: "Sync timeout" })
+    }
+  })
+
+  // Initialize WebSocket progress emitter
+  const io = req.app.get('io')
+  const progress = new SocketProgressEmitter(io, userId)
+
+  // Track what succeeded vs failed
+  const syncResults = {
+    shipping: { success: false, error: null },
+    sales: { success: false, error: null },
+    listings: { success: false, error: null },
+    verification: { success: false, error: null }
+  }
+
+  try {
+    activeSync.add(userId)
+    progress.starting()
+    console.log(`[${userId}] Starting eBay sync`)
+    
+    // Step 1: Get shipping transactions (most critical)
+    let shippingTransactions = []
+    try {
+      progress.fetchingShipping()
+      const shippingResult = await getShippingTransactions(ebayOAuthToken)
+      if (shippingResult.failedOAuth) throw new Error("OAuth expired")
+      shippingTransactions = shippingResult.transactions
+      syncResults.shipping.success = true
+      progress.fetchingShipping(shippingTransactions.length)
+      console.log(`[${userId}] ✅ Shipping: ${shippingTransactions.length} transactions`)
+    } catch (error) {
+      syncResults.shipping.error = error.message
+      console.log(`[${userId}] ❌ Shipping failed: ${error.message}`)
+      if (error.message.includes("OAuth")) {
+        activeSync.delete(userId)
+        progress.complete(false, "Access Token Expired")
+        return res.status(402).send({ success: false, message: "Access Token Expired" })
+      }
+      // Continue without shipping data - not fatal
     }
 
-    const verifiedCorrectInfo = await verifyCorrectInfoInInventoryItems(
-      inventoryItemsMap,
-      ebayListings,
-      averageShippingCost,
-      ebayFeePercent
-    )
+    // Step 2: Parallel operations with individual error handling
+    progress.fetchingEbayData()
+    let shippingUpdates, completedSales, ebayListings
+    
+    try {
+      const results = await Promise.allSettled([
+        updateAllZeroShippingCost(userId, shippingTransactions),
+        getCompletedSales(ebayOAuthToken),
+        getEbayListings(ebayAuthToken, userId),
+      ])
+      
+      shippingUpdates = results[0].status === 'fulfilled' ? results[0].value : null
+      completedSales = results[1].status === 'fulfilled' ? results[1].value : []
+      ebayListings = results[2].status === 'fulfilled' ? results[2].value : []
+      
+      // Log individual results with progress updates
+      if (results[0].status === 'rejected') {
+        console.log(`[${userId}] ❌ Shipping updates failed: ${results[0].reason?.message}`)
+      }
+      if (results[1].status === 'rejected') {
+        console.log(`[${userId}] ❌ Completed sales failed: ${results[1].reason?.message}`)
+        syncResults.sales.error = results[1].reason?.message
+      } else {
+        progress.fetchingSales(completedSales.length)
+        console.log(`[${userId}] ✅ Sales: ${completedSales.length} completed`)
+        syncResults.sales.success = true
+      }
+      if (results[2].status === 'rejected') {
+        console.log(`[${userId}] ❌ eBay listings failed: ${results[2].reason?.message}`)
+        syncResults.listings.error = results[2].reason?.message
+      } else {
+        progress.fetchingListings()
+        console.log(`[${userId}] ✅ Listings: ${ebayListings.length} active`)
+        syncResults.listings.success = true
+      }
+      
+    } catch (error) {
+      console.log(`[${userId}] ❌ Parallel operations error: ${error.message}`)
+      // Continue with whatever data we got
+      completedSales = []
+      ebayListings = []
+    }
 
-    // console.log("Is verified true? ", verifiedCorrectInfo)
+    // Step 3: Inventory processing with safety checks
+    progress.processingInventory()
+    let inventoryItems = await getInventoryItems(userId, false)
+    const inventoryItemsMap = new Map(inventoryItems.map((item) => [item.sku, item]))
+    
+    let newSoldItems = []
+    if (completedSales.length > 0) {
+      try {
+        newSoldItems = await updateInventoryWithSales(
+          userId, completedSales, inventoryItemsMap, 
+          shippingTransactions, ebayFeePercent
+        )
+        progress.processingInventory(newSoldItems.length)
+        console.log(`[${userId}] ✅ Updated ${newSoldItems.length} sold items`)
+        
+        if (newSoldItems.length > 0) {
+          updateSellerAvgShipping(userId)
+          newSoldItems.forEach((item) => inventoryItemsMap.set(item.sku, item))
+        }
+      } catch (error) {
+        syncResults.sales.error = error.message
+        console.log(`[${userId}] ❌ Sales update failed: ${error.message}`)
+        // Continue without sales updates - not fatal
+      }
+    }
 
+    // Step 4: Verification (non-critical)
+    progress.verifyingData()
+    let verifiedCorrectInfo = false
+    try {
+      verifiedCorrectInfo = await verifyCorrectInfoInInventoryItems(
+        inventoryItemsMap, ebayListings, averageShippingCost, ebayFeePercent
+      )
+      syncResults.verification.success = true
+      console.log(`[${userId}] ✅ Verification complete`)
+    } catch (error) {
+      syncResults.verification.error = error.message
+      console.log(`[${userId}] ❌ Verification failed: ${error.message}`)
+      // Continue without verification - not fatal
+    }
+
+    // Final data refresh if anything changed
+    progress.finalizing()
     if (verifiedCorrectInfo || newSoldItems.length > 0) {
       inventoryItems = await getInventoryItems(userId)
     }
+
+    console.log(`[${userId}] Sync completed successfully`)
+    activeSync.delete(userId)
+    
     const response = {
-      ebayListings,
+      ebayListings: ebayListings || [],
       inventoryItems,
+      syncResults,
+      timestamp: new Date().toISOString()
     }
+    
+    progress.complete(true, null, response)
     res.send(response)
-  } catch (e) {
-    console.log(e, "Access Token Expired")
-    res.status(402).send({ success: false, message: "Access Token Expired" })
+
+  } catch (error) {
+    console.error(`[${userId}] Sync error:`, error.message)
+    activeSync.delete(userId)
+    progress.complete(false, error.message)
+    
+    if (!res.headersSent) {
+      res.status(500).send({ 
+        success: false, 
+        message: "Sync partially failed", 
+        syncResults,
+        error: error.message 
+      })
+    }
   }
 })
 

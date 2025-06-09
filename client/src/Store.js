@@ -10,6 +10,7 @@ import axios from "axios"
 import prepItemsForImport from "./lib/massImportPrep"
 import readFile from "./lib/readAndParseCVS"
 import { AuthContext } from "./AuthContext"
+import socketService from "./services/socketService"
 
 const userAxios = axios.create({ timeout: 60000 })
 export const storeContext = createContext({})
@@ -57,17 +58,41 @@ const Store = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       if (user?.token && !isAuthRoute) {
-        console.log("Made it")
+        console.log("🔌 Initializing Store for user:", user._id)
+        console.log("🔌 User sync settings:", { syncedWithEbay: user.syncedWithEbay, OAuthActive: user.OAuthActive })
+        
+        // Initialize WebSocket connection for real-time progress
+        socketService.connect(user._id)
+        
         getExpenses()
         getChurnSettings()
         if (user.syncedWithEbay && user.OAuthActive) {
-          try {
-            await getEbay()
-          } catch (err) {
-            console.error("Error fetching eBay data:", err)
+          // Wait for room-joined confirmation before starting sync
+          let syncStarted = false
+          
+          const handleRoomJoined = () => {
+            if (!syncStarted) {
+              syncStarted = true
+              getEbay().catch(err => console.error("eBay sync error:", err))
+            }
           }
+          
+          // Listen for room-joined confirmation
+          socketService.on('room-joined', handleRoomJoined)
+          
+          // Fallback: if no room-joined event after 5 seconds, start anyway
+          setTimeout(() => {
+            if (!syncStarted) {
+              syncStarted = true
+              socketService.off('room-joined')
+              getEbay().catch(err => console.error("eBay sync error:", err))
+            }
+          }, 5000)
         }
       } else {
+        // Disconnect WebSocket when not authenticated
+        socketService.disconnect()
+        
         changeState({
           items: [],
           expenses: [],
@@ -83,6 +108,11 @@ const Store = (props) => {
     }
 
     fetchData()
+    
+    // Cleanup WebSocket on unmount
+    return () => {
+      socketService.disconnect()
+    }
   }, [user, isAuthRoute])
 
   async function checkNewScores(newScores) {
@@ -577,10 +607,12 @@ const Store = (props) => {
   }
 
   function getEbay() {
-    userAxios
+    // WebSocket will handle all progress events automatically
+    // Just make the API call - progress will be sent via WebSocket
+    return userAxios
       .get("/api/ebay/getebay", {
         headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
-        timeout: 30000,
+        timeout: 120000, // Increased to match backend timeout
       })
       .then((result) => {
         const data = result.data
@@ -592,10 +624,13 @@ const Store = (props) => {
             ebayListings: ebayListings,
           }
         })
+        return data // Return the data for chaining
       })
       .catch((err) => {
+        console.error("eBay sync error:", err)
+        
         if (err.response && err.response.status === 402) {
-          userAxios
+          return userAxios
             .post("/api/ebay/refreshOToken")
             .then((result) => {
               localStorage.setItem(
@@ -603,7 +638,7 @@ const Store = (props) => {
                 JSON.stringify({ ...user, OAuthActive: true })
               )
               return userAxios
-                .get("/api/ebay/getebay", { timeout: 30000 })
+                .get("/api/ebay/getebay", { timeout: 120000 })
                 .then((result) => {
                   const data = result.data
                   const { ebayListings = [], inventoryItems = [] } = data
@@ -614,6 +649,7 @@ const Store = (props) => {
                       ebayListings: ebayListings,
                     }
                   })
+                  return data // Return the data for chaining
                 })
                 .catch((err) => {
                   console.log(err.message)
@@ -621,6 +657,7 @@ const Store = (props) => {
                     "user",
                     JSON.stringify({ ...user, OAuthActive: false })
                   )
+                  throw err // Re-throw the error for proper handling
                 })
             })
             .catch((err) => {
@@ -636,7 +673,10 @@ const Store = (props) => {
               } else {
                 console.log(err)
               }
+              throw err // Re-throw the error for proper handling
             })
+        } else {
+          throw err // Re-throw the error for proper handling
         }
       })
   }

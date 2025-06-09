@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useCallback } from "react"
 import { Switch, Route, Redirect } from "react-router-dom"
 import ProtectedRoute from "./components/ServiceComponents/ProtectedRoute"
 import Inventory from "./components/Views/Inventory/Inventory"
@@ -18,6 +18,7 @@ import PartHunter from "./components/Views/KeywordHunter/KeywordHunter"
 import CarPartHunter from "./components/Views/CarPartHunter/CarPartHunter"  
 import OAuthCode from "./components/OAuth/OAuthCode"
 import Churn from "./components/Views/Churn/Churn"
+import SyncProgressIndicator from "./components/SyncProgressIndicator/SyncProgressIndicator"
 
 function App() {
   const storeData = useContext(storeContext)
@@ -38,6 +39,15 @@ function App() {
     churnSettings
   } = storeData
 
+  // Stable callback refs to prevent SyncProgressIndicator remounting
+  const handleSyncComplete = useCallback((result) => {
+    console.log('eBay sync completed!', result)
+  }, [])
+
+  const handleSyncError = useCallback((error) => {
+    console.error('eBay sync failed:', error)
+  }, [])
+
   return (
     <div className="appWrapper">
       <SideBar
@@ -45,6 +55,10 @@ function App() {
         login={login}
         syncWithEbay={syncWithEbay}
         user={user}
+      />
+      <SyncProgressIndicator 
+        onComplete={handleSyncComplete}
+        onError={handleSyncError}
       />
       <Switch>
         <Route path="/auth/signin" component={SignIn} />
