@@ -399,30 +399,43 @@ const TripReport = ({ items, expenses }) => {
 
     // Calculate projected payoff date
     const calculatePayoffDate = () => {
-      const remainingToBreakEven = tripTotalCost - tripRevenueReceived
+      // Use the same cost basis as the rest of the metrics when location filtering
+      const costBasis = isLocationFiltered ? tripPartsCost : tripTotalCost
+      const remainingToBreakEven = costBasis - tripRevenueReceived
       
       if (remainingToBreakEven <= 0) {
-        // Already profitable - calculate how long it took
-        const soldItems = tripPurchases.filter(item => item.sold)
+        // Already profitable - find the exact date when it became profitable
+        const soldItems = tripPurchases
+          .filter(item => item.sold && item.dateSold)
+          .map(item => ({
+            ...item,
+            saleDate: new Date(item.dateSold),
+            revenue: parseFloat(item.profit || 0) + parseFloat(item.purchasePrice || 0)
+          }))
+          .sort((a, b) => a.saleDate - b.saleDate) // Sort by sale date (earliest first)
+        
         if (soldItems.length === 0) {
           return { text: "Already profitable!", days: null, daysToProfitable: null }
         }
         
-        // Find the date of the last sale that put us into profit
-        const latestSaleDate = soldItems.reduce((latest, item) => {
-          if (item.dateSold) {
-            const saleDate = new Date(item.dateSold)
-            return saleDate > latest ? saleDate : latest
-          }
-          return latest
-        }, new Date(0))
+        // Find the exact point where cumulative revenue exceeded cost basis
+        let cumulativeRevenue = 0
+        let profitableDate = null
         
-        if (latestSaleDate.getTime() === 0) {
+        for (const item of soldItems) {
+          cumulativeRevenue += item.revenue
+          if (cumulativeRevenue >= costBasis) {
+            profitableDate = item.saleDate
+            break
+          }
+        }
+        
+        if (!profitableDate) {
           return { text: "Already profitable!", days: null, daysToProfitable: null }
         }
         
         // Calculate days from trip start to profitability
-        const daysToPayoff = Math.ceil((latestSaleDate - startDate) / (1000 * 60 * 60 * 24))
+        const daysToPayoff = Math.ceil((profitableDate - startDate) / (1000 * 60 * 60 * 24))
         return { 
           text: `✓ Profitable (${daysToPayoff} days)`, 
           days: daysToPayoff,

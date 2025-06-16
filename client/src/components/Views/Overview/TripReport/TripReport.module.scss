@@ -1,19 +1,19 @@
 .tripReportCard {
-    background: linear-gradient(180deg, #26303f 0%, #1f2937 100%);
+    background: #ffffff;
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 8px;
     margin-top: 0;
     margin-bottom: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e0e0e0;
     
     h2 {
       font-size: 14px;
       font-weight: 600;
       margin-bottom: 6px;
-      color: rgba(255, 255, 255, 0.9);
+      color: #333333;
       padding-bottom: 4px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid #e0e0e0;
     }
   }
   
@@ -22,6 +22,9 @@
     display: flex;
     gap: 8px;
     margin-bottom: 6px;
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    border-radius: 4px;
+    padding: 6px;
     
     @media (max-width: 768px) {
       flex-direction: column;
@@ -31,10 +34,10 @@
   // Date filter container
   .dateFilterContainer {
     flex: 0 0 200px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     padding: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .datePickerGroup {
@@ -45,24 +48,24 @@
     label {
       width: 60px;
       font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255, 255, 255, 0.9);
       margin-right: 6px;
     }
   }
   
   .datePicker {
     padding: 3px 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #ccc;
     border-radius: 3px;
     font-size: 11px;
     width: 110px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #26303f;
+    background: #ffffff;
+    color: #333333;
     
     &:focus {
-      border-color: rgb(166, 203, 252);
+      border-color: #007bff;
       outline: 0;
-      box-shadow: 0 0 0 0.1rem rgba(166, 203, 252, 0.25);
+      box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
     }
   }
   
@@ -118,19 +121,19 @@
   // Trip summary styling
   .tripSummary {
     flex: 1;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
     padding: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .summaryHeader {
     font-size: 11px;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
+    color: #333333;
     margin-bottom: 4px;
     padding-bottom: 3px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #e0e0e0;
   }
   
   .summaryMetrics {
@@ -145,13 +148,13 @@
     
     span:first-child {
       font-size: 9px;
-      color: rgba(255, 255, 255, 0.8);
+      color: #666666;
     }
     
     span:last-child {
       font-size: 11px;
       font-weight: 600;
-      color: rgba(255, 255, 255, 1);
+      color: #333333;
       margin-top: 1px;
     }
   }
@@ -167,12 +170,12 @@
     font-style: italic;
   }
   
-  .noFilterMessage {
-    color: rgba(255, 255, 255, 0.6);
+    .noFilterMessage {
+    color: #666666;
   }
-  
+
   .noDataMessage {
-    color: rgba(239, 68, 68, 0.8);
+    color: #dc3545;
   }
   
   // Trip metrics grid
@@ -194,10 +197,10 @@
   .columnHeader {
     font-size: 14px;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.95);
+    color: #333333;
     margin-bottom: 10px;
     padding-bottom: 5px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #e0e0e0;
   }
   
   // Metric styling
@@ -208,35 +211,35 @@
     font-size: 13px;
     
     span:first-child {
-      color: rgba(255, 255, 255, 0.8);
+      color: #666666;
     }
     
     span:last-child {
       font-weight: 500;
-      color: rgba(255, 255, 255, 1);
+      color: #333333;
     }
   }
   
   .totalMetric {
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid #e0e0e0;
     
     span:first-child {
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.7);
+      color: #666666;
     }
     
     span:last-child {
       font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
+      color: #333333;
     }
   }
   
   // Value styling
   .highlight {
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: #333333;
   }
   
   .positive {
@@ -251,9 +254,9 @@
 
   // Beautiful Expense section styling
   .expensesSection {
-    background: rgba(255, 255, 255, 0.05);
+    background: #ffffff;
     border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e0e0e0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     padding: 4px;
     margin-top: 4px;
@@ -271,13 +274,13 @@
     align-items: center;
     padding: 2px 6px;
     margin-bottom: 1px;
-    background: rgba(255, 255, 255, 0.05);
+    background: #ffffff;
     border-radius: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e0e0e0;
     transition: all 0.2s ease;
     
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: #f8f9fa;
       transform: translateY(-1px);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
@@ -288,7 +291,7 @@
   }
   
   .expenseTitle {
-    color: rgba(255, 255, 255, 0.7);
+    color: #333333;
     font-size: 14px;
     font-weight: 600;
     flex: 1;
@@ -296,7 +299,7 @@
     // Add icon-like styling for count
     .expenseCount {
       display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
+      background: #6c757d;
       color: white;
       border-radius: 6px;
       padding: 1px 3px;
@@ -309,7 +312,7 @@
   }
   
   .expenseAmount {
-    color: rgba(255, 255, 255, 0.9);
+    color: #333333;
     font-weight: 600;
     font-size: 14px;
     font-family: 'Monaco', 'Menlo', monospace;
@@ -323,7 +326,7 @@
     align-items: center;
     padding: 3px 6px;
     margin: 3px -4px -4px -4px;
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 0 0 4px 4px;
     font-weight: 600;
@@ -336,7 +339,7 @@
     }
     
     span:last-child {
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.95);
       font-size: 14px;
       font-family: 'Monaco', 'Menlo', monospace;
     }
@@ -363,7 +366,7 @@
   .columnHeader {
     font-size: 20px;
     font-weight: 600;
-    color: #ffffff;
+    color: #333333;
     margin-bottom: 20px;
     text-align: center;
     position: relative;
@@ -488,7 +491,7 @@
 
   .tripCounter {
     font-size: 13px;
-    color: #6c757d;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
     margin-bottom: 8px;
     font-weight: 500;
@@ -505,7 +508,7 @@
     font-size: 12px;
     border: 1px solid #ced4da;
     border-radius: 4px;
-    background-color: white;
+    background-color: #ffffff;
     color: #495057;
     cursor: pointer;
     transition: all 0.2s;
@@ -596,10 +599,10 @@
   }
 
   .keyMetric {
-    background: rgba(255, 255, 255, 0.05);
+    background: #ffffff;
     padding: 14px;
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e0e0e0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
@@ -617,7 +620,7 @@
   .metricLabel {
     display: block;
     font-size: 12px;
-    color: rgba(255, 255, 255, 0.8);
+    color: #666666;
     font-weight: 500;
     margin-bottom: 6px;
     text-transform: uppercase;
@@ -630,7 +633,7 @@
     gap: 6px;
     font-size: 16px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 1);
+    color: #333333;
     margin-bottom: 4px;
     flex-wrap: wrap; // Allow wrapping if needed
   }
@@ -640,17 +643,17 @@
     align-items: center;
     gap: 4px;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.8);
+    color: #666666;
     flex-wrap: wrap; // Allow wrapping if needed
   }
 
   .arrow {
-    color: rgba(255, 255, 255, 0.7);
+    color: #888888;
     font-weight: normal;
   }
 
   .separator {
-    color: rgba(255, 255, 255, 0.7);
+    color: #888888;
     font-weight: normal;
   }
 
