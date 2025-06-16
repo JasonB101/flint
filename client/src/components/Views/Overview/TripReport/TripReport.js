@@ -589,6 +589,7 @@ const TripReport = ({ items, expenses }) => {
                   disabled={currentTripIndex === allTrips.length - 1}
                   className={Styles.navButton}
                   title="Previous trip (older)"
+                  style={{ padding: '4px 8px', fontSize: '12px' }}
                 >
                   ← Prev
                 </button>
@@ -597,6 +598,7 @@ const TripReport = ({ items, expenses }) => {
                   disabled={currentTripIndex === 0}
                   className={Styles.navButton}
                   title="Next trip (newer)"
+                  style={{ padding: '4px 8px', fontSize: '12px' }}
                 >
                   Next →
                 </button>
@@ -604,6 +606,7 @@ const TripReport = ({ items, expenses }) => {
                   onClick={resetToMostRecent}
                   className={Styles.navButton}
                   title="Go to most recent trip"
+                  style={{ padding: '4px 8px', fontSize: '12px' }}
                 >
                   Latest
                 </button>
@@ -668,29 +671,24 @@ const TripReport = ({ items, expenses }) => {
 
         {/* Right side - Summary info */}
         {metrics.tripTotalItems > 0 && (
-          <div className={Styles.tripSummary}>
-            <div className={Styles.summaryHeader}>
-              Trip Summary: {startDate.toLocaleDateString()} -{" "}
-              {endDate.toLocaleDateString()}
-              {metrics.tripLocations && (
-                <div className={Styles.locationsContainer}>
-                  <span className={Styles.locationsLabel}>Locations:</span>
-                  <div className={Styles.locationBadges}>
-                    {metrics.tripLocations.split(" - ").map((location, index) => (
-                      <span
-                        key={index}
-                        className={`${Styles.locationBadge} ${
-                          selectedLocations.has(location.trim()) ? Styles.locationSelected : ''
-                        }`}
-                        onClick={() => handleLocationClick(location.trim())}
-                      >
-                        {location.trim()}
-                      </span>
-                    ))}
-                  </div>
+          <div className={Styles.tripSummary} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            {metrics.tripLocations && (
+              <div className={Styles.locationsContainer}>
+                <div className={Styles.locationBadges}>
+                  {metrics.tripLocations.split(" - ").map((location, index) => (
+                    <span
+                      key={index}
+                      className={`${Styles.locationBadge} ${
+                        selectedLocations.has(location.trim()) ? Styles.locationSelected : ''
+                      }`}
+                      onClick={() => handleLocationClick(location.trim())}
+                    >
+                      {location.trim()}
+                    </span>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Key Metrics Grid */}
             <div className={Styles.keyMetricsGrid}>
@@ -772,7 +770,7 @@ const TripReport = ({ items, expenses }) => {
             No items or expenses found in the selected date range.
           </div>
         ) : (
-          <div className={Styles.expensesSection}>
+          <div className={Styles.keyMetric}>
             <h3 className={Styles.columnHeader}>Expense Breakdown</h3>
             <div className={Styles.expenseList}>
               {metrics.groupedExpenses.length === 0 ? (
