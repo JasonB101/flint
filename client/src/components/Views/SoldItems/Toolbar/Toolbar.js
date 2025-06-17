@@ -4,7 +4,7 @@ import { Button } from "react-bootstrap"
 
 
 const Toolbar = (props) => {
-  const { searchTerm, changeSearchTerm, items, ebayListings = [], setToggleSummaryModal } = props
+  const { searchTerm, changeSearchTerm, items, ebayListings = [], setToggleSummaryModal, timeFilter, setTimeFilter } = props
   const soldDetails = assembleSoldInfo(items, ebayListings)
   const {
     soldAmount,
@@ -20,12 +20,25 @@ const Toolbar = (props) => {
 
   return (
     <div className={Styles.wrapper}>
-      <input
-        onChange={(e) => changeSearchTerm(e.target.value.trim())}
-        type="text"
-        value={searchTerm}
-        placeholder={"Search Sold Items"}
-      />
+      <div className={Styles.leftColumn}>
+        <input
+          onChange={(e) => changeSearchTerm(e.target.value.trim())}
+          type="text"
+          value={searchTerm}
+          placeholder={"Search Sold Items"}
+        />
+        <select 
+          value={timeFilter} 
+          onChange={(e) => setTimeFilter(e.target.value)}
+          className={Styles.timeFilter}
+        >
+          <option value="thisyear">This Year</option>
+          <option value="12months">Last 12 Months</option>
+          <option value="6months">Last 6 Months</option>
+          <option value="all">All Time</option>
+        </select>
+      </div>
+      <div className={Styles.rightSection}>
       <h5>
         Total Sold
         <span>{soldAmount}</span>
@@ -64,8 +77,9 @@ const Toolbar = (props) => {
           <span className={Styles.returnedBadge}>{returnedCount}</span>
         </h5>
       )}
-      <div className="spacer"></div>
-      <Button onClick={() => setToggleSummaryModal(true)}>Summary</Button>
+        <div className="spacer"></div>
+        <Button onClick={() => setToggleSummaryModal(true)}>Summary</Button>
+      </div>
     </div>
   )
 }

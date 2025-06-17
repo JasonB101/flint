@@ -1,13 +1,40 @@
 .wrapper {
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
+    gap: 20px;
     padding: 16px 20px;
     align-items: stretch;
     
     @media (max-width: 1200px) {
-        gap: 12px;
+        gap: 16px;
         padding: 12px 16px;
+    }
+    
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 0 0 auto;
+    
+    @media (max-width: 768px) {
+        flex: 1;
+    }
+}
+
+.rightSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: stretch;
+    flex: 1;
+    
+    @media (max-width: 1200px) {
+        gap: 12px;
     }
     
     @media (max-width: 768px) {
@@ -17,8 +44,8 @@
 }
 
 // Search Input
-.wrapper input[type=text] {
-    flex: 0 0 240px;
+.leftColumn input[type=text] {
+    width: 240px;
     height: 44px;
     padding: 12px 16px;
     font-size: 14px;
@@ -43,19 +70,50 @@
     }
     
     @media (max-width: 768px) {
-        flex: 1 1 auto;
+        width: 100%;
+    }
+}
+
+// Time Filter Dropdown
+.timeFilter {
+    width: 240px;
+    height: 44px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #26303f;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    
+    &:focus {
+        outline: none;
+        border-color: #26303f;
+        box-shadow: 0 4px 12px rgba(38, 48, 63, 0.15);
+        transform: translateY(-1px);
+    }
+    
+    &:hover {
+        border-color: #26303f;
+    }
+    
+    @media (max-width: 768px) {
+        width: 100%;
     }
 }
 
 // Metric Cards
-.wrapper h5 {
+.rightSection h5 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background: white;
     border-radius: 8px;
-    padding: 12px 16px;
+    padding: 8px 12px;
     margin: 0;
     min-width: 110px;
     border: 1px solid #e9ecef;
@@ -91,7 +149,7 @@
     
     @media (max-width: 1200px) {
         min-width: 90px;
-        padding: 10px 12px;
+        padding: 6px 10px;
         font-size: 10px;
     }
     
@@ -102,24 +160,24 @@
 }
 
 // Metric Values
-.wrapper span {
+.rightSection span {
     display: block;
     font-size: 16px;
     font-weight: 700;
     color: #26303f;
     font-family: 'Monaco', 'Menlo', monospace;
-    margin: 6px 0 0 0;
+    margin: 4px 0 0 0;
     line-height: 1;
     
     @media (max-width: 1200px) {
         font-size: 14px;
-        margin: 4px 0 0 0;
+        margin: 2px 0 0 0;
     }
 }
 
 // Special styling for profit metrics only
-.wrapper h5:nth-child(4) span { color: #28a745; } // Profit
-.wrapper h5:nth-child(8) span { color: #28a745; } // Avg Profit
+.rightSection h5:nth-child(4) span { color: #28a745; } // Profit
+.rightSection h5:nth-child(8) span { color: #28a745; } // Avg Profit
 
 // Returned Items Alert
 .returnedAlert {
@@ -149,7 +207,7 @@
 }
 
 // Summary Button
-.wrapper button {
+.rightSection button {
     flex: 0 0 auto;
     height: 44px;
     padding: 12px 24px;
@@ -184,7 +242,7 @@
 }
 
 // Spacer (flex-grow for spacing)
-.wrapper .spacer {
+.rightSection .spacer {
     flex: 1;
     min-width: 20px;
     

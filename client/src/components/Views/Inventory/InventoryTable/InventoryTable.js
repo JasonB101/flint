@@ -95,7 +95,10 @@ const InventoryTable = (props) => {
     let rowStyle = {}
     if (hasNoImages && listed) {
       // Red background for listed items with no images
-      rowStyle = { backgroundColor: "#ffebee" }
+      rowStyle = { 
+        backgroundColor: "#ffcdd2",
+        border: "2px solid #f44336"
+      }
     } else if (unlistedItems.length > 0 && unlistedItems.indexOf(ebayId) !== -1) {
       // Yellow-green background for unlisted items
       rowStyle = { backgroundColor: "#e3f385" }

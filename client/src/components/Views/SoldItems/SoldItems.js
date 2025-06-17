@@ -14,10 +14,44 @@ const SoldItems = (props) => {
     user,
   } = props
   const [soldItemsSearchTerm, changeSearchTerm] = useState("")
-  const [soldItems] = useState(items.filter((x) => x.sold === true))
-  const [itemsToShow, filterItems] = useState(soldItems)
+  const [timeFilter, setTimeFilter] = useState("thisyear") // "6months", "12months", "thisyear", "all"
+  const [soldItems, setSoldItems] = useState([])
+  const [itemsToShow, filterItems] = useState([])
   const [toggleSummaryModal, setToggleSummaryModal] = useState(false)
 
+  // Filter items based on time range
+  useEffect(() => {
+    const allSoldItems = items.filter((x) => x.sold === true)
+    
+    const now = new Date()
+    let filteredByTime = allSoldItems
+    
+    if (timeFilter === "6months") {
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(now.getMonth() - 6)
+      filteredByTime = allSoldItems.filter(item => {
+        const saleDate = new Date(item.dateSold)
+        return saleDate >= sixMonthsAgo
+      })
+    } else if (timeFilter === "12months") {
+      const twelveMonthsAgo = new Date()
+      twelveMonthsAgo.setFullYear(now.getFullYear() - 1)
+      filteredByTime = allSoldItems.filter(item => {
+        const saleDate = new Date(item.dateSold)
+        return saleDate >= twelveMonthsAgo
+      })
+    } else if (timeFilter === "thisyear") {
+      const yearStart = new Date(now.getFullYear(), 0, 1) // January 1st of current year
+      filteredByTime = allSoldItems.filter(item => {
+        const saleDate = new Date(item.dateSold)
+        return saleDate >= yearStart
+      })
+    }
+    
+    setSoldItems(filteredByTime)
+  }, [items, timeFilter])
+
+  // Filter by search term
   useEffect(() => {
     if (soldItemsSearchTerm === "") {
       filterItems(soldItems)
@@ -48,6 +82,8 @@ const SoldItems = (props) => {
             items={soldItems}
             ebayListings={ebayListings}
             setToggleSummaryModal={setToggleSummaryModal}
+            timeFilter={timeFilter}
+            setTimeFilter={setTimeFilter}
           />
         </div>
         
