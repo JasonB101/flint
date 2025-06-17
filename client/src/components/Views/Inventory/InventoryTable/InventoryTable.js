@@ -85,18 +85,26 @@ const InventoryTable = (props) => {
       _id,
       expectedProfit,
       ebayId,
+      imgUrls,
     } = itemObject
+
+    // Check if item has no images
+    const hasNoImages = !imgUrls || imgUrls.length === 0
+
+    // Determine row styling - prioritize no images (red) over unlisted (yellow-green)
+    let rowStyle = {}
+    if (hasNoImages && listed) {
+      // Red background for listed items with no images
+      rowStyle = { backgroundColor: "#ffebee" }
+    } else if (unlistedItems.length > 0 && unlistedItems.indexOf(ebayId) !== -1) {
+      // Yellow-green background for unlisted items
+      rowStyle = { backgroundColor: "#e3f385" }
+    }
 
     return (
       <tr
         key={_id}
-        style={
-          unlistedItems.length > 0
-            ? unlistedItems.indexOf(ebayId) !== -1
-              ? { backgroundColor: "#e3f385" }
-              : {}
-            : {}
-        }
+        style={rowStyle}
       >
         <td className={Styles["titleTd"]}>
           <span className={Styles["item-options"]}>

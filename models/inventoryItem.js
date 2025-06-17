@@ -78,6 +78,10 @@ const inventoryItemSchema = new Schema({
     default: null,
   },
   imgUrl: String,
+  imgUrls: {
+    type: [String],
+    default: []
+  },
   expectedProfit: {
     type: Number,
     default: 0,

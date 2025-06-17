@@ -273,11 +273,14 @@ const InventorySummaryModal = ({ inventoryItems, soldItems = [], setToggleInvent
           totalPurchaseCost: 0,
           validSoldCount: 0,
           allTitles: new Set(),
+          firstItem: item, // Store first item for image reference
+          allItems: [], // Store all items in this group
         }
       }
       
       // Add this title to the set of titles for this group
       summary[partNo].allTitles.add(item.title)
+      summary[partNo].allItems.push(item)
       summary[partNo].totalPulled += 1
       
       if (item.status === 'inventory') {
@@ -315,6 +318,35 @@ const InventorySummaryModal = ({ inventoryItems, soldItems = [], setToggleInvent
           displayTitle += ` (${item.allTitles.size} variants)`
         }
 
+        // Try to find the best image from the group
+        // Prioritize inventory items over sold items for images
+        let bestImageUrl = null
+        
+        // First, look for inventory items with images
+        const inventoryItems = item.allItems?.filter(itm => itm.status === 'inventory') || [item.firstItem]
+        for (const itm of inventoryItems) {
+          if (itm?.imgUrls?.[0]) {
+            bestImageUrl = itm.imgUrls[0]
+            break
+          }
+        }
+        
+        // If no inventory item has an image, look at sold items
+        if (!bestImageUrl) {
+          const soldItems = item.allItems?.filter(itm => itm.status === 'sold') || []
+          for (const itm of soldItems) {
+            if (itm?.imgUrls?.[0]) {
+              bestImageUrl = itm.imgUrls[0]
+              break
+            }
+          }
+        }
+        
+        // Fallback to first item
+        if (!bestImageUrl && item.firstItem?.imgUrls?.[0]) {
+          bestImageUrl = item.firstItem.imgUrls[0]
+        }
+
         return {
           partNo: displayPartNo,
           title: displayTitle,
@@ -325,6 +357,7 @@ const InventorySummaryModal = ({ inventoryItems, soldItems = [], setToggleInvent
           avgProfit: Math.floor(avgProfit),
           restockUrgency: restockUrgency,
           isSyntheticPartNo: item.isSyntheticPartNo,
+          imageUrl: bestImageUrl,
         }
       })
   }
@@ -417,13 +450,30 @@ const InventorySummaryModal = ({ inventoryItems, soldItems = [], setToggleInvent
                 <th onClick={() => requestSort("avgPurchasePrice")}>Avg Purchase Price</th>
                 <th onClick={() => requestSort("avgProfit")}>Avg Profit</th>
                 <th onClick={() => requestSort("restockUrgency")}>Restock Status</th>
+                <th>Image</th>
               </tr>
             </thead>
             <tbody>
               {summaryData.map((item) => (
                 <tr key={item.partNo}>
-                  <td style={{ textAlign: "left" }}>{item.partNo}</td>
-                  <td style={{ textAlign: "left" }}>{item.title}</td>
+                  <td style={{ 
+                    textAlign: "left",
+                    maxWidth: "120px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }} title={item.partNo}>
+                    {item.partNo}
+                  </td>
+                  <td style={{ 
+                    textAlign: "left",
+                    maxWidth: "422px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                  }} title={item.title}>
+                    {item.title}
+                  </td>
                   <td style={{ 
                     textAlign: "center",
                     color: item.currentInventory === 0 ? '#dc3545' : 
@@ -441,6 +491,34 @@ const InventorySummaryModal = ({ inventoryItems, soldItems = [], setToggleInvent
                            item.restockUrgency === "MODERATE" ? '#ffc107' : '#28a745'
                   }}>
                     {item.restockUrgency}
+                  </td>
+                  <td style={{ textAlign: "center", padding: "8px" }}>
+                    {item.imageUrl ? (
+                      <img 
+                        src={item.imageUrl} 
+                        alt="Part" 
+                        style={{ 
+                          width: "72px", 
+                          height: "72px", 
+                          objectFit: "cover", 
+                          borderRadius: "4px" 
+                        }} 
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: "72px", 
+                        height: "72px", 
+                        backgroundColor: "#f0f0f0", 
+                        borderRadius: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
+                        color: "#666"
+                      }}>
+                        No Image
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
