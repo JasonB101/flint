@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import Styles from "./ItemOptions.module.scss"
 
-const ItemOptions = ({setEditItem, itemObject}) => {
+const ItemOptions = ({setEditItem, itemObject, deleteInventoryItem, wasteInventoryItem}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [action, setAction] = useState(null) // To track which action is selected
   const modalRef = useRef(null)
@@ -48,8 +48,14 @@ const ItemOptions = ({setEditItem, itemObject}) => {
         console.log("Revise clicked")
         break
       case "waste":
-        // Logic for removing
-        console.log("waste clicked")
+        if (window.confirm(`Are you sure you want to mark "${itemObject.title}" as waste? This will record it as a loss in your profit calculations.`)) {
+          wasteInventoryItem(itemObject._id)
+        }
+        break
+      case "remove":
+        if (window.confirm(`Are you sure you want to completely remove "${itemObject.title}"? This will permanently delete it from the database. If it has an eBay listing, the listing will be ended first.`)) {
+          deleteInventoryItem(itemObject._id)
+        }
         break
       case "relist":
         // Logic for relisting
@@ -73,6 +79,7 @@ const ItemOptions = ({setEditItem, itemObject}) => {
           <p onClick={() => handleAction("copy")}>Copy</p>
           <p onClick={() => handleAction("relist")}>Relist</p>
           <p onClick={() => handleAction("waste")}>Waste</p>
+          <p onClick={() => handleAction("remove")}>Remove</p>
         </div>
       )}
     </div>

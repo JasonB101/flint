@@ -11,7 +11,7 @@ import EditItemModal from "./EditItemModal/EditItemModal"
 const InventoryTable = (props) => {
   // const storeData = useContext(storeContext);
   // const { updateUnlisted } = storeData
-  const { inventoryList: inventoryItems, ebayListings, editInventoryItem } = props
+  const { inventoryList: inventoryItems, ebayListings, editInventoryItem, deleteInventoryItem, wasteInventoryItem } = props
   const currencyFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -111,7 +111,7 @@ const InventoryTable = (props) => {
       >
         <td className={Styles["titleTd"]}>
           <span className={Styles["item-options"]}>
-            <ItemOptions setEditItem={setEditItem} itemObject={itemObject} />
+            <ItemOptions setEditItem={setEditItem} itemObject={itemObject} deleteInventoryItem={deleteInventoryItem} wasteInventoryItem={wasteInventoryItem} />
           </span>{" "}
           <span 
             className={Styles["titleText"]}

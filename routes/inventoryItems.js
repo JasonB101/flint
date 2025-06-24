@@ -244,11 +244,110 @@ inventoryRouter.put("/:id", (req, res, next) => {
   )
 })
 
-inventoryRouter.delete("/:id", (req, res, next) => {
-  InventoryItem.findByIdAndDelete({ _id: req.params.id }, (err, item) => {
-    if (err) res.status(503).send({ success: false, message: "Server Error" })
-    else res.send({ success: true })
-  })
+inventoryRouter.delete("/:id", async (req, res, next) => {
+  const user = await getUserObject(req.auth._id)
+  const { _id: userId, ebayToken: ebayAuthToken } = user
+  const itemId = req.params.id
+
+  try {
+    // First, find the item to check if it has an eBay listing
+    const item = await InventoryItem.findOne({ _id: itemId, userId: userId })
+    
+    if (!item) {
+      return res.status(404).send({ success: false, message: "Item not found" })
+    }
+
+    const { ebayId, title, sku } = item
+
+    // Check if item has an eBay listing that needs to be ended
+    if (ebayId && ebayId.trim() !== "") {
+      console.log(`Ending eBay listing ${ebayId} for item: ${title} (SKU: ${sku})`)
+      
+      const { endListing } = require("../lib/ebayMethods/ebayApi")
+      const listingResult = await endListing(ebayAuthToken, ebayId)
+      
+      if (!listingResult.success) {
+        console.log(`Failed to end listing ${ebayId}: ${listingResult.message}`)
+        return res.status(500).send({ 
+          success: false, 
+          message: `Failed to end eBay listing: ${listingResult.message}` 
+        })
+      }
+      
+      console.log(`Successfully ended eBay listing ${ebayId}`)
+    } else {
+      console.log(`No eBay listing found for item: ${title} (SKU: ${sku}), proceeding with removal`)
+    }
+
+    // Delete the item from the database
+    await InventoryItem.findByIdAndDelete(itemId)
+    
+    console.log(`Successfully removed item: ${title} (SKU: ${sku})`)
+    res.send({ success: true, message: "Item removed successfully" })
+    
+  } catch (error) {
+    console.error("Error removing item:", error)
+    res.status(500).send({ success: false, message: "Server error during removal" })
+  }
+})
+
+// Add waste functionality for inventory items
+inventoryRouter.put("/wasteItem/:id", async (req, res, next) => {
+  const user = await getUserObject(req.auth._id)
+  const { _id: userId, ebayToken: ebayAuthToken } = user
+  const itemId = req.params.id
+
+  try {
+    const item = await InventoryItem.findOne({ _id: itemId, userId: userId })
+    
+    if (!item) {
+      return res.status(404).send({ success: false, message: "Item not found" })
+    }
+
+    const { ebayId, title, sku } = item
+
+    // Check if item has an eBay listing that needs to be ended
+    if (ebayId && ebayId.trim() !== "") {
+      console.log(`Ending eBay listing ${ebayId} for waste item: ${title} (SKU: ${sku})`)
+      
+      const { endListing } = require("../lib/ebayMethods/ebayApi")
+      const listingResult = await endListing(ebayAuthToken, ebayId)
+      
+      if (!listingResult.success) {
+        console.log(`Failed to end listing ${ebayId}: ${listingResult.message}`)
+        return res.status(500).send({ 
+          success: false, 
+          message: `Failed to end eBay listing: ${listingResult.message}` 
+        })
+      }
+      
+      console.log(`Successfully ended eBay listing ${ebayId} for waste item`)
+    } else {
+      console.log(`No eBay listing found for waste item: ${title} (SKU: ${sku})`)
+    }
+
+    // Calculate negative profit for waste (lost the purchase price)
+    const wasteUpdates = {
+      listed: false,
+      sold: false, // Never sold, just wasted
+      status: "waste",
+      profit: -item.purchasePrice, // Negative because money was spent but no revenue
+      dateWasted: new Date().toLocaleDateString(), // Mark when it was wasted
+    }
+
+    const updatedItem = await InventoryItem.findByIdAndUpdate(
+      itemId, 
+      wasteUpdates, 
+      { new: true }
+    )
+
+    console.log(`Marked item as waste: ${item.title} (SKU: ${item.sku})`)
+    res.send({ success: true, result: updatedItem })
+    
+  } catch (error) {
+    console.error("Error wasting item:", error)
+    res.status(500).send({ success: false, message: "Server error during waste operation" })
+  }
 })
 
 async function getUserObject(userId) {

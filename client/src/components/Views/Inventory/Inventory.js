@@ -8,7 +8,7 @@ import InventorySummaryModal from "./InventorySummaryModal/InventorySummaryModal
 
 const Inventory = (props) => {
 
-    const { items, ebayListings, getEbayListing, submitNewItem, newListings, editInventoryItem, linkItem, user: {averageShippingCost, ebayFeePercent}, getActiveListings, getCompatibility } = props;
+    const { items, ebayListings, getEbayListing, submitNewItem, newListings, editInventoryItem, deleteInventoryItem, wasteInventoryItem, linkItem, user: {averageShippingCost, ebayFeePercent}, getActiveListings, getCompatibility } = props;
     
     // Extract sold items from the items array
     const soldItems = items.filter(item => item.sold === true);
@@ -74,6 +74,8 @@ const Inventory = (props) => {
                 <div className={Styles.tableSection}>
                     <InventoryTable 
                         editInventoryItem={editInventoryItem} 
+                        deleteInventoryItem={deleteInventoryItem}
+                        wasteInventoryItem={wasteInventoryItem}
                         openLinkModal={openLinkModal} 
                         ebayListings={ebayListings} 
                         inventoryList={itemsToShow} 

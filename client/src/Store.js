@@ -524,6 +524,50 @@ const Store = (props) => {
       .catch((err) => console.log("Return Item Failed:", err.message))
   }
 
+  function deleteInventoryItem(itemId) {
+    userAxios
+      .delete(`/api/inventoryItems/${itemId}`)
+      .then((res) => {
+        if (res.data.success) {
+          // Remove the item from state
+          const updatedItems = items.filter((item) => item._id !== itemId)
+          changeState((prevState) => ({
+            ...prevState,
+            items: updatedItems,
+          }))
+        } else {
+          alert("Failed to remove item: " + res.data.message)
+        }
+      })
+      .catch((err) => {
+        console.log("Delete Item Failed:", err.message)
+        alert("Failed to remove item. Please try again.")
+      })
+  }
+
+  function wasteInventoryItem(itemId) {
+    userAxios
+      .put(`/api/inventoryItems/wasteItem/${itemId}`)
+      .then((res) => {
+        if (res.data.success) {
+          // Update the item in state
+          const updatedItems = items.map((item) => 
+            item._id === itemId ? res.data.result : item
+          )
+          changeState((prevState) => ({
+            ...prevState,
+            items: updatedItems,
+          }))
+        } else {
+          alert("Failed to mark item as waste: " + res.data.message)
+        }
+      })
+      .catch((err) => {
+        console.log("Waste Item Failed:", err.message)
+        alert("Failed to mark item as waste. Please try again.")
+      })
+  }
+
   function editInventoryItem(itemObject) {
     userAxios
       .put("/api/inventoryItems/editInventoryItem", itemObject)
@@ -694,6 +738,8 @@ const Store = (props) => {
         // newListings,
         editInventoryItem,
         returnInventoryItem,
+        deleteInventoryItem,
+        wasteInventoryItem,
         // linkItem,
         syncWithEbay,
         setEbayToken,
