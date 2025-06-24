@@ -19,7 +19,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: visible;
   padding: 0;
   z-index: 1;
 }
@@ -87,6 +88,10 @@
   &.above {
     transform: translate(-50%, -100%);
   }
+  
+  &.below {
+    transform: translate(-50%, 0%);
+  }
 }
 
 .tooltipLabel {
@@ -101,98 +106,12 @@
   color: #fff;
 }
 
-.axisTitle {
-  margin-top: 15px;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #495057;
-  font-weight: 600;
-  text-align: center;
-  max-width: 100%;
-  word-wrap: break-word;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative;
-  
-  &::before {
-    content: '📊';
-    font-size: 16px;
-    margin-right: 8px;
-    display: inline-block;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 2px;
-    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
-    border-radius: 1px;
-  }
-}
-
-// Responsive design
-@media (max-width: 1200px) {
-  .chartContainer {
-    padding: 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .wrapper {
-    padding: 5px 0;
-  }
-  
-  .chartContainer {
-    padding: 0;
-    overflow: visible;
-  }
-  
-  .chart {
-    min-width: 400px;
-  }
-  
-  .chartTitle {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-  
-  .tooltip {
-    font-size: 11px;
-    padding: 6px 10px;
-    
-    .tooltipValue {
-      font-size: 12px;
-    }
-  }
-  
-  .axisTitle {
-    font-size: 12px;
-    margin-top: 8px;
-    padding: 8px 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .chartContainer {
-    padding: 0;
-  }
-  
-  .chart {
-    min-width: 350px;
-  }
-  
-  .tooltip {
-    font-size: 10px;
-    padding: 4px 8px;
-    
-    .tooltipValue {
-      font-size: 11px;
-    }
-  }
-}
+.noData {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #6c757d;
+  font-size: 16px;
+  font-style: italic;
+} 

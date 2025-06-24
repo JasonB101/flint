@@ -1,8 +1,21 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import Styles from "./Overview.module.scss"
 import TripReport from "./TripReport/TripReport"
+import CashFlowChart from "./CashFlowChart/CashFlowChart"
+import {
+  YearCashFlowChart,
+  YearCashFlowChartByWeek,
+  YearCashFlowChartByMonth,
+} from "./CashFlowChart/ChartTemplates/chartOptions"
 
 const Overview = ({ items, expenses }) => {
+  const [dateType, setDateType] = useState("week")
+  const [year, setYear] = useState(new Date().getFullYear())
+
+  // Safety checks
+  const safeItems = items || []
+  const safeExpenses = expenses || []
+
   // Currency formatter
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("en-US", {
@@ -12,12 +25,74 @@ const Overview = ({ items, expenses }) => {
     }).format(value)
   }
 
+  // Get available years from items and expenses
+  const availableYears = [...new Set([
+    ...safeItems.filter(item => item.dateSold).map(item => {
+      try {
+        return new Date(item.dateSold).getFullYear()
+      } catch (e) {
+        return null
+      }
+    }),
+    ...safeItems.filter(item => item.datePurchased).map(item => {
+      try {
+        return new Date(item.datePurchased).getFullYear()
+      } catch (e) {
+        return null
+      }
+    }),
+    ...safeExpenses.map(expense => {
+      try {
+        return new Date(expense.date).getFullYear()
+      } catch (e) {
+        return null
+      }
+    })
+  ])].filter(year => year !== null).sort((a, b) => b - a)
+
+  // Ensure we have at least the current year
+  const finalAvailableYears = availableYears.length > 0 ? availableYears : [new Date().getFullYear()]
+
+  // Chart options based on selected period
+  const getCashFlowChartOptions = () => {
+          try {
+        switch (dateType) {
+          case "day":
+            return new YearCashFlowChart(year, safeItems, safeExpenses)
+          case "week":
+            return new YearCashFlowChartByWeek(year, safeItems, safeExpenses)
+          case "month":
+            return new YearCashFlowChartByMonth(year, safeItems, safeExpenses)
+          default:
+            return new YearCashFlowChartByWeek(year, safeItems, safeExpenses)
+        }
+    } catch (error) {
+      console.error('Error generating cash flow chart options:', error)
+      return {
+        title: { text: 'Cash Flow Chart' },
+        data: [{
+          dataPoints: []
+        }]
+      }
+    }
+  }
+
+  const renderPeriodButton = (period, label) => (
+    <button
+      key={period}
+      onClick={() => setDateType(period)}
+      className={`${Styles.periodButton} ${dateType === period ? Styles.active : ''}`}
+    >
+      {label}
+    </button>
+  )
+
   const metrics = useMemo(() => {
-    if (!items || !items.length) return null
+    if (!safeItems || !safeItems.length) return null
 
     // Separate active and sold items
-    const activeItems = items.filter((item) => item.listed && !item.sold)
-    const soldItems = items.filter((item) => item.sold)
+    const activeItems = safeItems.filter((item) => item.listed && !item.sold)
+    const soldItems = safeItems.filter((item) => item.sold)
 
     // Inventory metrics
     const inventoryValue = activeItems.reduce(
@@ -62,7 +137,7 @@ const Overview = ({ items, expenses }) => {
       : 0
 
     // Calculate expense total
-    const totalExpenses = expenses.reduce(
+    const totalExpenses = safeExpenses.reduce(
       (sum, expense) => sum + parseFloat(expense.amount || 0),
       0
     )
@@ -115,16 +190,42 @@ const Overview = ({ items, expenses }) => {
       netProfit: formatCurrency(netProfit),
       netProfitValue: netProfit,
     }
-  }, [items, expenses])
+  }, [safeItems, safeExpenses])
 
   if (!metrics) return <div className={Styles.loading}>Loading metrics...</div>
 
   return (
     <div className={Styles.overviewWrapper}>
 
+      {/* Cash Flow Chart Section */}
+      <div className={Styles.chartCard}>
+        <div className={Styles.chartHeader}>
+          <h2>💰 Cash Flow Overview</h2>
+          <div className={Styles.chartControls}>
+            <div className={Styles.periodSelector}>
+              {renderPeriodButton("day", "Daily")}
+              {renderPeriodButton("week", "Weekly")}
+              {renderPeriodButton("month", "Monthly")}
+            </div>
+            
+            <div className={Styles.yearSelector}>
+              <select 
+                value={year} 
+                onChange={(e) => setYear(Number(e.target.value))}
+                className={Styles.yearSelect}
+              >
+                {finalAvailableYears.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
-      {/* Trip Report Component */}
-      <TripReport items={items} expenses={expenses} />
+        <div className={Styles.chartContainer}>
+          <CashFlowChart options={getCashFlowChartOptions()} />
+        </div>
+      </div>
 
       {/* Business Metrics */}
       <div className={Styles.metricsGrid}>
@@ -222,6 +323,9 @@ const Overview = ({ items, expenses }) => {
           </div>
         </div>
       </div>
+
+      {/* Trip Report Component */}
+      <TripReport items={safeItems} expenses={safeExpenses} />
 
       {/* Add bottom padding */}
       <div className={Styles.bottomPadding}></div>

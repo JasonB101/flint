@@ -1,0 +1,447 @@
+// Modal Overlay
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+// Modal Content
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 95%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+// Modal Header
+.modalHeader {
+  background: linear-gradient(to right, #26303f 0%, #4a5568 100%);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  
+  h2 {
+    margin: 0;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  line-height: 1;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Modal Body
+.modalBody {
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+// Import all the existing TripReport styles but with modal-specific adjustments
+.tripReportHeader {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 0;
+  background: linear-gradient(to right, #26303f 0%, #4a5568 100%);
+  border-radius: 0;
+  padding: 16px 24px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+// Date filter container
+.dateFilterContainer {
+  flex: 0 0 240px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.datePickerGroup {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  
+  label {
+    width: 80px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-right: 8px;
+    font-weight: 500;
+  }
+}
+
+.datePicker {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 130px;
+  background: #ffffff;
+  color: #333333;
+  
+  &:focus {
+    border-color: #007bff;
+    outline: 0;
+    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+.highlightedDate {
+  background-color: #007bff !important;
+  color: white !important;
+  border-radius: 3px;
+}
+
+// Trip Navigation
+.tripNavigation {
+  margin-bottom: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tripCounter {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.tripNavButtons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.navButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Payoff Status
+.payoffStatusContainer {
+  margin-top: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.payoffStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.payoffSuccess {
+  color: #28a745;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.payoffPending {
+  color: #ffc107;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.payoffUnknown {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.checkmark, .clockIcon {
+  font-size: 0.8rem;
+}
+
+.payoffText {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.payoffDays {
+  font-weight: bold;
+  color: white;
+}
+
+// Trip summary styling
+.tripSummary {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+// Locations
+.locationsContainer {
+  margin-bottom: 8px;
+}
+
+.locationBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.locationBadge {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+}
+
+.locationSelected {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+// Key Metrics Grid
+.keyMetricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.keyMetric {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dualMetric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metricSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metricLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.metricValue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.metricSubtext {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.highlight {
+  color: #ffc107 !important;
+}
+
+.positive {
+  color: #28a745 !important;
+}
+
+.negative {
+  color: #dc3545 !important;
+}
+
+.arrow {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+}
+
+.separator {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.currentValue {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+// Trip report content
+.tripReportContent {
+  padding: 20px;
+}
+
+.noDataMessage {
+  padding: 20px;
+  text-align: center;
+  font-style: italic;
+  color: #dc3545;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.columnHeader {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.expenseList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.expenseItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.expenseTitle {
+  font-size: 16px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.expenseAmount {
+  font-size: 16px;
+  color: #212529;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+}
+
+.noExpenses {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+}
+
+.totalExpenses {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .modalContent {
+    width: 98%;
+    max-height: 95vh;
+  }
+  
+  .modalHeader {
+    padding: 12px 16px;
+    
+    h2 {
+      font-size: 18px;
+    }
+  }
+  
+  .modalBody {
+    padding: 16px;
+  }
+  
+  .tripReportHeader {
+    flex-direction: column;
+  }
+  
+  .keyMetricsGrid {
+    grid-template-columns: 1fr;
+  }
+} 

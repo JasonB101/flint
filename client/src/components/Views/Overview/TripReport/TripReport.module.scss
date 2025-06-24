@@ -17,6 +17,32 @@
     }
   }
   
+  // Clickable header for expanding/collapsing
+  .tripReportHeaderClickable {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+    padding: 4px;
+    border-radius: 4px;
+    margin: -4px -4px 8px -4px;
+    
+    &:hover {
+      background-color: #f8f9fa;
+    }
+    
+    h2 {
+      margin-bottom: 0;
+      border-bottom: none;
+      padding-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #333333;
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+  
   // Trip Report header layout
   .tripReportHeader {
     display: flex;
@@ -660,4 +686,55 @@
   .potential {
     color: #8b7cf6;
     font-weight: 600;
+  }
+
+  // Trip Report Button Container
+  .tripReportButton {
+    width: 100%;
+    padding: 8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    margin-bottom: 8px;
+  }
+
+  .openModalButton {
+    width: 100%;
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    color: white;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    &:hover {
+      background: linear-gradient(135deg, #4a5568 0%, #5a6b7d 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .tripReportButton {
+      padding: 6px;
+    }
+    
+    .openModalButton {
+      padding: 14px 20px;
+      font-size: 15px;
+    }
   }

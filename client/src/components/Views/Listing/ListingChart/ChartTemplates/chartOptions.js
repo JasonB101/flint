@@ -84,8 +84,18 @@ export class YearListingChartByWeek extends YearListingChart {
     super(year, items)
 
     Date.prototype.getWeek = function () {
-      var onejan = new Date(this.getFullYear(), 0, 1)
-      return Math.ceil(((this - onejan) / 86400000 + onejan.getDay()) / 7)
+      const onejan = new Date(this.getFullYear(), 0, 1);
+      const dayOfYear = Math.floor((this - onejan) / 86400000) + 1;
+      
+      // Adjust for Sunday start (getDay() returns 0 for Sunday)
+      const janFirst = onejan.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      const daysToFirstSunday = (7 - janFirst) % 7;
+      
+      if (dayOfYear <= daysToFirstSunday) {
+        return 1; // First partial week
+      }
+      
+      return Math.ceil((dayOfYear - daysToFirstSunday) / 7) + 1;
     }
 
     this.data = [
