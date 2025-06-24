@@ -1,8 +1,14 @@
 const mongoose = require('mongoose');
 const InventoryItem = require('./models/inventoryItem');
+const path = require("path");
 
-// Connect to MongoDB using hard-coded connection string
-mongoose.connect('mongodb+srv://jadmin:Wtf10101@cluster1.6bbc3.mongodb.net/heroku_jp04p0x6?retryWrites=true&w=majority', {
+// Load environment variables
+require("dotenv").config({
+  path: path.join(__dirname, ".env"),
+});
+
+// Connect to MongoDB using environment variable
+mongoose.connect(process.env.MONGO_ATLAS_CLUSTER1, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
