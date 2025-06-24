@@ -47,6 +47,13 @@ const userSchema = new Schema({
     ebayOAuthToken: String,
     ebayRefreshOAuthToken: String,
     OAuthActive: Boolean,
+    notificationSettings: {
+        type: Object,
+        default: {
+            milestones: true,
+            automaticReturns: true
+        }
+    }
 })
 
 userSchema.pre("save", function (next) {

@@ -87,7 +87,7 @@ const SoldTable = (props) => {
     const username = buyer ? buyer : "Unknown"
     
     // Check if this sold item is currently listed on eBay (potential return)
-    const isCurrentlyListed = ebayListings.some(listing => listing.sku === sku)
+    const isCurrentlyListed = ebayListings.some(listing => listing.SKU === sku || listing.sku === sku)
     
     return (
       <tr key={_id} className={isCurrentlyListed ? Styles.returnedItem : ""}>

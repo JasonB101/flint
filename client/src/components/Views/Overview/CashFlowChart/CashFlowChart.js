@@ -47,6 +47,10 @@ const CashFlowChart = ({ options }) => {
     adjustedMaxValue = 0;
   }
   
+  // Round to nearest 100
+  adjustedMaxValue = Math.ceil(adjustedMaxValue / 100) * 100;
+  adjustedMinValue = Math.floor(adjustedMinValue / 100) * 100;
+  
   const adjustedRange = adjustedMaxValue - adjustedMinValue;
   
   // Calculate the actual range needed, but keep zero-centered visualization

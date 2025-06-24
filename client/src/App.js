@@ -19,6 +19,7 @@ import CarPartHunter from "./components/Views/CarPartHunter/CarPartHunter"
 import OAuthCode from "./components/OAuth/OAuthCode"
 import Churn from "./components/Views/Churn/Churn"
 import SyncProgressIndicator from "./components/SyncProgressIndicator/SyncProgressIndicator"
+import Settings from "./components/Views/Settings/Settings"
 
 function App() {
   const storeData = useContext(storeContext)
@@ -127,6 +128,10 @@ function App() {
         <ProtectedRoute
           path="/car-parthunter"
           component={() => <CarPartHunter {...storeData} />}
+        />
+        <ProtectedRoute
+          path="/settings"
+          component={() => <Settings />}
         />
         <ProtectedRoute
           path="/verifyUserToken"

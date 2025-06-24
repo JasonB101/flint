@@ -109,7 +109,7 @@ function assembleSoldInfo(items, ebayListings = []) {
     soldObj.avgDaysListed += x.daysListed
     
     // Check if this sold item is currently listed on eBay (potential return)
-    if (ebayListings.some(listing => listing.sku === sku)) {
+    if (ebayListings.some(listing => listing.SKU === sku || listing.sku === sku)) {
       soldObj.returnedCount++
     }
   })

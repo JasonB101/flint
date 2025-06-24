@@ -101,6 +101,10 @@ const inventoryItemSchema = new Schema({
   },
   ebayFees: Number,
   additionalCosts: Array, //Return cost, 1st time shipping cost etc
+  automaticReturn: {
+    type: Boolean,
+    default: false, // false = manual return, true = automatic return/relist
+  },
   profit: Number,
   roi: Number,
   shipped: {

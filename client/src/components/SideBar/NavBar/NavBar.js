@@ -5,6 +5,29 @@ import Menu from "./Menu/Menu"
 
 const NavBar = ({fname}) => {
   const navMenu = {
+    items: {
+      title: "Items",
+      subMenu: [
+        <NavLink
+          key="inventory"
+          to="/inventory"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Inventory<div className="spacer"></div>
+        </NavLink>,
+        <NavLink
+          key="sold"
+          to="/reports/solditems"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Sold<div className="spacer"></div>
+        </NavLink>,
+      ],
+    },
     reports: {
       title: "Reports",
       subMenu: [
@@ -91,23 +114,7 @@ const NavBar = ({fname}) => {
 
   return (
     <div className={Styles.wrapper}>
-      <NavLink
-        to="/inventory"
-        activeStyle={{
-          backgroundColor: "#353a42",
-        }}
-      >
-        Inventory
-      </NavLink>
-      <NavLink
-        key="sold"
-        to="/reports/solditems"
-        activeStyle={{
-          backgroundColor: "#353a42",
-        }}
-      >
-        Sold<div className="spacer"></div>
-      </NavLink>
+      <Menu id="items" {...navMenu.items} />
       <NavLink
         to="/expenses"
         activeStyle={{
@@ -117,7 +124,7 @@ const NavBar = ({fname}) => {
         Expenses
       </NavLink>
       <Menu id="reports" {...navMenu.reports} />
-      <Menu id="tools" {...navMenu.tools} /> {/* Add Tools menu */}
+      <Menu id="tools" {...navMenu.tools} />
       <div className="spacer"></div>
     </div>
   )

@@ -46,6 +46,7 @@ app.use("/api/syncebay", require("./routes/syncEbay"))
 app.use("/api/ebay", require("./routes/ebay"))
 app.use("/api/milestones", require("./routes/milestones"))
 app.use("/api/notifications", require("./routes/notifications"))
+app.use("/api/user", require("./routes/user"))
 app.use("/auth", require("./routes/auth"))
 
 app.use((req, res, next) => {

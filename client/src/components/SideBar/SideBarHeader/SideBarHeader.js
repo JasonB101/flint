@@ -9,28 +9,23 @@ const SideBarHeader = (props) => {
         getNotifications, 
         getNotificationCount, 
         markNotificationAsViewed, 
-        markAllNotificationsAsViewed,
-        deleteNotification 
+        markAllNotificationsAsViewed
     } = useContext(storeContext);
     
     const [showUserDropdown, setShowUserDropdown] = useState(false);
-    const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+    const [showNotificationModal, setShowNotificationModal] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [notificationCount, setNotificationCount] = useState(0);
     const [hasMilestoneNotifications, setHasMilestoneNotifications] = useState(false);
     
     const userDropdownRef = useRef(null);
-    const notificationDropdownRef = useRef(null);
     const history = useHistory();
 
-    // Close dropdowns when clicking outside
+    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
                 setShowUserDropdown(false);
-            }
-            if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
-                setShowNotificationDropdown(false);
             }
         };
 
@@ -88,17 +83,22 @@ const SideBarHeader = (props) => {
         history.push('/auth/signin');
     };
 
-    const toggleUserDropdown = () => {
-        setShowUserDropdown(!showUserDropdown);
-        setShowNotificationDropdown(false);
+    const handleSettings = () => {
+        setShowUserDropdown(false);
+        history.push('/settings');
     };
 
-    const toggleNotificationDropdown = async () => {
-        setShowNotificationDropdown(!showNotificationDropdown);
+    const toggleUserDropdown = () => {
+        setShowUserDropdown(!showUserDropdown);
+        setShowNotificationModal(false);
+    };
+
+    const toggleNotificationModal = async () => {
+        setShowNotificationModal(!showNotificationModal);
         setShowUserDropdown(false);
         
-        // Only fetch full notifications when opening dropdown
-        if (!showNotificationDropdown) {
+        // Only fetch full notifications when opening modal
+        if (!showNotificationModal) {
             await fetchNotifications();
         }
     };
@@ -106,17 +106,15 @@ const SideBarHeader = (props) => {
     const handleNotificationClick = async (notification) => {
         if (!notification.isViewed) {
             await markNotificationAsViewed(notification._id);
-            // Update local state immediately for better UX
-            setNotifications(prev => prev.map(n => 
-                n._id === notification._id ? { ...n, isViewed: true } : n
-            ));
-            // Only fetch count, not full notifications again
+            // Remove from local state immediately (hide from modal)
+            setNotifications(prev => prev.filter(n => n._id !== notification._id));
+            // Update count
             await fetchNotificationCountOnly();
         }
         
         // If it's a milestone notification, show the congrats modal
         if (notification.type === 'newMilestone') {
-            setShowNotificationDropdown(false);
+            setShowNotificationModal(false);
             // Call the global function to show congrats modal
             if (window.showMilestoneCongrats) {
                 window.showMilestoneCongrats(notification);
@@ -126,21 +124,30 @@ const SideBarHeader = (props) => {
 
     const handleMarkAllAsViewed = async () => {
         await markAllNotificationsAsViewed();
-        // Update local state immediately
-        setNotifications(prev => prev.map(n => ({ ...n, isViewed: true })));
+        // Clear all notifications from modal
+        setNotifications([]);
         setNotificationCount(0);
         setHasMilestoneNotifications(false);
-        // No need to refetch - we already updated the state
     };
 
-    const handleDeleteNotification = async (notificationId, event) => {
-        event.stopPropagation();
-        await deleteNotification(notificationId);
-        // Update local state immediately
-        setNotifications(prev => prev.filter(n => n._id !== notificationId));
-        // Only fetch count to update badge
-        await fetchNotificationCountOnly();
+    const handleCopySku = async (sku, event) => {
+        event.stopPropagation(); // Prevent notification click
+        try {
+            await navigator.clipboard.writeText(sku);
+            // Could add a toast notification here if desired
+        } catch (error) {
+            console.error('Failed to copy SKU:', error);
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = sku;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
     };
+
+
 
     const formatNotificationMessage = (notification) => {
         // For milestone notifications, just show "Milestone!" without details
@@ -150,7 +157,10 @@ const SideBarHeader = (props) => {
         
         // For automatic return notifications
         if (notification.type === 'automaticReturn') {
-            return notification.data.message || `Return processed for SKU ${notification.data.sku}`;
+            const { data } = notification;
+            const itemTitle = data.itemTitle || `SKU ${data.sku}`;
+            
+            return itemTitle;
         }
         
         // For other notification types, show detailed message
@@ -187,6 +197,13 @@ const SideBarHeader = (props) => {
                             <div className={Styles.dropdown}>
                                 <button 
                                     className={Styles.dropdownItem}
+                                    onClick={handleSettings}
+                                >
+                                    <i className="material-icons">settings</i>
+                                    Settings
+                                </button>
+                                <button 
+                                    className={Styles.dropdownItem}
                                     onClick={handleSignOut}
                                 >
                                     <i className="material-icons">logout</i>
@@ -197,8 +214,8 @@ const SideBarHeader = (props) => {
                     </div>
 
                     {/* Notifications */}
-                    <div className={Styles.notificationWrapper} ref={notificationDropdownRef}>
-                        <div className={`${Styles.notificationIcon} ${notificationCount > 0 ? Styles.hasNotifications : ''} ${hasMilestoneNotifications ? Styles.hasMilestones : ''}`} onClick={toggleNotificationDropdown}>
+                    <div className={Styles.notificationWrapper}>
+                        <div className={`${Styles.notificationIcon} ${notificationCount > 0 ? Styles.hasNotifications : ''} ${hasMilestoneNotifications ? Styles.hasMilestones : ''}`} onClick={toggleNotificationModal}>
                             {notificationCount > 0 ? (
                                 <>
                                     <i className="material-icons">notifications_active</i>
@@ -208,61 +225,80 @@ const SideBarHeader = (props) => {
                                 <i className="material-icons">notifications</i>
                             )}
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {showNotificationModal && (
+                <div className={Styles.notificationModalOverlay} onClick={() => setShowNotificationModal(false)}>
+                    <div className={Styles.notificationModalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={Styles.notificationModalHeader}>
+                            <h2>🔔 Notifications</h2>
+                            <button className={Styles.closeButton} onClick={() => setShowNotificationModal(false)}>×</button>
+                        </div>
                         
-                        {showNotificationDropdown && (
-                            <div className={Styles.notificationDropdown}>
-                                <div className={Styles.notificationHeader}>
-                                    <span>Notifications</span>
-                                    {notifications.length > 0 && (
-                                        <button 
-                                            className={Styles.markAllBtn}
-                                            onClick={handleMarkAllAsViewed}
+                        <div className={Styles.notificationModalBody}>
+                            {notifications.length > 0 && (
+                                <div className={Styles.notificationActions}>
+                                    <button 
+                                        className={Styles.markAllViewedBtn}
+                                        onClick={handleMarkAllAsViewed}
+                                    >
+                                        Mark all as read
+                                    </button>
+                                </div>
+                            )}
+                            
+                            <div className={Styles.notificationModalList}>
+                                {notifications.length === 0 ? (
+                                    <div className={Styles.emptyNotifications}>
+                                        <i className="material-icons">notifications_none</i>
+                                        <span>No notifications yet</span>
+                                        <p>You'll see your milestone achievements and updates here</p>
+                                    </div>
+                                ) : (
+                                    notifications.map((notification) => (
+                                        <div 
+                                            key={notification._id}
+                                            className={`${Styles.notificationModalItem} ${!notification.isViewed ? Styles.unviewed : ''} ${notification.type === 'newMilestone' ? Styles.milestone : ''} ${notification.type === 'automaticReturn' ? Styles.automaticReturn : ''}`}
+                                            onClick={() => handleNotificationClick(notification)}
                                         >
-                                            Mark all read
-                                        </button>
-                                    )}
-                                </div>
-                                
-                                <div className={Styles.notificationList}>
-                                    {notifications.length === 0 ? (
-                                        <div className={Styles.emptyNotifications}>
-                                            <i className="material-icons">notifications_none</i>
-                                            <span>No notifications</span>
-                                        </div>
-                                    ) : (
-                                        notifications.map((notification) => (
-                                            <div 
-                                                key={notification._id}
-                                                className={`${Styles.notificationItem} ${!notification.isViewed ? Styles.unviewed : ''} ${notification.type === 'newMilestone' ? Styles.milestone : ''} ${notification.type === 'automaticReturn' ? Styles.automaticReturn : ''}`}
-                                                onClick={() => handleNotificationClick(notification)}
-                                            >
-                                                <div className={Styles.notificationContent}>
-                                                    <div className={Styles.notificationMessage}>
-                                                        {notification.type === 'newMilestone' ? '🏆' : notification.type === 'automaticReturn' ? '↩️' : '🎉'} {formatNotificationMessage(notification)}
-                                                    </div>
-                                                    <div className={Styles.notificationDate}>
-                                                        {notification.type === 'newMilestone' 
-                                                            ? `${formatDate(notification.date)} • Click to view details` 
-                                                            : notification.type === 'automaticReturn'
-                                                                ? `Order ${notification.data.orderId} • ${formatDate(notification.date)}`
-                                                                : `${notification.data.dateTitle} • ${formatDate(notification.date)}`
-                                                        }
-                                                    </div>
-                                                </div>
-                                            
-                                                <button
-                                                    className={Styles.deleteBtn}
-                                                    onClick={(e) => handleDeleteNotification(notification._id, e)}
-                                                    title="Delete notification"
-                                                >
-                                                    <i className="material-icons">close</i>
-                                                </button>
+                                            <div className={Styles.notificationIcon}>
+                                                {notification.type === 'newMilestone' ? '🏆' : notification.type === 'automaticReturn' ? '↩️' : '🎉'}
                                             </div>
-                                        ))
-                                    )}
-                                </div>
+                                            <div className={Styles.notificationContent}>
+                                                <div className={Styles.notificationMessage}>
+                                                    {formatNotificationMessage(notification)}
+                                                </div>
+                                                {notification.type === 'automaticReturn' && (
+                                                    <div className={Styles.notificationDate}>
+                                                        {formatDate(notification.date)}
+                                                    </div>
+                                                )}
+                                                <div className={Styles.notificationDate}>
+                                                    {notification.type === 'newMilestone' 
+                                                        ? `${formatDate(notification.date)} • Click to view details` 
+                                                        : notification.type === 'automaticReturn'
+                                                            ? `Returned → Relisted • $${notification.data.returnShippingCost || '0.00'} return cost • New profit: $${notification.data.newExpectedProfit || '0.00'}`
+                                                            : `${notification.data.dateTitle} • ${formatDate(notification.date)}`
+                                                    }
+                                                </div>
+                                            </div>
+                                            
+                                            {notification.type === 'automaticReturn' && (
+                                                <button
+                                                    className={Styles.copySkuBtn}
+                                                    onClick={(e) => handleCopySku(notification.data.sku, e)}
+                                                    title="Copy SKU"
+                                                >
+                                                    <i className="material-icons">content_copy</i>
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             )}

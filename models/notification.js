@@ -12,6 +12,10 @@ const notificationSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
