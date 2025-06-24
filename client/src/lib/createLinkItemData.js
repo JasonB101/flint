@@ -31,7 +31,7 @@ const createLinkItemData = async (ebayId, getEbayListing) => {
         declineOfferLow: +item.ListingDetails?.MinimumBestOfferPrice?.$t || "",
         shippingService: item.ShippingDetails?.ShippingServiceOptions?.ShippingService || "USPSPriority",
         description: item.Description || "",
-        SKU: item.SKU || "",
+        sku: item.SKU || "",
         imageUrls: item.PictureDetails?.PictureURL || [],
         ebayId,
         categoryId: item.PrimaryCategory?.CategoryID || "",
