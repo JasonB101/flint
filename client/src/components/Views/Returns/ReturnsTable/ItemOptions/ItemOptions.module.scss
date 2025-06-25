@@ -1,0 +1,49 @@
+.itemOptionsWrapper {
+  position: relative;
+  overflow: visible;
+  z-index: 10001;
+  
+  .optionsModal {
+    overflow: visible;
+    position: absolute;
+    top: 100%; // Position below the button
+    left: 0px; // Align to the left edge
+    background-color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); // Better shadow for depth
+    padding: 8px 0; // Better padding
+    z-index: 10001; // Much higher than sticky headers (z-index: 10)
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    min-width: 120px;
+    
+    p {
+      font-size: 14px;
+      cursor: pointer;
+      line-height: 1;
+      margin: 8px 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: #f8f9fa;
+        color: #26303f; // Blue theme to match site
+      }
+    }
+  }
+  
+  i {
+    text-align: center;
+    padding: 4px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    color: #6c757d;
+    
+    &:hover {
+      background-color: rgba(38, 48, 63, 0.1); // Light blue background
+      color: #26303f;
+    }
+  }
+} 

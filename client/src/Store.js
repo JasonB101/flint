@@ -252,7 +252,38 @@ const Store = (props) => {
     }
   }
 
+  // User settings functions
+  async function getUserSettings() {
+    try {
+      const response = await userAxios.get("/api/user/settings")
+      const { success, notificationSettings } = response.data
+      
+      if (success) {
+        return { notificationSettings }
+      } else {
+        throw new Error("Failed to fetch user settings")
+      }
+    } catch (error) {
+      console.error("Error fetching user settings:", error)
+      throw error
+    }
+  }
 
+  async function updateUserSettings(settingsData) {
+    try {
+      const response = await userAxios.put("/api/user/settings", settingsData)
+      const { success, message } = response.data
+      
+      if (success) {
+        return true
+      } else {
+        throw new Error(message || "Failed to update user settings")
+      }
+    } catch (error) {
+      console.error("Error updating user settings:", error)
+      throw error
+    }
+  }
 
   async function saveChurnSettings(newChurnSettings) {
     try {
@@ -767,7 +798,10 @@ const Store = (props) => {
         markNotificationAsViewed,
         markAllNotificationsAsViewed,
         deleteNotification,
-        clearAllNotifications
+        clearAllNotifications,
+        // User settings functions
+        getUserSettings,
+        updateUserSettings
       }}
     >
       {props.children}

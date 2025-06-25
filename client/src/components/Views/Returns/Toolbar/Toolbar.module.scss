@@ -1,0 +1,156 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  background: #f8f9fa;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  .leftColumn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    input {
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 200px;
+      
+      &:focus {
+        outline: none;
+        border-color: #26303f;
+        box-shadow: 0 0 0 2px rgba(38, 48, 63, 0.25);
+      }
+      
+      &::placeholder {
+        color: #6c757d;
+      }
+    }
+    
+    .timeFilter {
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      
+      &:focus {
+        outline: none;
+        border-color: #26303f;
+        box-shadow: 0 0 0 2px rgba(38, 48, 63, 0.25);
+      }
+    }
+  }
+  
+  h5 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 80px;
+    
+    span {
+      font-size: 16px;
+      font-weight: 700;
+      color: #212529;
+      margin-top: 4px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: #e9ecef;
+      min-width: 40px;
+      text-align: center;
+    }
+  }
+  
+  // Specific badge styling for different return types and statuses
+  .automaticBadge {
+    background: #d4edda !important;
+    color: #155724 !important;
+    border: 1px solid #c3e6cb !important;
+  }
+  
+  .manualBadge {
+    background: #fff3cd !important;
+    color: #856404 !important;
+    border: 1px solid #ffeaa7 !important;
+  }
+  
+  .reListedBadge {
+    background: #d1f2eb !important;
+    color: #0c5460 !important;
+    border: 1px solid #bee5eb !important;
+  }
+  
+  .wasteBadge {
+    background: #f8d7da !important;
+    color: #721c24 !important;
+    border: 1px solid #f5c6cb !important;
+  }
+  
+  .completedBadge {
+    background: #e2e3e5 !important;
+    color: #383d41 !important;
+    border: 1px solid #d6d8db !important;
+  }
+  
+  .spacer {
+    flex: 1;
+  }
+  
+  button {
+    background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(38, 48, 63, 0.3);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(38, 48, 63, 0.25);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .wrapper {
+    gap: 15px;
+    
+    .leftColumn {
+      width: 100%;
+      justify-content: space-between;
+      
+      input {
+        width: 150px;
+      }
+    }
+    
+    h5 {
+      min-width: 70px;
+      font-size: 11px;
+      
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+} 

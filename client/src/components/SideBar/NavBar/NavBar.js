@@ -26,6 +26,15 @@ const NavBar = ({fname}) => {
         >
           Sold<div className="spacer"></div>
         </NavLink>,
+        <NavLink
+          key="returns"
+          to="/reports/returns"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Returns<div className="spacer"></div>
+        </NavLink>,
       ],
     },
     reports: {

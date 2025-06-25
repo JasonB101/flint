@@ -10,6 +10,7 @@ import "./global.scss"
 import SideBar from "./components/SideBar/SideBar"
 import { storeContext } from "./Store"
 import SoldItems from "./components/Views/SoldItems/SoldItems"
+import Returns from "./components/Views/Returns/Returns"
 import Milestones from "./components/Views/Milestones/Milestones"
 import Expense from "./components/Views/Expense/Expense"
 import Overview from "./components/Views/Overview/Overview"
@@ -112,6 +113,10 @@ function App() {
         <ProtectedRoute
           path="/reports/solditems"
           component={() => <SoldItems {...storeData} />}
+        />
+        <ProtectedRoute
+          path="/reports/returns"
+          component={() => <Returns {...storeData} />}
         />
         <ProtectedRoute
           path="/reports/overview"

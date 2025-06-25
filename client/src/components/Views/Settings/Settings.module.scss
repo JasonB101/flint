@@ -1,9 +1,57 @@
 .wrapper {
-    grid-area: main;
+    padding: 20px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 40px;
+    height: 100vh;
     overflow-y: auto;
-    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    
+    @media (max-width: 768px) {
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+.pageHeader {
+    text-align: center;
+    margin-bottom: 0;
+    
+    h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #26303f;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    p {
+        font-size: 16px;
+        color: #6c757d;
+        margin: 0;
+    }
+}
+
+.contentCard {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    flex: 1;
+    
+    &:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.bottomPadding {
+    height: 20px;
+    flex-shrink: 0;
 }
 
 .loading {
@@ -15,29 +63,8 @@
     color: #6c757d;
 }
 
-.header {
-    margin-bottom: 40px;
-    
-    h1 {
-        font-size: 32px;
-        font-weight: 700;
-        color: #26303f;
-        margin-bottom: 8px;
-    }
-    
-    p {
-        font-size: 16px;
-        color: #6c757d;
-        margin: 0;
-    }
-}
-
 .section {
-    background: white;
-    border-radius: 12px;
     padding: 32px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.05);
     
     h2 {
         font-size: 24px;
@@ -146,36 +173,20 @@
         border-radius: 50%;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
+    
+    &.updating {
+        opacity: 0.7;
+        
+        &:before {
+            animation: pulse 1s infinite;
+        }
+    }
 }
 
-.actions {
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid #e9ecef;
-}
-
-.saveButton {
-    background: linear-gradient(135deg, #4a5568 0%, #26303f 100%);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    
-    &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #26303f 0%, #1a202c 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(74, 85, 104, 0.3);
-    }
-    
-    &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
 .message {
