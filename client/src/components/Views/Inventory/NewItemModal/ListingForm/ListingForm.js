@@ -65,6 +65,14 @@ const ListingForm = (props) => {
     }
   }, [ebayListings, itemForm.sku])
 
+  // Sync the SKU when itemForm changes
+  useEffect(() => {
+    setInput((prevInputForm) => ({
+      ...prevInputForm,
+      sku: itemForm.sku,
+    }))
+  }, [itemForm.sku])
+
   useEffect(() => {
     if (partNo !== "N/A") {
       const existingItems = items
@@ -385,9 +393,10 @@ const ListingForm = (props) => {
         </Form.Group>
       </Form.Row>
 
-      <Form.Label>Manufacturer</Form.Label>
+      <Form.Label>Item Details</Form.Label>
       <Form.Row>
         <Form.Group as={Col} controlId="formGridBrand">
+          <Form.Label>Brand</Form.Label>
           <Form.Control
             value={inputForm.brand}
             name="brand"
@@ -396,11 +405,21 @@ const ListingForm = (props) => {
           />
         </Form.Group>
         <Form.Group as={Col} controlId="formGridPartNo">
+          <Form.Label>Part Number</Form.Label>
           <Form.Control
             value={inputForm.partNo}
             name="partNo"
             onChange={handleChange}
             placeholder="Part Number"
+          />
+        </Form.Group>
+        <Form.Group as={Col} controlId="formGridSku">
+          <Form.Label>SKU</Form.Label>
+          <Form.Control
+            value={inputForm.sku}
+            name="sku"
+            onChange={handleChange}
+            placeholder="SKU"
           />
         </Form.Group>
       </Form.Row>
