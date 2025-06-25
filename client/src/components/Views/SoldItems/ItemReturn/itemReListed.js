@@ -23,7 +23,9 @@ const updates = {
       expectedProfit: expectedProfit,
       ebayId: ebayId,
       status: "active",
-      listingAgent: "member"
+      listingAgent: "member",
+      automaticReturn: false, // Mark as manual return
+      returnDate: new Date().toLocaleDateString(), // Set return date
     },
   }
   return updates

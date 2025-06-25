@@ -9,6 +9,8 @@ const itemIsWaste = (newValues) => {
     additionalCosts: additionalCosts,
     status: "waste",
     roi: roi,
+    automaticReturn: false, // Mark as manual return
+    returnDate: new Date().toLocaleDateString(), // Set return date
   }
   return updates
 }

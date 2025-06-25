@@ -54,7 +54,9 @@ const ReturnsTable = (props) => {
     // Format dates
     const formattedDatePurchased = datePurchased ? new Date(datePurchased).toLocaleDateString() : "N/A"
     const formattedDateSold = dateSold ? new Date(dateSold).toLocaleDateString() : "N/A"
-    const formattedReturnDate = updatedAt ? new Date(updatedAt).toLocaleDateString() : "N/A"
+    // Use dedicated returnDate field, fallback to updatedAt, then dateSold
+    const returnDateToUse = itemObject.returnDate || updatedAt || dateSold
+    const formattedReturnDate = returnDateToUse ? new Date(returnDateToUse).toLocaleDateString() : "N/A"
 
     // Check if currently listed on eBay
     const isCurrentlyListed = ebayListings.some(listing => 

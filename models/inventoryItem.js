@@ -105,6 +105,14 @@ const inventoryItemSchema = new Schema({
     type: Boolean,
     default: false, // false = manual return, true = automatic return/relist
   },
+  returnDate: {
+    type: String,
+    default: null, // Date when item was returned (for returns only)
+  },
+  returnDeliveredDate: {
+    type: String,
+    default: null, // Date when return was delivered back to seller
+  },
   profit: Number,
   roi: Number,
   shipped: {
