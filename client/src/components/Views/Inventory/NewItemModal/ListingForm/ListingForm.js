@@ -60,18 +60,16 @@ const ListingForm = (props) => {
   })
 
   useEffect(() => {
-    if (ebayListings.some((x) => x.SKU === itemForm.sku)) {
+    // Convert both to strings for comparison
+    const currentSku = String(inputForm.sku)
+    const matchingListing = ebayListings.find((x) => String(x.SKU) === currentSku)
+    
+    if (matchingListing) {
       handleListingWithSkuExists()
     }
-  }, [ebayListings, itemForm.sku])
+  }, [ebayListings, inputForm.sku])
 
-  // Sync the SKU when itemForm changes
-  useEffect(() => {
-    setInput((prevInputForm) => ({
-      ...prevInputForm,
-      sku: itemForm.sku,
-    }))
-  }, [itemForm.sku])
+
 
   useEffect(() => {
     if (partNo !== "N/A") {
@@ -160,7 +158,7 @@ const ListingForm = (props) => {
     //If an ebay listing exists with the SKU provided
     if (result) {
       setItemToBeLinked(true)
-      const ebayItem = ebayListings.find((x) => x.SKU === itemForm.sku)
+      const ebayItem = ebayListings.find((x) => String(x.SKU) === String(inputForm.sku))
       const ebayItemId = ebayItem.ItemID
       const listingInfo = await createLinkItemData(ebayItemId, getEbayListing)
       setInput((prevInputForm) => ({
