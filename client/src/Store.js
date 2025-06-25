@@ -23,10 +23,12 @@ const Store = (props) => {
     expenses: [],
     ebayListings: [],
     churnSettings: null,
+    ebaySyncComplete: false,
+    returns: [],
 
     // newListings: []
   })
-  const { items, expenses, ebayListings, churnSettings } = state
+  const { items, expenses, ebayListings, churnSettings, ebaySyncComplete, returns } = state
   const location = useLocation()
 
   const authRoutes = ["/auth/signin", "/auth/signup", "/"]
@@ -88,6 +90,31 @@ const Store = (props) => {
               getEbay().catch(err => console.error("eBay sync error:", err))
             }
           }, 5000)
+        } else {
+          // If eBay sync is not enabled, just fetch returns directly
+          console.log("📦 eBay sync not enabled, fetching returns directly...")
+          fetchReturns()
+            .then((returnsResponse) => {
+              const returnsData = returnsResponse.returns || []
+              changeState((prevState) => {
+                return {
+                  ...prevState,
+                  ebaySyncComplete: true,
+                  returns: returnsData,
+                }
+              })
+              console.log("✅ Returns fetched directly (no eBay sync needed)")
+            })
+            .catch((error) => {
+              console.error("❌ Error fetching returns directly:", error)
+              changeState((prevState) => {
+                return {
+                  ...prevState,
+                  ebaySyncComplete: true,
+                  returns: [],
+                }
+              })
+            })
         }
       } else {
         // Disconnect WebSocket when not authenticated
@@ -98,6 +125,8 @@ const Store = (props) => {
           expenses: [],
           ebayListings: [],
           churnSettings: null,
+          ebaySyncComplete: false,
+          returns: [],
           carPartOptions: {
             years: [],
             models: [],
@@ -432,6 +461,19 @@ const Store = (props) => {
     }
   }
 
+  async function getCompatibility(itemIds, partNumber) {
+    try {
+      const itemIdsString = Array.isArray(itemIds) ? itemIds.join(',') : itemIds
+      const result = await userAxios.get(
+        `/api/ebay/getCompatibility?itemIds=${itemIdsString}&partNumber=${partNumber}`
+      )
+      return result.data
+    } catch (error) {
+      console.error("Error fetching compatibility:", error)
+      return { success: false, compatibility: [] }
+    }
+  }
+
   async function getShippingLabels(orderId = null) {
     try {
       const result = await userAxios.get("/api/ebay/getshippinglabels")
@@ -447,24 +489,102 @@ const Store = (props) => {
     }
   }
 
-  async function getCompatibility(itemIds, partNumber) {
-    if (itemIds.length === 0) return []
+  async function getReturnDetails(itemId) {
     try {
-      // Send a GET request to the /getCompatibility route, passing itemIds as a query parameter
-      const result = await userAxios.get("/api/ebay/getCompatibility", {
-        params: {
-          itemIds: itemIds.join(","), // Pass itemIds as a comma-separated string
-          partNumber: partNumber, // Include partNumber in the request
-        },
+      // First try to get from Return collection
+      const returnsResponse = await getReturnsForItem(itemId)
+      if (returnsResponse.success && returnsResponse.returns.length > 0) {
+        return {
+          success: true,
+          returnDetails: returnsResponse.returns[0], // Use most recent return
+          hasEbayData: true
+        }
+      }
+
+      // Fallback to original eBay API method
+      const response = await userAxios.get(`/api/ebay/getReturnDetails/${itemId}`)
+      return response.data
+    } catch (error) {
+      console.error("Error fetching return details:", error)
+      return { success: false, returnDetails: null, hasEbayData: false }
+    }
+  }
+
+  async function getReturnsForItem(itemId) {
+    try {
+      const response = await userAxios.get(`/api/returns/item/${itemId}`)
+      if (response.data.success) {
+        return response.data
+      } else {
+        console.error("Failed to fetch returns for item:", response.data.error)
+        return { success: false, returns: [] }
+      }
+    } catch (error) {
+      console.error("Error fetching returns for item:", error)
+      return { success: false, returns: [] }
+    }
+  }
+
+  async function getReturnStats() {
+    try {
+      const response = await userAxios.get("/api/returns/stats")
+      if (response.data.success) {
+        return response.data.stats
+      } else {
+        console.error("Failed to fetch return stats:", response.data.error)
+        return null
+      }
+    } catch (error) {
+      console.error("Error fetching return stats:", error)
+      return null
+    }
+  }
+
+  // Enhanced function to get return data for multiple sold items efficiently
+  async function getReturnsForSoldItems(soldItems) {
+    try {
+      // Get all returns for the user in one call
+      const response = await userAxios.get("/api/returns?limit=1000")
+      if (!response.data.success) {
+        console.error("Failed to fetch returns:", response.data.error)
+        return {}
+      }
+
+      const allReturns = response.data.returns
+      const returnsByItemId = {}
+
+      // Group returns by inventory item ID
+      allReturns.forEach(returnRecord => {
+        const itemId = returnRecord.inventoryItemId?._id || returnRecord.inventoryItemId
+        if (!returnsByItemId[itemId]) {
+          returnsByItemId[itemId] = []
+        }
+        returnsByItemId[itemId].push(returnRecord)
       })
 
-      const compatibility = result.data.compatibility || []
+      // Create a mapping for sold items
+      const soldItemReturnData = {}
+      soldItems.forEach(item => {
+        const itemReturns = returnsByItemId[item._id] || []
+        if (itemReturns.length > 0) {
+          // Sort by creation date, most recent first
+          itemReturns.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate))
+          soldItemReturnData[item._id] = {
+            returns: itemReturns,
+            latestReturn: itemReturns[0],
+            hasActiveReturn: itemReturns.some(r => 
+              ['OPEN', 'RETURN_REQUESTED', 'ITEM_READY_TO_SHIP', 'ITEM_SHIPPED'].includes(r.returnStatus)
+            ),
+            isDelivered: itemReturns.some(r => r.trackingStatus === 'DELIVERED'),
+            deliveredCount: itemReturns.filter(r => r.trackingStatus === 'DELIVERED').length
+          }
+        }
+      })
 
-      // If you need to filter by some condition (e.g., if the list has matches), you can do so
-      return compatibility // Return the compatibility data
+      return soldItemReturnData
     } catch (error) {
-      console.error("Error fetching compatibility data:", error)
-      return [] // Return an empty array in case of error
+      console.error("Error fetching returns for sold items:", error)
+      return {}
     }
   }
 
@@ -536,23 +656,40 @@ const Store = (props) => {
   }
 
   function returnInventoryItem(itemUpdates) {
+    console.log('📤 Sending return item request:', itemUpdates)
+    
     userAxios
       .put("/api/inventoryItems/returnInventoryItem", itemUpdates)
       .then((res) => {
+        console.log('📥 Return item response:', res.data)
+        
         if (res.data.success) {
           const updatedItems = [...items]
           const itemIndex = updatedItems.findIndex(
             (item) => item._id === itemUpdates.itemId
           )
-          updatedItems[itemIndex] = res.data.result
+          
+          if (itemIndex !== -1) {
+            updatedItems[itemIndex] = res.data.result
+            console.log('✅ Updated item in state:', res.data.result)
+          } else {
+            console.log('⚠️ Item not found in state to update')
+          }
 
           changeState((prevState) => ({
             ...prevState,
             items: updatedItems,
           }))
+        } else {
+          console.log('❌ Return item failed:', res.data.message)
+          alert('Failed to process return: ' + res.data.message)
         }
       })
-      .catch((err) => console.log("Return Item Failed:", err.message))
+      .catch((err) => {
+        console.error("❌ Return Item API Error:", err)
+        console.error("Error response:", err.response?.data)
+        alert('Failed to process return: ' + (err.response?.data?.message || err.message))
+      })
   }
 
   function deleteInventoryItem(itemId) {
@@ -705,16 +842,43 @@ const Store = (props) => {
         headers: { "Cache-Control": "no-cache, no-store, must-revalidate" },
         timeout: 120000, // Increased to match backend timeout
       })
-      .then((result) => {
+      .then(async (result) => {
         const data = result.data
         const { ebayListings = [], inventoryItems = [] } = data
-        changeState((prevState) => {
-          return {
-            ...prevState,
-            items: inventoryItems,
-            ebayListings: ebayListings,
-          }
-        })
+        
+        console.log("✅ eBay sync completed, now fetching returns...")
+        
+        // Fetch returns after eBay sync completes
+        try {
+          const returnsResponse = await fetchReturns()
+          const returnsData = returnsResponse.returns || []
+          
+          changeState((prevState) => {
+            return {
+              ...prevState,
+              items: inventoryItems,
+              ebayListings: ebayListings,
+              ebaySyncComplete: true,
+              returns: returnsData,
+            }
+          })
+          
+          console.log("✅ Returns fetched successfully after eBay sync")
+        } catch (returnsError) {
+          console.error("❌ Error fetching returns after eBay sync:", returnsError)
+          
+          // Still update with eBay data even if returns fail
+          changeState((prevState) => {
+            return {
+              ...prevState,
+              items: inventoryItems,
+              ebayListings: ebayListings,
+              ebaySyncComplete: true,
+              returns: [],
+            }
+          })
+        }
+        
         return data // Return the data for chaining
       })
       .catch((err) => {
@@ -756,6 +920,24 @@ const Store = (props) => {
   //   })
   //   return newEbayListings
   // }
+
+  async function fetchReturns() {
+    try {
+      console.log("📦 Fetching returns from API...")
+      const response = await userAxios.get("/api/returns?limit=1000");
+      console.log(`📦 Fetched ${response.data.returns?.length || 0} returns`)
+      
+      // Debug: Log the first return to see the data structure
+      if (response.data.returns?.length > 0) {
+        console.log("📦 Sample return data:", JSON.stringify(response.data.returns[0], null, 2))
+      }
+      
+      return response.data;
+    } catch (e) {
+      console.error("❌ Error fetching returns:", e.message)
+      return { success: false, returns: [] };
+    }
+  }
 
   return (
     <storeContext.Provider
@@ -800,8 +982,16 @@ const Store = (props) => {
         deleteNotification,
         clearAllNotifications,
         // User settings functions
-        getUserSettings,
-        updateUserSettings
+            getUserSettings,
+    updateUserSettings,
+    getReturnsForSoldItems,
+    getReturnStats,
+        getReturnDetails,
+        getReturnsForItem,
+        fetchReturns,
+        // eBay sync and returns state
+        ebaySyncComplete,
+        returns
       }}
     >
       {props.children}

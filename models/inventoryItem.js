@@ -113,6 +113,40 @@ const inventoryItemSchema = new Schema({
     type: String,
     default: null, // Date when return was delivered back to seller
   },
+  // Keep only essential return fields for quick access
+  hasActiveReturn: {
+    type: Boolean,
+    default: false, // Quick flag to check if item has an active return
+  },
+  returnCount: {
+    type: Number,
+    default: 0, // Number of returns for this item
+  },
+  // eBay Post-Order API - keep minimal cancellation data
+  ebayCancelId: {
+    type: String,
+    default: null, // eBay cancellation ID from Post-Order API
+  },
+  ebayCancelStatus: {
+    type: String,
+    default: null, // Current cancellation status from eBay
+  },
+  ebayCancelReason: {
+    type: String,
+    default: null, // Reason for cancellation from eBay
+  },
+  lastCancelledOrder: {
+    type: String,
+    default: null, // Track the last cancelled order ID to prevent re-processing
+  },
+  cancelledDate: {
+    type: Date,
+    default: null, // Date when the order was cancelled
+  },
+  lastReturnedOrder: {
+    type: String,
+    default: null, // Track the last returned order ID to prevent re-processing
+  },
   profit: Number,
   roi: Number,
   shipped: {

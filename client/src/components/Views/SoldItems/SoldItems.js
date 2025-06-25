@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import Styles from "./SoldItems.module.scss"
 import SoldTable from "./SoldTable/SoldTable"
 import Toolbar from "./Toolbar/Toolbar"
 import SoldSummaryModal from "./SoldSummaryModal/SoldSummaryModal"
+import { storeContext } from "../../../Store"
 
 const SoldItems = (props) => {
   const {
@@ -13,11 +14,16 @@ const SoldItems = (props) => {
     returnInventoryItem,
     user,
   } = props
+  
+  const { getReturnsForSoldItems } = useContext(storeContext)
+  
   const [soldItemsSearchTerm, changeSearchTerm] = useState("")
   const [timeFilter, setTimeFilter] = useState("thisyear") // "6months", "12months", "thisyear", "all"
   const [soldItems, setSoldItems] = useState([])
   const [itemsToShow, filterItems] = useState([])
   const [toggleSummaryModal, setToggleSummaryModal] = useState(false)
+  const [returnData, setReturnData] = useState({}) // Store return data for all sold items
+  const [loadingReturns, setLoadingReturns] = useState(false)
 
   // Filter items based on time range
   useEffect(() => {
@@ -50,6 +56,28 @@ const SoldItems = (props) => {
     
     setSoldItems(filteredByTime)
   }, [items, timeFilter])
+
+  // Fetch return data when sold items change
+  useEffect(() => {
+    if (soldItems.length > 0) {
+      fetchReturnData()
+    }
+  }, [soldItems])
+
+  const fetchReturnData = async () => {
+    if (!user?.token) return
+    
+    setLoadingReturns(true)
+    try {
+      const returnInfo = await getReturnsForSoldItems(soldItems)
+      setReturnData(returnInfo)
+      console.log(`📦 Loaded return data for ${Object.keys(returnInfo).length} items`)
+    } catch (error) {
+      console.error("Error fetching return data:", error)
+    } finally {
+      setLoadingReturns(false)
+    }
+  }
 
   // Filter by search term
   useEffect(() => {
@@ -95,6 +123,8 @@ const SoldItems = (props) => {
             getShippingLabels={getShippingLabels}
             returnInventoryItem={returnInventoryItem}
             user={user}
+            returnData={returnData}
+            loadingReturns={loadingReturns}
           />
         </div>
       </div>

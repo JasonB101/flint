@@ -383,6 +383,24 @@
         }
     }
     
+    &.returnDelivered {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        
+        &:hover {
+            background: #c3e6cb;
+        }
+        
+        &.unviewed {
+            background: #d1ecf1;
+            border-left: 4px solid #20c997;
+            
+            &:hover {
+                background: #bee5eb;
+            }
+        }
+    }
+    
     .notificationIcon {
         font-size: 24px;
         flex-shrink: 0;

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react"
 import Styles from "./ItemOptions.module.scss"
+import ReturnDetailsModal from "../../ReturnDetailsModal/ReturnDetailsModal"
 
-const ItemOptions = ({ itemObject }) => {
+const ItemOptions = ({ itemObject, setProcessItem }) => {
   const [showOptions, setShowOptions] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
   const optionsRef = useRef(null)
 
-  const { _id, sku, title, status, listed } = itemObject
+  const { _id, sku, title, status, listed, ebayReturnId } = itemObject
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -24,9 +26,8 @@ const ItemOptions = ({ itemObject }) => {
   }, [showOptions])
 
   const handleViewDetails = () => {
-    console.log("View details for item:", _id)
     setShowOptions(false)
-    // You can implement a detail modal here
+    setShowDetailsModal(true)
   }
 
   const handleViewOnEbay = () => {
@@ -43,30 +44,53 @@ const ItemOptions = ({ itemObject }) => {
     setShowOptions(false)
   }
 
+  const handleProcess = () => {
+    setShowOptions(false)
+    if (setProcessItem) {
+      setProcessItem(itemObject)
+    }
+  }
+
   return (
-    <div className={Styles.itemOptionsWrapper} ref={optionsRef}>
-      <i
-        className="material-icons"
-        onClick={() => setShowOptions(!showOptions)}
-      >
-        more_vert
-      </i>
-      {showOptions && (
-        <div className={Styles.optionsModal}>
-          <p onClick={handleViewDetails}>
-            View Details
-          </p>
-          {listed && (
-            <p onClick={handleViewOnEbay}>
-              View on eBay
+    <>
+      <div className={Styles.itemOptionsWrapper} ref={optionsRef}>
+        <i
+          className="material-icons"
+          onClick={() => setShowOptions(!showOptions)}
+        >
+          more_vert
+        </i>
+        {showOptions && (
+          <div className={Styles.optionsModal}>
+            <p onClick={handleProcess}>
+              <i className="material-icons">settings_applications</i>
+              Process
             </p>
-          )}
-          <p onClick={handleCopyInfo}>
-            Copy Info
-          </p>
-        </div>
-      )}
-    </div>
+            <p onClick={handleViewDetails}>
+              <i className="material-icons">info</i>
+              View Details
+              {ebayReturnId && <span className={Styles.ebayBadge}>eBay</span>}
+            </p>
+            {listed && (
+              <p onClick={handleViewOnEbay}>
+                <i className="material-icons">launch</i>
+                View on eBay
+              </p>
+            )}
+            <p onClick={handleCopyInfo}>
+              <i className="material-icons">content_copy</i>
+              Copy Info
+            </p>
+          </div>
+        )}
+      </div>
+
+      <ReturnDetailsModal
+        show={showDetailsModal}
+        onHide={() => setShowDetailsModal(false)}
+        itemId={_id}
+      />
+    </>
   )
 }
 

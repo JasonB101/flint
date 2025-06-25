@@ -24,10 +24,20 @@
       padding: 4px 8px;
       border-radius: 4px;
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       
       &:hover {
         background-color: #f8f9fa;
         color: #26303f; // Blue theme to match site
+      }
+
+      i {
+        font-size: 16px;
+        padding: 0;
+        color: #6c757d;
+        margin: 0;
       }
     }
   }
@@ -46,4 +56,14 @@
       color: #26303f;
     }
   }
+}
+
+.ebayBadge {
+  background-color: #0064d2;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: auto;
+  font-weight: 600;
 } 

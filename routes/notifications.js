@@ -17,7 +17,7 @@ notificationRouter.get("/", async (req, res, next) => {
       .sort({ date: -1 })
       .limit(50) // Limit to 50 most recent notifications
     
-
+    
     res.status(200).json({ success: true, notifications })
   } catch (error) {
     console.error("Error fetching notifications:", error)
@@ -157,7 +157,7 @@ notificationRouter.delete("/:id", async (req, res, next) => {
     
     const notification = await Notification.findOneAndUpdate(
       {
-        _id: notificationId,
+      _id: notificationId,
         userId: userId,
         isDeleted: { $ne: true } // Only soft delete if not already deleted
       },

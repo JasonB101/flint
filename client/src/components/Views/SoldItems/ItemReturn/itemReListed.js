@@ -1,5 +1,5 @@
 const itemReListed = (newValues) => {
-const {dateListed, additionalCosts, expectedProfit, ebayId, itemId} = newValues
+const {dateListed, additionalCosts, expectedProfit, ebayId, itemId, returnDate, orderId} = newValues
 const updates = {
     itemId: itemId,
     $unset: {
@@ -25,7 +25,8 @@ const updates = {
       status: "active",
       listingAgent: "member",
       automaticReturn: false, // Mark as manual return
-      returnDate: new Date().toLocaleDateString(), // Set return date
+      returnDate: returnDate || new Date().toLocaleDateString(), // Use provided date or fallback
+      lastReturnedOrder: orderId, // Track the returned order
     },
   }
   return updates

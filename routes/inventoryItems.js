@@ -106,21 +106,38 @@ inventoryRouter.post("/", async (req, res, next) => {
 })
 
 inventoryRouter.put("/returnInventoryItem", async (req, res, next) => {
-  const user = await getUserObject(req.auth._id)
-  const { _id: userId } = user
-  const updates = req.body
-  const { itemId, ...updateFields } = updates
-  // console.log(itemId, updateFields)
-  InventoryItem.findOneAndUpdate(
-    { _id: itemId, userId: userId },
-    updateFields,
-    { new: true },
-    (err, result) => {
-      if (err) res.send({ success: false, message: err.message })
-      if (result) res.send({ success: true, result })
+  try {
+    const user = await getUserObject(req.auth._id)
+    const { _id: userId } = user
+    const updates = req.body
+    const { itemId, ...updateFields } = updates
+    
+    console.log(`🔄 Processing return for item ${itemId}:`, updateFields)
+    
+    const result = await InventoryItem.findOneAndUpdate(
+      { _id: itemId, userId: userId },
+      updateFields,
+      { new: true }
+    )
+    
+    if (!result) {
+      console.log(`❌ Item not found: ${itemId}`)
+      return res.status(404).send({ 
+        success: false, 
+        message: "Item not found or unauthorized" 
+      })
     }
-  )
-  // res.send({success: false, message: "This is a placeholder"})
+    
+    console.log(`✅ Return processed successfully for item ${itemId}`)
+    res.send({ success: true, result })
+    
+  } catch (error) {
+    console.error(`❌ Error processing return:`, error)
+    res.status(500).send({ 
+      success: false, 
+      message: error.message || "Failed to process return" 
+    })
+  }
 })
 
 inventoryRouter.put("/editInventoryItem", async (req, res, next) => {

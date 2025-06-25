@@ -6,6 +6,24 @@
   height: 100%;
   z-index: 1;
   
+  // Center all table headers except the first one (title)
+  th {
+    text-align: center;
+    
+    &:first-child {
+      text-align: left;
+    }
+  }
+  
+  // Center all table cells except the first one (title)
+  td {
+    text-align: center;
+    
+    &:first-child {
+      text-align: left;
+    }
+  }
+  
   tr {
     &:hover {
       background: #748eff !important;
@@ -20,6 +38,8 @@
         background: #a3e4d7 !important; // Darker green on hover
       }
     }
+    
+
   }
 
   .titleId {
@@ -58,6 +78,32 @@
         box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
       }
     }
+    
+    .unprocessedIndicator {
+      color: #f44336;
+      font-weight: bold;
+      margin-right: 8px;
+      font-size: 12px;
+      cursor: help;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+    
+    .unprocessedIndicator {
+      color: #f44336;
+      font-weight: bold;
+      margin-right: 8px;
+      font-size: 12px;
+      cursor: help;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
 
     .titleText {
       white-space: nowrap;
@@ -84,6 +130,8 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: inline-block;
+    text-align: center;
     
     &.automatic {
       background: #d4edda;
@@ -106,6 +154,8 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: inline-block;
+    text-align: center;
     
     &.active {
       background: #d1f2eb;
@@ -123,6 +173,38 @@
       background: #e2e3e5;
       color: #383d41;
       border: 1px solid #d6d8db;
+    }
+    
+    &.resold {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      font-weight: 700;
+    }
+    
+    &.relisted {
+      background: #cce5ff;
+      color: #004085;
+      border: 1px solid #b3d4ff;
+    }
+    
+    &.refunded {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    
+    &.returned {
+      background: #e2e3e5;
+      color: #383d41;
+      border: 1px solid #d6d8db;
+    }
+    
+    &.wasted {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      font-weight: 700;
     }
   }
 
@@ -171,5 +253,82 @@
         box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.25);
       }
     }
+  }
+
+  // Profit styling
+  .positiveProfit {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .negativeProfit {
+    color: #dc3545;
+    font-weight: 600;
+  }
+
+  .neutralProfit {
+    color: #000;
+    font-weight: 600;
+  }
+
+  // eBay integration styles
+  .ebayStatus {
+    background-color: #e3f2fd !important;
+    color: #0064d2 !important;
+    border: 1px solid #0064d2 !important;
+  }
+
+  .ebayIndicator {
+    margin-left: 4px;
+    font-size: 10px;
+  }
+
+  .trackingStatus {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    display: inline-block;
+    text-align: center;
+    
+    &.delivered {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+    }
+    
+    &.in_transit {
+      background-color: #fff3e0;
+      color: #f57c00;
+    }
+    
+    &.shipped {
+      background-color: #e3f2fd;
+      color: #1976d2;
+    }
+    
+    &.notshipped {
+      background-color: #fff3e0;
+      color: #f57c00;
+    }
+  }
+
+  .noTracking {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  // Refund amount styling
+  .refundAmount {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .noRefund {
+    color: #6c757d;
+    font-style: italic;
   }
 } 

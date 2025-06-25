@@ -162,6 +162,12 @@ const SideBarHeader = (props) => {
             
             return itemTitle;
         }
+
+        // For return delivered notifications
+        if (notification.type === 'returnDelivered') {
+            const { data } = notification;
+            return `Return Delivered - ${data.itemTitle || `SKU ${data.itemSku}`}`;
+        }
         
         // For other notification types, show detailed message
         const { data } = notification;
@@ -228,7 +234,7 @@ const SideBarHeader = (props) => {
                     </div>
                 </div>
             )}
-
+                        
             {showNotificationModal && (
                 <div className={Styles.notificationModalOverlay} onClick={() => setShowNotificationModal(false)}>
                     <div className={Styles.notificationModalContent} onClick={(e) => e.stopPropagation()}>
@@ -238,67 +244,69 @@ const SideBarHeader = (props) => {
                         </div>
                         
                         <div className={Styles.notificationModalBody}>
-                            {notifications.length > 0 && (
+                                    {notifications.length > 0 && (
                                 <div className={Styles.notificationActions}>
-                                    <button 
+                                        <button 
                                         className={Styles.markAllViewedBtn}
-                                        onClick={handleMarkAllAsViewed}
-                                    >
+                                            onClick={handleMarkAllAsViewed}
+                                        >
                                         Mark all as read
-                                    </button>
+                                        </button>
                                 </div>
                             )}
-                            
+                                
                             <div className={Styles.notificationModalList}>
-                                {notifications.length === 0 ? (
-                                    <div className={Styles.emptyNotifications}>
-                                        <i className="material-icons">notifications_none</i>
+                                    {notifications.length === 0 ? (
+                                        <div className={Styles.emptyNotifications}>
+                                            <i className="material-icons">notifications_none</i>
                                         <span>No notifications yet</span>
                                         <p>You'll see your milestone achievements and updates here</p>
-                                    </div>
-                                ) : (
-                                    notifications.map((notification) => (
-                                        <div 
-                                            key={notification._id}
-                                            className={`${Styles.notificationModalItem} ${!notification.isViewed ? Styles.unviewed : ''} ${notification.type === 'newMilestone' ? Styles.milestone : ''} ${notification.type === 'automaticReturn' ? Styles.automaticReturn : ''}`}
-                                            onClick={() => handleNotificationClick(notification)}
-                                        >
+                                        </div>
+                                    ) : (
+                                        notifications.map((notification) => (
+                                            <div 
+                                                key={notification._id}
+                                            className={`${Styles.notificationModalItem} ${!notification.isViewed ? Styles.unviewed : ''} ${notification.type === 'newMilestone' ? Styles.milestone : ''} ${notification.type === 'automaticReturn' ? Styles.automaticReturn : ''} ${notification.type === 'returnDelivered' ? Styles.returnDelivered : ''}`}
+                                                onClick={() => handleNotificationClick(notification)}
+                                            >
                                             <div className={Styles.notificationIcon}>
-                                                {notification.type === 'newMilestone' ? '🏆' : notification.type === 'automaticReturn' ? '↩️' : '🎉'}
+                                                {notification.type === 'newMilestone' ? '🏆' : notification.type === 'automaticReturn' ? '↩️' : notification.type === 'returnDelivered' ? '📦' : '🎉'}
                                             </div>
-                                            <div className={Styles.notificationContent}>
-                                                <div className={Styles.notificationMessage}>
+                                                <div className={Styles.notificationContent}>
+                                                    <div className={Styles.notificationMessage}>
                                                     {formatNotificationMessage(notification)}
-                                                </div>
+                                                    </div>
                                                 {notification.type === 'automaticReturn' && (
                                                     <div className={Styles.notificationDate}>
                                                         {formatDate(notification.date)}
                                                     </div>
                                                 )}
-                                                <div className={Styles.notificationDate}>
-                                                    {notification.type === 'newMilestone' 
-                                                        ? `${formatDate(notification.date)} • Click to view details` 
-                                                        : notification.type === 'automaticReturn'
+                                                    <div className={Styles.notificationDate}>
+                                                        {notification.type === 'newMilestone' 
+                                                            ? `${formatDate(notification.date)} • Click to view details` 
+                                                            : notification.type === 'automaticReturn'
                                                             ? `Returned → Relisted • $${notification.data.returnShippingCost || '0.00'} return cost • New profit: $${notification.data.newExpectedProfit || '0.00'}`
+                                                            : notification.type === 'returnDelivered'
+                                                            ? `${notification.data.carrierUsed || 'Unknown carrier'} delivery • ${notification.data.trackingNumber || 'No tracking'} • ${formatDate(notification.date)}`
                                                             : `${notification.data.dateTitle} • ${formatDate(notification.date)}`
-                                                    }
+                                                        }
+                                                    </div>
                                                 </div>
-                                            </div>
                                             
-                                            {notification.type === 'automaticReturn' && (
+                                            {(notification.type === 'automaticReturn' || notification.type === 'returnDelivered') && (
                                                 <button
                                                     className={Styles.copySkuBtn}
-                                                    onClick={(e) => handleCopySku(notification.data.sku, e)}
+                                                    onClick={(e) => handleCopySku(notification.data.sku || notification.data.itemSku, e)}
                                                     title="Copy SKU"
                                                 >
                                                     <i className="material-icons">content_copy</i>
                                                 </button>
                                             )}
-                                        </div>
-                                    ))
-                                )}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             </div>
-                        </div>
                     </div>
                 </div>
             )}

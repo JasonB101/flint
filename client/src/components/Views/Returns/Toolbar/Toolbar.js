@@ -43,11 +43,11 @@ const Toolbar = (props) => {
       </h5>
       <h5>
         Automatic
-        <span className={Styles.automaticBadge}>{automaticReturns}</span>
+        <span>{automaticReturns}</span>
       </h5>
       <h5>
         Manual
-        <span className={Styles.manualBadge}>{manualReturns}</span>
+        <span>{manualReturns}</span>
       </h5>
       <h5>
         Return Costs
@@ -59,15 +59,15 @@ const Toolbar = (props) => {
       </h5>
       <h5>
         Re-listed
-        <span className={Styles.reListedBadge}>{reListedCount}</span>
+        <span>{reListedCount}</span>
       </h5>
       <h5>
         Wasted
-        <span className={Styles.wasteBadge}>{wasteCount}</span>
+        <span>{wasteCount}</span>
       </h5>
       <h5>
         Completed
-        <span className={Styles.completedBadge}>{completedCount}</span>
+        <span>{completedCount}</span>
       </h5>
       <div className="spacer"></div>
       <Button onClick={() => setToggleSummaryModal(true)}>Summary</Button>

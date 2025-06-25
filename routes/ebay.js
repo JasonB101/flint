@@ -10,6 +10,20 @@ const {
   getShippingTransactions,
   getListing,
 } = require("../lib/ebayMethods/ebayApi")
+const {
+  searchReturns,
+  getReturnDetails,
+  getReturnTracking,
+  searchCancellations,
+  getCancellationDetails,
+  syncReturnsWithInventory
+} = require("../lib/ebayMethods/postOrderApi")
+const {
+  createOrUpdateReturn,
+  getReturnsForItem,
+  updateInventoryItemReturnFlags,
+  autoProcessOrUpdateReturn
+} = require("../lib/returnService")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const {
   updateInventoryWithSales,
@@ -17,10 +31,12 @@ const {
   updateAllZeroShippingCost,
   figureExpectedProfit,
   verifyCorrectInfoInInventoryItems,
+  processCancellations,
 } = require("../lib/inventoryMethods")
 const getCompletedSales = require("../lib/ebayMethods/getCompletedSales")
 const findCompatibilityList = require("../lib/ebayMethods/findCompatibilityList")
 const SocketProgressEmitter = require("../lib/socketProgressEmitter")
+const Return = require("../models/return")
 
 // GET EBAY NOW COMPLETES SALES, AND RETURNS NEW UPDATED ITEMS.
 // NEED TO HANDLE MULTIPLE QUANTITIES, use await between each itemUpdate. use InventoryItem.find() instead of findOne.
@@ -54,6 +70,9 @@ ebayRouter.get("/getShippingLabels", async (req, res, next) => {
     if (shippingTransactions.failedOAuth) {
       throw new Error("Need to Update OAuth")
     }
+    
+
+    
     res.send({
       success: true,
       shippingLabels: shippingTransactions.transactions,
@@ -259,18 +278,42 @@ ebayRouter.get("/getebay", async (req, res, next) => {
 
     // Step 2: Parallel operations with individual error handling
     progress.fetchingEbayData()
-    let shippingUpdates, completedSales, ebayListings
+    let shippingUpdates, completedSales, ebayListings, returnData, cancellationData
     
     try {
-      const results = await Promise.allSettled([
-        updateAllZeroShippingCost(userId, shippingTransactions),
-        getCompletedSales(refreshedOAuthToken),
-        getEbayListings(ebayAuthToken, userId),
-      ])
+      // Calculate date range for returns and cancellations (last 6 months for returns, 12 months for cancellations)
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+      const twelveMonthsAgo = new Date()
+      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12)
+      
+      const dateFilter = {
+        creation_date_range_from: twelveMonthsAgo.toISOString(),
+        creation_date_range_to: new Date().toISOString(),
+        limit: '200'
+      }
+      
+      // Return search for last 6 months (more focused)
+      const returnDateFilter = {
+        creation_date_range_from: sixMonthsAgo.toISOString(),
+        creation_date_range_to: new Date().toISOString(),
+        limit: '200'
+        // Don't specify return_status to get all returns
+      }
+      
+              const results = await Promise.allSettled([
+          updateAllZeroShippingCost(userId, shippingTransactions),
+          getCompletedSales(refreshedOAuthToken),
+          getEbayListings(ebayAuthToken, userId),
+          searchReturns(refreshedOAuthToken, returnDateFilter),
+          searchCancellations(refreshedOAuthToken, dateFilter),
+        ])
       
       shippingUpdates = results[0].status === 'fulfilled' ? results[0].value : null
       completedSales = results[1].status === 'fulfilled' ? results[1].value : []
       ebayListings = results[2].status === 'fulfilled' ? results[2].value : []
+      returnData = results[3].status === 'fulfilled' ? results[3].value : { returns: [], success: false }
+      cancellationData = results[4].status === 'fulfilled' ? results[4].value : { cancellations: [], success: false }
       
       // Log individual results with progress updates
       if (results[0].status === 'rejected') {
@@ -292,12 +335,28 @@ ebayRouter.get("/getebay", async (req, res, next) => {
         console.log(`[${userId}] ✅ Listings: ${ebayListings.length} active`)
         syncResults.listings.success = true
       }
+      if (results[3].status === 'rejected') {
+        console.log(`[${userId}] ❌ Returns data failed: ${results[3].reason?.message}`)
+        syncResults.returns = { success: false, error: results[3].reason?.message }
+      } else {
+        console.log(`[${userId}] ✅ Returns: ${returnData.returns?.length || 0} found`)
+        syncResults.returns = { success: returnData.success, count: returnData.returns?.length || 0 }
+      }
+      if (results[4].status === 'rejected') {
+        console.log(`[${userId}] ❌ Cancellations data failed: ${results[4].reason?.message}`)
+        syncResults.cancellations = { success: false, error: results[4].reason?.message }
+      } else {
+        console.log(`[${userId}] ✅ Cancellations: ${cancellationData.cancellations?.length || 0} found`)
+        syncResults.cancellations = { success: cancellationData.success, count: cancellationData.cancellations?.length || 0 }
+      }
       
     } catch (error) {
       console.log(`[${userId}] ❌ Parallel operations error: ${error.message}`)
       // Continue with whatever data we got
       completedSales = []
       ebayListings = []
+      returnData = { returns: [], success: false }
+      cancellationData = { cancellations: [], success: false }
     }
 
     // Step 3: Inventory processing with safety checks
@@ -305,6 +364,27 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     let inventoryItems = await getInventoryItems(userId, false)
     const inventoryItemsMap = new Map(inventoryItems.map((item) => [item.sku, item]))
     
+    // Step 3.1: Process cancellations FIRST (before sales)
+    if (cancellationData.success && cancellationData.cancellations.length > 0) {
+      try {
+        progress.emit('processing cancellations', 50, 'Processing order cancellations...')
+        const cancellationResults = await processCancellations(
+          cancellationData.cancellations,
+          inventoryItemsMap
+        )
+        
+        console.log(`[${userId}] ✅ Processed cancellations: ${cancellationResults.reverted} reverted, ${cancellationResults.processed} processed`)
+        syncResults.cancellations = { 
+          success: true, 
+          ...cancellationResults 
+        }
+      } catch (error) {
+        console.log(`[${userId}] ❌ Cancellation processing failed: ${error.message}`)
+        syncResults.cancellations = { success: false, error: error.message }
+      }
+    }
+    
+    // Step 3.2: Process sales AFTER cancellations
     let newSoldItems = []
     if (completedSales.length > 0) {
       try {
@@ -325,6 +405,116 @@ ebayRouter.get("/getebay", async (req, res, next) => {
         // Continue without sales updates - not fatal
       }
     }
+
+    // Step 3.5: Sync Post-Order API data with new Return collection
+    if (returnData.success && returnData.returns.length > 0) {
+      try {
+        progress.emit('syncing returns', 60, 'Syncing return data...')
+        
+        let returnsSynced = 0
+        let returnsCreated = 0
+        let returnsUpdated = 0
+        
+        // --- NEW: Pre-filter out closed returns ---
+        const closedReturnsArr = await Return.find({ userId, returnStatus: 'CLOSED' }).select('ebayReturnId orderId')
+        const closedReturnIds = new Set(closedReturnsArr.map(r => r.ebayReturnId))
+        const closedOrderIds = new Set(closedReturnsArr.map(r => r.orderId))
+        const returnsToProcess = returnData.returns.filter(r =>
+          !closedReturnIds.has(r.returnId) && (!r.orderId || !closedOrderIds.has(r.orderId))
+        )
+        // --- END NEW ---
+        
+        // Process each return and store in dedicated Return collection
+        let processedReturns = []
+        for (const rawReturnData of returnsToProcess) {
+          try {
+            // Find matching inventory item - rawReturnData is from search API (flat structure)
+            const normalizedReturn = {
+              orderId: rawReturnData.orderId,  // Direct property from search API
+              sku: rawReturnData.creationInfo?.item?.sku,  // From creationInfo in search API
+              itemId: rawReturnData.creationInfo?.item?.itemId  // From creationInfo in search API
+            }
+            
+            let matchedItem = null
+            if (normalizedReturn.sku) {
+              matchedItem = inventoryItemsMap.get(normalizedReturn.sku)
+            }
+            if (!matchedItem && normalizedReturn.itemId) {
+              matchedItem = Array.from(inventoryItemsMap.values()).find(item => item.ebayId === normalizedReturn.itemId)
+            }
+            
+            if (matchedItem) {
+              // === NEW: Fetch detail API for each return ===
+              let detail = null;
+              try {
+                const detailResp = await getReturnDetails(refreshedOAuthToken, rawReturnData.returnId);
+                if (detailResp && detailResp.success && detailResp.returnData) {
+                  detail = detailResp.returnData.detail;
+                }
+              } catch (e) {
+                console.log(`⚠️ Could not fetch detail for return ${rawReturnData.returnId}: ${e.message}`);
+              }
+              const structuredReturnData = {
+                summary: rawReturnData,
+                detail: detail
+              };
+              // Create or update return record in dedicated collection
+              const returnRecord = await createOrUpdateReturn(structuredReturnData, matchedItem._id, userId)
+              
+              // Update basic return info in inventory item
+              const basicReturnInfo = {
+                returnDate: returnRecord.creationDate ? returnRecord.creationDate.toLocaleDateString() : undefined,
+                returnDeliveredDate: returnRecord.deliveryDate ? returnRecord.deliveryDate.toLocaleDateString() : undefined
+              }
+              
+              // Remove undefined values
+              Object.keys(basicReturnInfo).forEach(key => {
+                if (basicReturnInfo[key] === undefined) {
+                  delete basicReturnInfo[key]
+                }
+              })
+              
+              if (Object.keys(basicReturnInfo).length > 0) {
+                await InventoryItem.findByIdAndUpdate(matchedItem._id, basicReturnInfo)
+                Object.assign(matchedItem, basicReturnInfo)
+              }
+              
+              returnsSynced++
+              if (returnRecord.createdAt && returnRecord.updatedAt && 
+                  returnRecord.createdAt.getTime() === returnRecord.updatedAt.getTime()) {
+                returnsCreated++
+              } else {
+                returnsUpdated++
+              }
+              
+              processedReturns.push({ sku: matchedItem?.sku || normalizedReturn.sku || '', returnStatus: (returnRecord?.returnStatus || '').toUpperCase() });
+            } else {
+              console.log(`⚠️ No inventory match for return: ${rawReturnData.returnId} (SKU: ${normalizedReturn.sku}, ItemID: ${normalizedReturn.itemId})`)
+            }
+          } catch (returnError) {
+            console.error(`❌ Error processing individual return:`, returnError.message)
+          }
+        }
+        
+        if (processedReturns.length > 0) {
+          console.table(processedReturns, ['sku', 'returnStatus']);
+        }
+        
+        syncResults.returnSync = { 
+          success: true, 
+          synced: returnsSynced,
+          created: returnsCreated,
+          updated: returnsUpdated,
+          total: returnData.returns.length
+        }
+        
+      } catch (error) {
+        console.log(`[${userId}] ❌ Return sync failed: ${error.message}`)
+        syncResults.returnSync = { success: false, error: error.message }
+      }
+    }
+
+    // Cancellation processing moved to Step 3.1 (before sales)
 
     // Step 4: Verification (non-critical)
     progress.verifyingData()
@@ -469,8 +659,259 @@ ebayRouter.get("/getListing/:itemId", async (req, res) => {
   }
 })
 
+// Get detailed return information for an item
+ebayRouter.get("/getReturnDetails/:itemId", async (req, res) => {
+  try {
+    const { itemId } = req.params
+    
+    if (!req.auth?._id) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      })
+    }
+    
+    console.log(`🔍 Getting return details for item ${itemId}, user ${req.auth._id}`)
+    
+    let userObject
+    let ebayOAuthToken
+    
+    try {
+      userObject = await getUserObject(req.auth._id)
+      ebayOAuthToken = userObject.ebayOAuthToken
+    } catch (userError) {
+      console.error(`❌ User lookup failed for ID ${req.auth._id}:`, userError.message)
+      return res.status(401).json({
+        success: false,
+        message: "User authentication invalid. Please log in again.",
+        needsReauth: true
+      })
+    }
+    
+    if (!ebayOAuthToken) {
+      console.warn(`⚠️ No eBay OAuth token found for user ${req.auth._id}`)
+      return res.status(401).json({
+        success: false,
+        message: "eBay authentication required"
+      })
+    }
+
+    // Get the inventory item to find the return ID
+    const inventoryItem = await InventoryItem.findById(itemId)
+    if (!inventoryItem) {
+      return res.status(404).json({
+        success: false,
+        message: "Inventory item not found"
+      })
+    }
+
+    let returnDetails = null
+    let trackingDetails = null
+
+    // If we have an eBay return ID, get detailed return information
+    if (inventoryItem.ebayReturnId) {
+      console.log(`🔍 Found stored return ID: ${inventoryItem.ebayReturnId}`)
+      const returnResponse = await getReturnDetails(ebayOAuthToken, inventoryItem.ebayReturnId)
+      
+      if (returnResponse.success) {
+        returnDetails = returnResponse.returnData
+        console.log(`✅ Retrieved return details for stored return ID`)
+        console.log(`📋 Return data structure:`)
+        console.log(`📋 Summary:`, JSON.stringify(returnDetails.summary, null, 2))
+        console.log(`📋 Detail:`, JSON.stringify(returnDetails.detail, null, 2))
+        
+        // If we have tracking info, get detailed tracking
+        if (inventoryItem.ebayTrackingNumber && inventoryItem.ebayCarrierUsed) {
+          const trackingResponse = await getReturnTracking(
+            ebayOAuthToken, 
+            inventoryItem.ebayReturnId,
+            inventoryItem.ebayCarrierUsed,
+            inventoryItem.ebayTrackingNumber
+          )
+          
+          if (trackingResponse.success) {
+            trackingDetails = trackingResponse.trackingData
+          }
+        }
+      } else if (returnResponse.failedOAuth) {
+        return res.status(401).json({
+          success: false,
+          message: "eBay authentication expired"
+        })
+      }
+    } else {
+      // No stored return ID - search for returns that might match this item
+      console.log(`🔍 No stored return ID found, searching for returns for order: ${inventoryItem.orderId}`)
+      
+      try {
+        // Search for recent returns (last 90 days)
+        const searchFilters = {
+          creation_date_range_from: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+          limit: '200'
+        }
+        
+        const searchResult = await searchReturns(ebayOAuthToken, searchFilters)
+        
+        if (searchResult.success && searchResult.returns.length > 0) {
+          console.log(`📊 Found ${searchResult.returns.length} recent returns, checking for matches`)
+          
+          // Look for returns that match this item's order ID, SKU, or eBay ID
+          const matchingReturn = searchResult.returns.find(returnItem => {
+            const orderMatch = returnItem.orderId === inventoryItem.orderId
+            const skuMatch = returnItem.lineItems && returnItem.lineItems.some(lineItem => 
+              lineItem.itemId === inventoryItem.ebayId || 
+              lineItem.lineItemId === inventoryItem.sku
+            )
+            return orderMatch || skuMatch
+          })
+          
+          if (matchingReturn) {
+            console.log(`✅ Found matching return for this item:`, {
+              returnId: matchingReturn.returnId,
+              orderId: matchingReturn.orderId,
+              creationDate: matchingReturn.creationDate
+            })
+            
+            // Get detailed return information and store in Return collection
+            const returnResponse = await getReturnDetails(ebayOAuthToken, matchingReturn.returnId)
+            if (returnResponse.success) {
+              returnDetails = returnResponse.returnData
+              
+              // Store in dedicated Return collection
+              await createOrUpdateReturn(returnDetails, itemId, req.auth._id)
+              
+              console.log(`✅ Retrieved and stored detailed return information`)
+              console.log(`📋 Return data structure:`)
+              console.log(`📋 Summary:`, JSON.stringify(returnDetails.summary, null, 2))
+              console.log(`📋 Detail:`, JSON.stringify(returnDetails.detail, null, 2))
+            }
+          } else {
+            console.log(`⚠️ No matching return found among ${searchResult.returns.length} returns`)
+          }
+        } else {
+          console.log(`⚠️ No returns found in search result`)
+        }
+      } catch (searchError) {
+        console.error("Error searching for returns:", searchError.message)
+      }
+    }
+
+    res.json({
+      success: true,
+      inventoryItem: inventoryItem.toObject(),
+      returnDetails,
+      trackingDetails,
+      hasEbayData: !!inventoryItem.ebayReturnId
+    })
+
+  } catch (error) {
+    console.error("Error fetching return details:", error)
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching return details"
+    })
+  }
+})
+
+// Get return tracking information
+ebayRouter.get("/getReturnTracking/:itemId", async (req, res) => {
+  try {
+    const { itemId } = req.params
+    
+    if (!req.auth?._id) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      })
+    }
+    
+    console.log(`📦 Getting return tracking for item ${itemId}, user ${req.auth._id}`)
+    
+    let userObject
+    let ebayOAuthToken
+    
+    try {
+      userObject = await getUserObject(req.auth._id)
+      ebayOAuthToken = userObject.ebayOAuthToken
+    } catch (userError) {
+      console.error(`❌ User lookup failed for tracking request, ID ${req.auth._id}:`, userError.message)
+      return res.status(401).json({
+        success: false,
+        message: "User authentication invalid. Please log in again.",
+        needsReauth: true
+      })
+    }
+    
+    if (!ebayOAuthToken) {
+      console.warn(`⚠️ No eBay OAuth token found for tracking request, user ${req.auth._id}`)
+      return res.status(401).json({
+        success: false,
+        message: "eBay authentication required"
+      })
+    }
+
+    const inventoryItem = await InventoryItem.findById(itemId)
+    if (!inventoryItem) {
+      return res.status(404).json({
+        success: false,
+        message: "Inventory item not found"
+      })
+    }
+
+    if (!inventoryItem.ebayReturnId || !inventoryItem.ebayTrackingNumber || !inventoryItem.ebayCarrierUsed) {
+      return res.status(404).json({
+        success: false,
+        message: "No tracking information available"
+      })
+    }
+
+    const trackingResponse = await getReturnTracking(
+      ebayOAuthToken,
+      inventoryItem.ebayReturnId,
+      inventoryItem.ebayCarrierUsed,
+      inventoryItem.ebayTrackingNumber
+    )
+
+    if (!trackingResponse.success) {
+      if (trackingResponse.failedOAuth) {
+        return res.status(401).json({
+          success: false,
+          message: "eBay authentication expired"
+        })
+      }
+      
+      return res.status(404).json({
+        success: false,
+        message: trackingResponse.error || "Failed to retrieve tracking information"
+      })
+    }
+
+    res.json({
+      success: true,
+      trackingData: trackingResponse.trackingData,
+      inventoryItem: {
+        sku: inventoryItem.sku,
+        title: inventoryItem.title,
+        ebayReturnId: inventoryItem.ebayReturnId,
+        ebayTrackingNumber: inventoryItem.ebayTrackingNumber,
+        ebayCarrierUsed: inventoryItem.ebayCarrierUsed
+      }
+    })
+
+  } catch (error) {
+    console.error("Error fetching return tracking:", error)
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching tracking information"
+    })
+  }
+})
+
 async function getUserObject(userId) {
   const userInfo = await User.findById(userId)
+  if (!userInfo) {
+    throw new Error(`User not found with ID: ${userId}`)
+  }
   return userInfo.toObject()
 }
 

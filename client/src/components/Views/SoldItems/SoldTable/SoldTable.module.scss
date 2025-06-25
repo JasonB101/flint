@@ -10,7 +10,57 @@
       background: #748eff !important;
     }
     
-    // Highlight rows for items that are currently listed (potential returns)
+    // Active return (highest priority - red)
+    &.activeReturn {
+      background: #f8d7da !important; // Light red background
+      border-left: 4px solid #dc3545 !important; // Red left border
+      
+      &:hover {
+        background: #f1b2b7 !important; // Darker red on hover
+      }
+    }
+    
+    // Delivered return that needs processing (high priority - orange)
+    &.deliveredReturn {
+      background: #fff3cd !important; // Light orange background
+      border-left: 4px solid #fd7e14 !important; // Orange left border
+      
+      &:hover {
+        background: #ffe69c !important; // Darker orange on hover
+      }
+    }
+    
+    // Closed return (medium priority - blue)
+    &.closedReturn {
+      background: #d1ecf1 !important; // Light blue background
+      border-left: 4px solid #17a2b8 !important; // Blue left border
+      
+      &:hover {
+        background: #b8daff !important; // Darker blue on hover
+      }
+    }
+    
+    // Potential return from eBay listing (legacy detection - yellow)
+    &.potentialReturn {
+      background: #fff3cd !important; // Light yellow background
+      border-left: 4px solid #ffc107 !important; // Yellow left border
+      
+      &:hover {
+        background: #ffe69c !important; // Darker yellow on hover
+      }
+    }
+    
+    // Flagged return from inventory flags (low priority - gray)
+    &.flaggedReturn {
+      background: #e2e3e5 !important; // Light gray background
+      border-left: 4px solid #6c757d !important; // Gray left border
+      
+      &:hover {
+        background: #d1d2d4 !important; // Darker gray on hover
+      }
+    }
+    
+    // Legacy support for old returnedItem class
     &.returnedItem {
       background: #fff3cd !important; // Light yellow background
       border-left: 4px solid #ffc107 !important; // Orange left border
@@ -40,8 +90,8 @@
     }
     
     .returnIndicator {
-      background: #ff6b35;
-      color: white;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 12px;
       padding: 2px 6px;
       font-size: 11px;
@@ -49,12 +99,87 @@
       display: inline-block;
       cursor: help;
       transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(255, 107, 53, 0.3);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       
       &:hover {
-        background: #e55a2b;
-        transform: scale(1.05);
-        box-shadow: 0 2px 6px rgba(255, 107, 53, 0.4);
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.1);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+      
+      // Specific styling for different return types
+      &[data-return-type="activeReturn"] {
+        background: #dc3545;
+        color: white;
+        border-color: #dc3545;
+        
+        &:hover {
+          background: #c82333;
+        }
+      }
+      
+      &[data-return-type="deliveredReturn"] {
+        background: #fd7e14;
+        color: white;
+        border-color: #fd7e14;
+        
+        &:hover {
+          background: #e8680b;
+        }
+      }
+      
+      &[data-return-type="closedReturn"] {
+        background: #17a2b8;
+        color: white;
+        border-color: #17a2b8;
+        
+        &:hover {
+          background: #138496;
+        }
+      }
+      
+      &[data-return-type="potentialReturn"] {
+        background: #ffc107;
+        color: #212529;
+        border-color: #ffc107;
+        
+        &:hover {
+          background: #e0a800;
+        }
+      }
+      
+      &[data-return-type="flaggedReturn"] {
+        background: #6c757d;
+        color: white;
+        border-color: #6c757d;
+        
+        &:hover {
+          background: #5a6268;
+        }
+      }
+    }
+    
+    .loadingIndicator {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 12px;
+      padding: 2px 6px;
+      font-size: 11px;
+      margin-right: 8px;
+      display: inline-block;
+      cursor: default;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 1;
       }
     }
 
@@ -66,8 +191,6 @@
       z-index: 9999; // Ensure the whole cell is above other content when hovering
     }
   }
-
-
 
   .tdEdit .edit {
     visibility: hidden;
@@ -82,201 +205,30 @@
   .tdEdit .save {
     visibility: hidden;
     position: absolute;
-    right: 2px;
-    bottom: 2px;
+    right: 22px;
+    top: 2px;
     font-size: 16px;
-    color: green;
+    color: rgb(90, 90, 90);
     cursor: pointer;
-  }
-
-  .edit:hover {
-    font-size: 18px;
-  }
-  .save:hover {
-    font-size: 18px;
   }
 
   .tdEdit:hover .edit {
     visibility: visible;
   }
-
-  td {
-    padding: 3px !important;
-    position: relative;
-    text-align: center;
-    vertical-align: middle !important;
-    border: 0 !important ;
-    cursor: default !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    input {
-      text-align: center;
-      width: 50px;
-    }
-    
-    // Title column - wider with ellipsis truncation
-    &:nth-child(1) {
-      width: 450px;
-      max-width: 450px;
-      min-width: 450px;
-      text-align: left;
-      white-space: nowrap;
-      overflow: visible; // Allow dropdown to show
-      text-overflow: ellipsis;
-      position: relative;
-      z-index: 1;
-      
-      // Override overflow only for the text content, not the whole cell
-      .titleText {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1;
-      }
-    }
-    
-    // Part No
-    &:nth-child(2) {
-      width: 120px;
-      max-width: 120px;
-    }
-    
-    // SKU
-    &:nth-child(3) {
-      width: 80px;
-      max-width: 80px;
-    }
-    
-    // Date Purchased
-    &:nth-child(4) {
-      width: 100px;
-      max-width: 100px;
-    }
-    
-    // Date Sold
-    &:nth-child(5) {
-      width: 100px;
-      max-width: 100px;
-    }
-    
-    // Days Listed
-    &:nth-child(6) {
-      width: 80px;
-      max-width: 80px;
-    }
-    
-    // Purchase Price
-    &:nth-child(7) {
-      width: 90px;
-      max-width: 90px;
-    }
-    
-    // Price Sold
-    &:nth-child(8) {
-      width: 90px;
-      max-width: 90px;
-    }
-    
-    // Shipping Cost
-    &:nth-child(9) {
-      width: 100px;
-      max-width: 100px;
-    }
-    
-    // Fees
-    &:nth-child(10) {
-      width: 80px;
-      max-width: 80px;
-    }
-    
-    // Profit
-    &:nth-child(11) {
-      width: 80px;
-      max-width: 80px;
-    }
-    
-    // ROI
-    &:nth-child(12) {
-      width: 70px;
-      max-width: 70px;
-    }
-    
-    // Buyer - fixed width with truncation for old IDs
-    &:nth-child(13) {
-      width: 120px;
-      max-width: 120px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .tdEdit:hover .save {
+    visibility: visible;
   }
 
-  th {
-    position: -webkit-sticky;
-    padding: 10px 6px !important;
-    position: sticky;
-    background: #26303f;
-    color: white;
-    top: 0;
-    margin-top: -4px;
-    z-index: 10;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    border: none !important;
-    background-clip: padding-box;
+  .tdEdit {
+    position: relative;
+  }
+
+  .data {
+    color: black;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-    // Match column widths with data cells
-    &:nth-child(1) { 
-      width: 450px; 
-      max-width: 450px; 
-      min-width: 450px;
-      text-align: left; 
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    } // Title
-    &:nth-child(2) { width: 120px; max-width: 120px; } // Part No
-    &:nth-child(3) { width: 80px; max-width: 80px; } // SKU
-    &:nth-child(4) { width: 100px; max-width: 100px; } // Purchased
-    &:nth-child(5) { width: 100px; max-width: 100px; } // Sold
-    &:nth-child(6) { width: 80px; max-width: 80px; } // Days
-    &:nth-child(7) { width: 90px; max-width: 90px; } // Cost
-    &:nth-child(8) { width: 90px; max-width: 90px; } // Sale
-    &:nth-child(9) { width: 100px; max-width: 100px; } // Shipping
-    &:nth-child(10) { width: 80px; max-width: 80px; } // Fees
-    &:nth-child(11) { width: 80px; max-width: 80px; } // Profit
-    &:nth-child(12) { width: 70px; max-width: 70px; } // ROI
-    &:nth-child(13) { width: 120px; max-width: 120px; } // Buyer
   }
 
-  & > div > table > thead > tr {
-    position: relative;
+  .itemsList {
+    height: 100%;
   }
-
-  thead {
-    // background: #b1b7c0;
-    // color: rgb(17, 17, 17);
-    text-align: center;
-    font-weight: normal;
-  }
-
-  .buttonWrapper {
-    button {
-      max-height: 30px;
-      font-size: 12px;
-    }
-  }
-}
-
-.itemsList {
-  background-color: white;
 }
