@@ -331,14 +331,19 @@ inventoryRouter.put("/wasteItem/:id", async (req, res, next) => {
       const listingResult = await endListing(ebayAuthToken, ebayId)
       
       if (!listingResult.success) {
-        console.log(`Failed to end listing ${ebayId}: ${listingResult.message}`)
-        return res.status(500).send({ 
-          success: false, 
-          message: `Failed to end eBay listing: ${listingResult.message}` 
-        })
+        // Check if the listing is already closed - this is OK for waste operation
+        if (listingResult.message && listingResult.message.includes("already been closed")) {
+          console.log(`eBay listing ${ebayId} is already closed - proceeding with waste operation`)
+        } else {
+          console.log(`Failed to end listing ${ebayId}: ${listingResult.message}`)
+          return res.status(500).send({ 
+            success: false, 
+            message: `Failed to end eBay listing: ${listingResult.message}` 
+          })
+        }
+      } else {
+        console.log(`Successfully ended eBay listing ${ebayId} for waste item`)
       }
-      
-      console.log(`Successfully ended eBay listing ${ebayId} for waste item`)
     } else {
       console.log(`No eBay listing found for waste item: ${title} (SKU: ${sku})`)
     }

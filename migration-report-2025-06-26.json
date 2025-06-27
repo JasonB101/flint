@@ -1,0 +1,989 @@
+{
+  "totalReturns": 69,
+  "itemsProcessed": 67,
+  "itemsSkipped": 5,
+  "itemsUpdated": 64,
+  "errors": 0,
+  "details": [
+    {
+      "itemId": "656d3e6a85b433b766e53e09",
+      "sku": "10966",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "675015eed4f0e03de89bebac",
+      "sku": "15560",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "67b51076494f7386c79c0388",
+      "sku": "15631",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "66d888ac75eee2b5482133b6",
+      "sku": "11375",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "67d1b71f98dc1d30dedbcb4e",
+      "sku": "15743",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "67b4f81ef68921eeddeb0fb4",
+      "sku": "15616",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67ee3c2a70c554f685e0de43",
+      "sku": "15826",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "671b2fe61502a75ca8ee120b",
+      "sku": "15484",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67da1adfc7fc0a6596630cae",
+      "sku": "15808",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "670d4e792381f5e3dbdc368a",
+      "sku": "11502",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "670d58ff2381f5e3dbdc36b4",
+      "sku": "11509",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "6812774ed5fa04303c9d41e5",
+      "sku": "15972",
+      "returnCount": 1,
+      "missingFields": [],
+      "needsUpdate": false,
+      "updatedFields": []
+    },
+    {
+      "itemId": "67b4f0aaf68921eeddeb0f94",
+      "sku": "15611",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67ee41fe70c554f685e0de5b",
+      "sku": "15834",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "682d76b75091ccce03cd9333",
+      "sku": "16070",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "68126289d5fa04303c9d41c2",
+      "sku": "15962",
+      "returnCount": 1,
+      "missingFields": [],
+      "needsUpdate": false,
+      "updatedFields": []
+    },
+    {
+      "itemId": "681257b1d5fa04303c9d41a1",
+      "sku": "15952",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "6439aea5d8dbdbf57e3dd296",
+      "sku": "10703",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "67143d7594ee756ff3ed8a5f",
+      "sku": "15471",
+      "returnCount": 1,
+      "missingFields": [],
+      "needsUpdate": false,
+      "updatedFields": []
+    },
+    {
+      "itemId": "67d990563a00b8a7b0445c2f",
+      "sku": "15770",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67be25a8467050dedc95c15e",
+      "sku": "15646",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "672e5c692becf83dc3b138d3",
+      "sku": "15512",
+      "returnCount": 1,
+      "missingFields": [
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "63bc994eabaa40d1f0ecea29",
+      "sku": "10433",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67d992653a00b8a7b0445c35",
+      "sku": "15772",
+      "returnCount": 1,
+      "missingFields": [
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67be44b6467050dedc95c20d",
+      "sku": "15669",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67d987de3a00b8a7b0445bd7",
+      "sku": "15761",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "66d8bb6e75eee2b548213420",
+      "sku": "11385",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "6701c5bb341ab3107b049ab1",
+      "sku": "11497",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "6544b9021461c8f1ba5f5dfa",
+      "sku": "10831",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67ee4af870c554f685e0de6f",
+      "sku": "15840",
+      "returnCount": 1,
+      "missingFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "returnCount",
+        "hasActiveReturn",
+        "returnDate",
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67b54628494f7386c79c04ac",
+      "sku": "1211",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "681e5c5a13e5fcdbd1225717",
+      "sku": "1759",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "681e5b8a13e5fcdbd12256d7",
+      "sku": "1743",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "683265f4697d443d91556969",
+      "sku": "1872",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67be765d467050dedc95c2f2",
+      "sku": "1251",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "6823c4ec91e3624559941aff",
+      "sku": "1765",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "68378b05bc005e3aa5b71f17",
+      "sku": "1895",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "676468c764851b226248e804",
+      "sku": "1039",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67a2d6a51a0be51c736c48d2",
+      "sku": "1173",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67ae6fbea254663e6c42e3ad",
+      "sku": "1195",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67be7091467050dedc95c2a0",
+      "sku": "1242",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67b54360494f7386c79c0497",
+      "sku": "1208",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67be6faa467050dedc95c298",
+      "sku": "1241",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67b5452c494f7386c79c049c",
+      "sku": "1209",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67c1162c8dc172d0669f8fe7",
+      "sku": "1281",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "6764707264851b226248e81c",
+      "sku": "1047",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67ca48febd766a7c15e15633",
+      "sku": "1299",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "6792ee3c41f0af99eec583dc",
+      "sku": "1130",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67eeefef70c554f685e0e078",
+      "sku": "1460",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67e60cb66ae3ecc804731c01",
+      "sku": "1404",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67899f09b880e268e1722799",
+      "sku": "1109",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "679974c7ac90b062645e159c",
+      "sku": "1152",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67fae332d1f2595d46a29fe2",
+      "sku": "1549",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67dc8dc3d9de7ff341dc13e2",
+      "sku": "1397",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "67c113998dc172d0669f8fcc",
+      "sku": "1276",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "680a71ab5ac7b20fa383e02a",
+      "sku": "1602",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "68113f889b22a00b83f9e6e0",
+      "sku": "1655",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67eef89370c554f685e0e0c9",
+      "sku": "1486",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "67b7a77ed03b39b947762a48",
+      "sku": "1236",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "682e4552527a5fb26c8cb90f",
+      "sku": "1795",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    },
+    {
+      "itemId": "682e4587527a5fb26c8cb91b",
+      "sku": "1798",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "677f06f7ee29b437cfbf5d1d",
+      "sku": "1087",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder"
+      ]
+    },
+    {
+      "itemId": "682e45fb527a5fb26c8cb94f",
+      "sku": "1811",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "682f8f4768024ff4b9ecf5b1",
+      "sku": "1837",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67c78b2b30cd5ea8b6f4c00b",
+      "sku": "1286",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "67d0c28fe29a6c0d30ea9ec5",
+      "sku": "1330",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn"
+      ]
+    },
+    {
+      "itemId": "6840a989885b9b64f9097173",
+      "sku": "1907",
+      "returnCount": 1,
+      "missingFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "returnShippingCost in additionalCosts"
+      ],
+      "needsUpdate": true,
+      "updatedFields": [
+        "lastReturnedOrder",
+        "automaticReturn",
+        "additionalCosts"
+      ]
+    }
+  ]
+}
