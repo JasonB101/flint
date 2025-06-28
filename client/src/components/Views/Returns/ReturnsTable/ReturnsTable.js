@@ -52,11 +52,43 @@ const ReturnsTable = (props) => {
       .join(' ')
   }
 
-  // Sort returned items by update date (newest first)
+  // Sort returned items by return date (newest first)
   returnedItems.sort((a, b) => {
-    const aDate = new Date(a.updatedAt || a.dateSold || 0)
-    const bDate = new Date(b.updatedAt || b.dateSold || 0)
-    return bDate - aDate
+    // Simplified and more reliable return date extraction
+    const getReturnDate = (item) => {
+      // Priority 1: Use dedicated returnDate field if available
+      if (item.returnDate) {
+        return new Date(item.returnDate);
+      }
+      
+      // Priority 2: Use updatedAt if significantly different from dateSold
+      if (item.updatedAt && item.dateSold) {
+        const updatedDate = new Date(item.updatedAt);
+        const soldDate = new Date(item.dateSold);
+        const daysDifference = Math.abs((updatedDate - soldDate) / (1000 * 60 * 60 * 24));
+        
+        if (daysDifference > 1) {
+          return updatedDate;
+        }
+      }
+      
+      // Priority 3: Fall back to updatedAt or dateSold
+      if (item.updatedAt) {
+        return new Date(item.updatedAt);
+      }
+      
+      if (item.dateSold) {
+        return new Date(item.dateSold);
+      }
+      
+      // Default: return very old date for items without dates
+      return new Date(0);
+    };
+    
+    const aDate = getReturnDate(a);
+    const bDate = getReturnDate(b);
+    
+    return bDate - aDate; // Newest first
   })
 
   const items = returnedItems.map((x) => populateRow(x))
@@ -82,7 +114,6 @@ const ReturnsTable = (props) => {
       shippingCost,
       ebayFees,
       listedPrice,
-      returnDate,
     } = itemObject
 
     // Calculate return shipping cost

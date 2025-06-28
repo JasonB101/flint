@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext, useCallback } from "react"
 import Styles from "./ItemReturnModal.module.scss"
-import updateAdditionalCosts from "./updateAdditionalCost"
 import figureExpectedProfit from "../../../../lib/figureExpectedProfit"
 import itemReListed from "./itemReListed"
 import itemIsWaste from "./itemIsWaste"
-import { Modal, Button, Form, Row, Col } from "react-bootstrap"
 import { storeContext } from "../../../../Store"
 
 // Function to format return reasons into human-readable text
@@ -83,7 +81,7 @@ const ItemReturnModal = ({
 
   useEffect(() => {
     fetchReturnDetails()
-  }, [itemId])
+  }, [itemId, fetchReturnDetails])
 
   // Calculate combined costs without modifying state repeatedly
   const calculatedAdditionalCosts = React.useMemo(() => {
@@ -188,7 +186,7 @@ const ItemReturnModal = ({
     onSubmit(updates)
   }
 
-  const fetchReturnDetails = async () => {
+  const fetchReturnDetails = useCallback(async () => {
     if (!itemId) return
 
     setSubmitEnabled(false)
@@ -299,7 +297,7 @@ const ItemReturnModal = ({
       console.error("❌ Error fetching return details:", error)
       setSubmitEnabled(true)
     }
-  }
+  }, [itemId, getReturnsForItem, user?.token, sku, orderId])
 
   return (
     <div className={Styles.modal}>

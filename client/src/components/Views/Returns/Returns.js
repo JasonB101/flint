@@ -23,7 +23,7 @@ const Returns = (props) => {
   const [toggleSummaryModal, setToggleSummaryModal] = useState(false)
   const [unprocessedReturnIds, setUnprocessedReturnIds] = useState(new Set())
   const [unprocessedReturnsDetails, setUnprocessedReturnsDetails] = useState({})
-  const { ebaySyncComplete, returns: storeReturns } = useContext(storeContext)
+  const { ebaySyncComplete, returns: storeReturns, items: inventoryItems } = useContext(storeContext)
 
   // Dynamically generate status options from loaded returns
   const statusOptions = useMemo(() => {
@@ -37,20 +37,25 @@ const Returns = (props) => {
 
   // Transform return objects to match the expected inventory item format
   const transformReturnData = (returns) => {
-    return returns.map((returnItem, index) => {
-      // Get inventory item data from the populated field
-      const inventoryItem = returnItem.inventoryItemId || {}
-      
-      // Debug logging to verify ID mapping
-      if (inventoryItem._id) {
-        console.log(`🔗 Return ${returnItem.ebayReturnId} linked to inventory item ${inventoryItem._id}`)
+    // Create a map of inventory items by itemId for quick lookup
+    const inventoryItemsMap = new Map();
+    inventoryItems.forEach(item => {
+      if (item.ebayId) {
+        inventoryItemsMap.set(item.ebayId, item);
+      }
+    });
+    
+    const returnsByInventoryId = new Map();
+    
+    returns.forEach(returnItem => {
+      const inventoryItem = inventoryItemsMap.get(returnItem.itemId);
+      if (inventoryItem) {
+        // Link return to inventory item
       } else {
-        console.log(`⚠️ Return ${returnItem.ebayReturnId} has no linked inventory item`)
+        // Return has no linked inventory item
       }
       
-      
-      
-      return {
+      const returnData = {
         _id: inventoryItem._id || returnItem.inventoryItemId, // Use inventory item ID, not return ID
         // Basic item info
         title: returnItem.itemTitle || inventoryItem.title || "Unknown Item",
@@ -127,7 +132,11 @@ const Returns = (props) => {
         itemId: returnItem.itemId,
         returnDocumentId: returnItem._id, // Keep track of the return document ID
       }
+      
+      returnsByInventoryId.set(returnItem.itemId, returnData);
     })
+    
+    return Array.from(returnsByInventoryId.values());
   }
 
   // Map return status to inventory status for display
@@ -159,7 +168,6 @@ const Returns = (props) => {
         
         if (data.success) {
           const unprocessedIds = new Set(data.unprocessedReturns.map(r => r.ebayReturnId))
-          console.log(`📊 Found ${unprocessedIds.size} unprocessed returns`)
           setUnprocessedReturnIds(unprocessedIds)
           setUnprocessedReturnsDetails(data.unprocessedReturnsMap || {})
         }
@@ -172,14 +180,13 @@ const Returns = (props) => {
   // Wait for eBay sync to complete, then use returns from Store
   useEffect(() => {
     if (ebaySyncComplete && storeReturns) {
-      console.log("📦 Using returns from Store after eBay sync completion");
-      
       const transformedReturns = transformReturnData(storeReturns);
       setAllReturns(transformedReturns);
       
       // Fetch unprocessed returns info
       fetchUnprocessedReturns();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ebaySyncComplete, storeReturns])
 
   // Filter by time

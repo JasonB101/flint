@@ -33,7 +33,7 @@ const ItemOptions = ({ itemObject, setProcessItem }) => {
   const handleViewOnEbay = () => {
     if (listed) {
       // If we have eBay ID, we could open the eBay listing
-      console.log("View on eBay for SKU:", sku)
+      // View on eBay for SKU
     }
     setShowOptions(false)
   }

@@ -22,7 +22,8 @@ const {
   createOrUpdateReturn,
   getReturnsForItem,
   updateInventoryItemReturnFlags,
-  autoProcessOrUpdateReturn
+  autoProcessOrUpdateReturn,
+  processRelistedReturns
 } = require("../lib/returnService")
 const { getOAuthLink, refreshAccessToken } = require("../lib/oAuth")
 const {
@@ -511,6 +512,24 @@ ebayRouter.get("/getebay", async (req, res, next) => {
       } catch (error) {
         console.log(`[${userId}] ❌ Return sync failed: ${error.message}`)
         syncResults.returnSync = { success: false, error: error.message }
+      }
+    }
+
+    // Step 3.6: Process re-listed returns (simple forward-going logic)
+    if (syncResults.returnSync?.success && syncResults.returnSync?.synced > 0) {
+      try {
+        progress.emit('processing re-listed returns', 85, 'Processing re-listed items...')
+        
+        const relistResults = await processRelistedReturns(userId, ebayListings, {
+          dryRun: false  // Set to true for testing
+        })
+        
+        console.log(`[${userId}] ✅ Processed ${relistResults.relistProcessed} re-listed returns`)
+        syncResults.relistProcessing = relistResults
+        
+      } catch (error) {
+        console.log(`[${userId}] ❌ Relist processing failed: ${error.message}`)
+        syncResults.relistProcessing = { success: false, error: error.message }
       }
     }
 
