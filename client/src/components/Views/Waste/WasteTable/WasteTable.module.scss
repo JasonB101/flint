@@ -1,7 +1,9 @@
 .wrapper {
-  width: 100%;
+  position: relative;
+  padding-bottom: 5px;
+  border-top: 1px solid rgb(206, 204, 204);
+  overflow: auto;
   height: 100%;
-  overflow: hidden;
 }
 
 // Table styling
@@ -36,10 +38,29 @@
   }
 }
 
-// Title column with waste indicator
+// Title column with waste indicator and options
 .titleId {
   max-width: 300px !important;
   position: relative !important;
+  
+  .item-options {
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 4px;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s linear;
+    position: relative;
+    z-index: 9999;
+  }
+  
+  &:hover {
+    .item-options {
+      visibility: visible;
+      opacity: 1;
+    }
+    z-index: 9999;
+  }
   
   .wasteIndicator {
     display: inline-block;
@@ -49,7 +70,7 @@
   
   .titleText {
     display: inline-block;
-    max-width: calc(100% - 30px);
+    max-width: calc(100% - 60px); // Account for options icon + waste indicator
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

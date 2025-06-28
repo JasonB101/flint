@@ -28,18 +28,6 @@
     &:hover {
       background: #748eff !important;
     }
-    
-    // Highlight rows for items that are currently re-listed
-    &.reListedItem {
-      background: #d1f2eb !important; // Light green background
-      border-left: 4px solid #28a745 !important; // Green left border
-      
-      &:hover {
-        background: #a3e4d7 !important; // Darker green on hover
-      }
-    }
-    
-
   }
 
   .titleId {
@@ -58,24 +46,18 @@
       transition: visibility 0s, opacity 0.2s linear;
       position: relative;
       z-index: 9999;
-    }
-    
-    .activeIndicator {
-      background: #28a745;
-      color: white;
-      border-radius: 12px;
-      padding: 2px 6px;
-      font-size: 11px;
+          }
+      
+      .unprocessedIndicator {
+      color: #f44336;
+      font-weight: bold;
       margin-right: 8px;
-      display: inline-block;
+      font-size: 12px;
       cursor: help;
       transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(40, 167, 69, 0.3);
       
       &:hover {
-        background: #218838;
-        transform: scale(1.05);
-        box-shadow: 0 2px 6px rgba(40, 167, 69, 0.4);
+        transform: scale(1.1);
       }
     }
     
@@ -92,8 +74,8 @@
       }
     }
     
-    .unprocessedIndicator {
-      color: #f44336;
+    .attentionIndicator {
+      color: #ff9800;
       font-weight: bold;
       margin-right: 8px;
       font-size: 12px;
@@ -323,7 +305,7 @@
 
   // Refund amount styling
   .refundAmount {
-    color: #28a745;
+    color: #000;
     font-weight: 600;
   }
 

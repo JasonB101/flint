@@ -12,9 +12,7 @@ const SoldTable = (props) => {
     returnInventoryItem, 
     ebayListings, 
     getShippingLabels, 
-    user, 
-    returnData = {}, 
-    loadingReturns = false 
+    user 
   } = props
   
   const [editItem, changeEdit] = useState({
@@ -24,111 +22,27 @@ const SoldTable = (props) => {
   })
   const [returnItem, setReturnItem] = useState(null)
 
-  // Enhanced return detection using comprehensive return data
-  function getReturnStatus(itemObject) {
-    const { _id, sku } = itemObject
-    
-    // Get return data for this specific item
-    const itemReturnInfo = returnData[_id]
-    
-    // Check if this sold item is currently listed on eBay (legacy detection)
-    const isCurrentlyListed = ebayListings.some(listing => listing.SKU === sku || listing.sku === sku)
-    
-    if (itemReturnInfo) {
-      const { latestReturn, hasActiveReturn, isDelivered, deliveredCount, returns } = itemReturnInfo
-      
-      // Comprehensive return status based on actual return data
-      if (hasActiveReturn) {
-        return {
-          type: 'activeReturn',
-          icon: '🔄',
-          title: `Active Return - Status: ${latestReturn.returnStatus}`,
-          className: Styles.activeReturn,
-          priority: 1
-        }
-      }
-      
-      if (isDelivered) {
-        return {
-          type: 'deliveredReturn',
-          icon: '📦',
-          title: `Return Delivered${deliveredCount > 1 ? ` (${deliveredCount} times)` : ''} - Needs Processing`,
-          className: Styles.deliveredReturn,
-          priority: 2
-        }
-      }
-      
-      if (returns.length > 0) {
-        const status = latestReturn.returnStatus
-        return {
-          type: 'closedReturn',
-          icon: '↩️',
-          title: `Return - Status: ${status}`,
-          className: Styles.closedReturn,
-          priority: 3
-        }
-      }
-    }
-    
-    // Fallback to legacy detection (item currently listed)
-    if (isCurrentlyListed) {
-      return {
-        type: 'potentialReturn',
-        icon: '⚠️',
-        title: 'Item is currently listed on eBay - Potential Return',
-        className: Styles.potentialReturn,
-        priority: 4
-      }
-    }
-    
-    // Check basic return flags from inventory item
-    if (itemObject.hasActiveReturn) {
-      return {
-        type: 'flaggedReturn',
-        icon: '🔄',
-        title: 'Item flagged as having active return',
-        className: Styles.flaggedReturn,
-        priority: 5
-      }
-    }
-    
-    return null
-  }
 
-  // Helper function to get return priority for sorting
-  function getReturnPriority(itemObject) {
-    const returnStatus = getReturnStatus(itemObject)
-    return returnStatus ? returnStatus.priority : 999 // Items without returns get lowest priority
-  }
 
   soldItems.sort((a, b) => {
-    // Primary sort: Return status priority (lower numbers = higher priority)
-    const aPriority = getReturnPriority(a)
-    const bPriority = getReturnPriority(b)
-    const priorityDiff = aPriority - bPriority
+    // Sort by date sold (newest first)
+    const { dateSold: aDate, shippingCost: aShipping = 0 } = a
+    const { dateSold: bDate, shippingCost: bShipping = 0 } = b
     
-    // If return priorities are the same, sort by date sold (newest first)
-    if (priorityDiff === 0) {
-      const { dateSold: aDate, shippingCost: aShipping = 0 } = a
-      const { dateSold: bDate, shippingCost: bShipping = 0 } = b
-      
-      const aTime = Number(new Date(String(aDate)).getTime())
-      const bTime = Number(new Date(String(bDate)).getTime())
-      const dateDiff = bTime - aTime
-      
-      // If dates are also the same, tertiary sort: Shipping cost (0 at top, then ascending)
-      if (dateDiff === 0) {
-        // Put 0 shipping costs first
-        if (aShipping === 0 && bShipping !== 0) return -1
-        if (bShipping === 0 && aShipping !== 0) return 1
-        // Then sort by shipping cost ascending
-        return aShipping - bShipping
-      }
-      
-      return dateDiff
+    const aTime = Number(new Date(String(aDate)).getTime())
+    const bTime = Number(new Date(String(bDate)).getTime())
+    const dateDiff = bTime - aTime
+    
+    // If dates are the same, secondary sort: Shipping cost (0 at top, then ascending)
+    if (dateDiff === 0) {
+      // Put 0 shipping costs first
+      if (aShipping === 0 && bShipping !== 0) return -1
+      if (bShipping === 0 && aShipping !== 0) return 1
+      // Then sort by shipping cost ascending
+      return aShipping - bShipping
     }
     
-    return priorityDiff
+    return dateDiff
   })
   const items = soldItems.map((x) => populateRow(x))
 
@@ -182,11 +96,8 @@ const SoldTable = (props) => {
     } = itemObject
     const username = buyer ? buyer : "Unknown"
     
-    // Get comprehensive return status
-    const returnStatus = getReturnStatus(itemObject)
-    
     return (
-      <tr key={_id} className={returnStatus?.className || ""}>
+      <tr key={_id}>
         <td className={Styles["titleId"]}>
           <span className={Styles["item-options"]}>
             <ItemOptions
@@ -194,23 +105,6 @@ const SoldTable = (props) => {
               itemObject={itemObject}
             />
           </span>{" "}
-          {returnStatus && (
-            <span 
-              className={Styles["returnIndicator"]}
-              title={returnStatus.title}
-              data-return-type={returnStatus.type}
-            >
-              {returnStatus.icon}
-            </span>
-          )}
-          {loadingReturns && !returnStatus && (
-            <span 
-              className={Styles["loadingIndicator"]}
-              title="Loading return data..."
-            >
-              ⏳
-            </span>
-          )}
           <span 
             className={Styles["titleText"]}
             ref={(el) => {

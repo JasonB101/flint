@@ -93,12 +93,22 @@ const ReturnsTable = (props) => {
     // Calculate total additional costs
     const totalAdditionalCosts = additionalCosts.reduce((sum, cost) => sum + (cost.amount || 0), 0)
 
+    // PROFIT CALCULATION LOGIC:
+    // - Original Profit = selling price - item cost - fees - shipping
+    // - Refunded Item Loss = item cost + original fees + return shipping (actual out-of-pocket loss)
+    // - Waste Item Loss = item cost + all additional costs
+    // - Resold Item Profit = new sale profit (includes return costs already)
+    
     // Determine profit or expected profit based on status
     let profitOrExpected = 0
     
     if (status === "waste") {
       // Calculate loss for waste items (always negative)
       profitOrExpected = -(purchasePrice + totalAdditionalCosts)
+    } else if (itemObject.refundAmount && itemObject.refundAmount > 0) {
+      // Item was refunded - calculate actual out-of-pocket loss
+      // Loss = item cost + original fees + return shipping cost (not the entire refund amount)
+      profitOrExpected = -(purchasePrice + (ebayFees || 0) + returnShippingCost)
     } else if (status === "completed") {
       // Item was sold again - use the stored profit (return costs already included)
       if (profit !== undefined) {
@@ -190,6 +200,12 @@ const ReturnsTable = (props) => {
 
     // Check if this return is unprocessed
     const isUnprocessed = unprocessedReturnIds && unprocessedReturnIds.has(itemObject.ebayReturnId)
+    
+    // Check if this return needs attention (refunded but not properly processed)
+    const needsAttention = itemObject.refundAmount && itemObject.refundAmount > 0 && 
+                          currentStatus === 'REFUNDED' && 
+                          status !== 'waste' && 
+                          status !== 'completed'
 
     const valueToFixed = (value) => {
       if (typeof value === "number") {
@@ -230,7 +246,7 @@ const ReturnsTable = (props) => {
     }
 
     return (
-      <tr key={_id} className={isCurrentlyListed ? Styles.reListedItem : ""}>
+      <tr key={_id}>
         <td className={Styles["titleId"]}>
           <span className={Styles["item-options"]}>
             <ItemOptions itemObject={itemObject} setProcessItem={setProcessItem} />
@@ -243,12 +259,12 @@ const ReturnsTable = (props) => {
               ⚠️
             </span>
           )}
-          {isCurrentlyListed && (
+          {needsAttention && (
             <span 
-              className={Styles["activeIndicator"]}
-              title="Currently active on eBay"
+              className={Styles["attentionIndicator"]}
+              title={`Refunded item needs processing - $${valueToFixed(itemObject.refundAmount)} refunded. Consider marking as waste or relisting.`}
             >
-              ✅
+              💰
             </span>
           )}
           <span 

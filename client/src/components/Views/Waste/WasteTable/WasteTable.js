@@ -7,8 +7,6 @@ import ItemOptions from "./ItemOptions/ItemOptions"
 const WasteTable = (props) => {
   const { wasteItems, updateItem, user, deleteWasteItem } = props
   
-  console.log(`📋 WasteTable received ${wasteItems.length} waste items:`, wasteItems)
-  
   const [editItem, changeEdit] = useState({
     entryItem: "",
     value: "",
@@ -23,8 +21,6 @@ const WasteTable = (props) => {
   })
 
   const items = sortedWasteItems.map((x) => populateRow(x))
-  
-  console.log(`📋 WasteTable generated ${items.length} table rows`)
 
   useEffect(() => {
     applySortingToDOM()
@@ -99,6 +95,9 @@ const WasteTable = (props) => {
     return (
       <tr key={_id} className={Styles.wasteRow}>
         <td className={Styles["titleId"]}>
+          <span className={Styles["item-options"]}>
+            <ItemOptions itemObject={itemObject} deleteWasteItem={deleteWasteItem} />
+          </span>{" "}
           <span className={Styles["wasteIndicator"]} title="Waste Item">
             🗑️
           </span>
@@ -157,9 +156,6 @@ const WasteTable = (props) => {
         <td className={Styles.wasteReason}>{wasteReason}</td>
         <td>{buyer || "N/A"}</td>
         <td>{lastReturnedOrder || "N/A"}</td>
-        <td>
-          <ItemOptions itemObject={itemObject} deleteWasteItem={deleteWasteItem} />
-        </td>
       </tr>
     )
 
@@ -240,7 +236,6 @@ const WasteTable = (props) => {
             <th>Reason</th>
             <th>Buyer</th>
             <th>Order ID</th>
-            <th>Options</th>
           </tr>
         </thead>
         <tbody className={Styles.itemsList}>{items}</tbody>

@@ -41,8 +41,6 @@ const Waste = (props) => {
 
   // Apply time filter to waste items
   const applyTimeFilter = (allWasteItems) => {
-    console.log(`🗑️ Applying time filter "${timeFilter}" to ${allWasteItems.length} waste items`)
-    
     const now = new Date()
     let filteredByTime = allWasteItems
     
@@ -75,7 +73,6 @@ const Waste = (props) => {
     }
     // "all" timeFilter shows everything (no filtering needed)
     
-    console.log(`🗑️ After time filtering: ${filteredByTime.length} waste items`)
     setWasteItems(filteredByTime)
   }
 
@@ -99,11 +96,8 @@ const Waste = (props) => {
 
   // Filter by search term
   useEffect(() => {
-    console.log(`🔍 Applying search filter "${wasteSearchTerm}" to ${wasteItems.length} waste items`)
-    
     if (wasteSearchTerm === "") {
       filterItems(wasteItems)
-      console.log(`🔍 No search term - showing all ${wasteItems.length} items`)
     } else {
       const searchFiltered = wasteItems.filter((x) => {
         const { title, partNo, sku, buyer } = x
@@ -116,7 +110,6 @@ const Waste = (props) => {
         )
       })
       filterItems(searchFiltered)
-      console.log(`🔍 Search filtered: ${searchFiltered.length} items match "${wasteSearchTerm}"`)
     }
   }, [wasteSearchTerm, wasteItems])
 
@@ -131,7 +124,6 @@ const Waste = (props) => {
       })
       
       if (response.ok) {
-        console.log(`✅ Successfully deleted waste item ${itemId}`)
         // Refresh the waste items list
         loadWasteItems()
         // Also trigger a refresh in the parent component if needed
@@ -140,11 +132,9 @@ const Waste = (props) => {
         }
       } else {
         const errorData = await response.json()
-        console.error("Failed to delete waste item:", errorData.message)
         alert(`Failed to delete item: ${errorData.message}`)
       }
     } catch (error) {
-      console.error("Error deleting waste item:", error)
       alert("Error deleting item. Please try again.")
     }
   }
@@ -171,10 +161,6 @@ const Waste = (props) => {
             user={user}
             deleteWasteItem={deleteWasteItem}
           />
-          {/* Debug info */}
-          <div style={{ padding: '10px', fontSize: '12px', color: '#666' }}>
-            Debug: Showing {itemsToShow.length} waste items to table
-          </div>
         </div>
       </div>
 
