@@ -1,43 +1,55 @@
 .wrapper {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 16px 20px;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 8px 12px;
   align-items: stretch;
   
-  @media (max-width: 1200px) {
-    gap: 12px;
-    padding: 12px 16px;
+  @media (max-width: 1400px) {
+    gap: 4px;
+    padding: 6px 10px;
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 1280px) {
+    gap: 3px;
+    padding: 4px 8px;
+  }
+  
+  @media (max-width: 1024px) {
     flex-direction: column;
+    flex-wrap: wrap;
     gap: 8px;
   }
 
   .leftColumn {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     flex: 0 0 auto;
     
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       width: 100%;
     }
   }
 
   input[type="text"] {
-    height: 44px;
-    padding: 12px 16px;
-    font-size: 14px;
+    height: 32px;
+    padding: 6px 10px;
+    font-size: 12px;
     font-weight: 500;
     color: #26303f;
     background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-    min-width: 240px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    min-width: 150px;
+    
+    @media (max-width: 1280px) {
+      min-width: 120px;
+      height: 30px;
+      padding: 4px 8px;
+      font-size: 11px;
+    }
     
     &::placeholder {
       color: #6c757d;
@@ -47,39 +59,43 @@
     &:focus {
       outline: none;
       border-color: #26303f;
-      box-shadow: 0 4px 12px rgba(38, 48, 63, 0.15);
-      transform: translateY(-1px);
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       min-width: auto;
       width: 100%;
+      height: 40px;
     }
   }
 
   .timeFilter {
-    height: 44px;
-    padding: 12px 16px;
-    font-size: 14px;
+    height: 32px;
+    padding: 6px 10px;
+    font-size: 12px;
     font-weight: 500;
     color: #26303f;
     background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-    min-width: 240px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    min-width: 150px;
+    
+    @media (max-width: 1280px) {
+      min-width: 120px;
+      height: 30px;
+      padding: 4px 8px;
+      font-size: 11px;
+    }
     
     &:focus {
       outline: none;
       border-color: #26303f;
-      box-shadow: 0 4px 12px rgba(38, 48, 63, 0.15);
-      transform: translateY(-1px);
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       min-width: auto;
       width: 100%;
+      height: 40px;
     }
   }
 
@@ -89,19 +105,32 @@
     justify-content: center;
     align-items: center;
     background: white;
-    border-radius: 8px;
-    padding: 12px 16px;
+    border-radius: 4px;
+    padding: 4px 6px;
     margin: 0;
-    min-width: 110px;
+    min-width: 55px;
+    max-width: 70px;
     border: 1px solid #e9ecef;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
     position: relative;
     overflow: hidden;
+    flex-shrink: 1;
+    
+    @media (max-width: 1400px) {
+      min-width: 50px;
+      max-width: 60px;
+      padding: 3px 5px;
+    }
+    
+    @media (max-width: 1280px) {
+      min-width: 45px;
+      max-width: 55px;
+      padding: 2px 4px;
+    }
     
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       border-color: #26303f;
     }
     
@@ -111,40 +140,47 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
+      height: 2px;
       background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
     }
     
     color: #6c757d;
-    font-size: 11px;
+    font-size: 8px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
+    letter-spacing: 0.2px;
+    line-height: 1.1;
     text-align: center;
     
-    @media (max-width: 1200px) {
-      min-width: 90px;
-      padding: 10px 12px;
-      font-size: 10px;
+    @media (max-width: 1280px) {
+      font-size: 7px;
+      letter-spacing: 0.1px;
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       flex: 1;
       min-width: 0;
+      max-width: none;
+      font-size: 10px;
+      padding: 8px;
     }
   }
 
   span {
     display: block;
-    font-size: 16px;
+    font-size: 11px;
     font-weight: 700;
     color: #26303f;
     font-family: 'Monaco', 'Menlo', monospace;
-    margin: 6px 0 0 0;
+    margin: 2px 0 0 0;
     line-height: 1;
     
-    @media (max-width: 1200px) {
+    @media (max-width: 1280px) {
+      font-size: 10px;
+      margin: 1px 0 0 0;
+    }
+    
+    @media (max-width: 1024px) {
       font-size: 14px;
       margin: 4px 0 0 0;
     }
@@ -153,43 +189,44 @@
 
 .wrapper .spacer {
   flex: 1;
-  min-width: 20px;
+  min-width: 5px;
   
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     display: none;
   }
 }
 
 .wrapper button {
   flex: 0 0 auto;
-  height: 44px;
-  padding: 12px 24px;
-  font-size: 14px;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 11px;
   font-weight: 600;
   color: white;
   background: linear-gradient(135deg, #26303f 0%, #4a5568 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(38, 48, 63, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  
+  @media (max-width: 1280px) {
+    height: 30px;
+    padding: 4px 10px;
+    font-size: 10px;
+  }
   
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(38, 48, 63, 0.35);
     background: linear-gradient(135deg, #1a1f2e 0%, #3a4557 100%);
   }
   
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(38, 48, 63, 0.2);
   }
   
-  &:active {
-    transform: translateY(0);
-  }
-  
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     flex: 1;
+    height: 40px;
+    font-size: 14px;
   }
 } 
