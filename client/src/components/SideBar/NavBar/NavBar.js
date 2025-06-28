@@ -35,6 +35,15 @@ const NavBar = ({fname}) => {
         >
           Returns<div className="spacer"></div>
         </NavLink>,
+        <NavLink
+          key="waste"
+          to="/reports/waste"
+          activeStyle={{
+            backgroundColor: "#353a42",
+          }}
+        >
+          Waste<div className="spacer"></div>
+        </NavLink>,
       ],
     },
     reports: {

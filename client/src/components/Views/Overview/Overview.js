@@ -90,9 +90,9 @@ const Overview = ({ items, expenses }) => {
   const metrics = useMemo(() => {
     if (!safeItems || !safeItems.length) return null
 
-    // Separate active and sold items
-    const activeItems = safeItems.filter((item) => item.listed && !item.sold)
-    const soldItems = safeItems.filter((item) => item.sold)
+    // Separate active and finalized items (sold + waste)
+    const activeItems = safeItems.filter((item) => item.listed && !item.sold && item.status !== "waste")
+    const finalizedItems = safeItems.filter((item) => item.sold === true || item.status === "waste")
 
     // Inventory metrics
     const inventoryValue = activeItems.reduce(
@@ -104,36 +104,36 @@ const Overview = ({ items, expenses }) => {
       0
     )
 
-    // Sales metrics
-    const totalRevenue = soldItems.reduce(
-      (sum, item) => sum + parseFloat(item.priceSold || 0),
+    // Sales metrics (including waste losses)
+    const totalRevenue = finalizedItems.reduce(
+      (sum, item) => sum + (item.sold ? parseFloat(item.priceSold || 0) : 0), // Only sold items generate revenue
       0
     )
-    const totalProfit = soldItems.reduce(
-      (sum, item) => sum + parseFloat(item.profit || 0),
+    const totalProfit = finalizedItems.reduce(
+      (sum, item) => sum + parseFloat(item.profit || 0), // Include profit from sales AND losses from waste
       0
     )
-    const totalEbayFees = soldItems.reduce(
+    const totalEbayFees = finalizedItems.reduce(
       (sum, item) =>
         sum + parseFloat(item.ebayFees || 0) + parseFloat(item.payPalFees || 0),
       0
     )
-    const totalShippingCosts = soldItems.reduce(
+    const totalShippingCosts = finalizedItems.reduce(
       (sum, item) => sum + parseFloat(item.shippingCost || 0),
       0
     )
-    // Calculate average values
-    const nonFreeItems = soldItems.filter(
-      (item) => parseFloat(item.purchasePrice || 0) > 0.01
+    // Calculate average values (from finalized items, excluding free/waste items for ROI)
+    const nonFreeItems = finalizedItems.filter(
+      (item) => parseFloat(item.purchasePrice || 0) > 0.01 && item.sold // Only sold items for ROI calculation
     )
 
     const avgROI = nonFreeItems.length
       ? nonFreeItems.reduce((sum, item) => sum + parseFloat(item.roi || 0), 0) /
         nonFreeItems.length
       : 0
-    const avgDaysListed = soldItems.length
-      ? soldItems.reduce((sum, item) => sum + (item.daysListed || 0), 0) /
-        soldItems.length
+    const avgDaysListed = finalizedItems.filter(item => item.sold).length // Only sold items have meaningful "days listed"
+      ? finalizedItems.filter(item => item.sold).reduce((sum, item) => sum + (item.daysListed || 0), 0) /
+        finalizedItems.filter(item => item.sold).length
       : 0
 
     // Calculate expense total
@@ -152,8 +152,8 @@ const Overview = ({ items, expenses }) => {
     )
     const totalCost = rawInventoryValue + totalExpenses
 
-    const costOfInventorySold = soldItems.reduce(
-      (sum, item) => sum + parseFloat(item.purchasePrice || 0),
+    const costOfInventorySold = finalizedItems.reduce(
+      (sum, item) => sum + parseFloat(item.purchasePrice || 0), // Include cost of waste items too
       0
     )
 
@@ -175,7 +175,9 @@ const Overview = ({ items, expenses }) => {
       potentialProfit: formatCurrency(potentialProfit),
       expectedRevenue: formatCurrency(expectedRevenue),
 
-      soldItems: soldItems.length,
+      soldItems: finalizedItems.filter(item => item.sold).length,
+      wasteItems: finalizedItems.filter(item => item.status === "waste").length,
+      totalFinalized: finalizedItems.length,
       totalRevenue: formatCurrency(totalRevenue),
       totalProfit: formatCurrency(totalProfit),
       averageROI: avgROI.toFixed(1),
@@ -266,6 +268,12 @@ const Overview = ({ items, expenses }) => {
               <span>Items Sold:</span>
               <span>{metrics.soldItems}</span>
             </div>
+            {metrics.wasteItems > 0 && (
+              <div className={Styles.metric}>
+                <span>Items Waste:</span>
+                <span className={Styles.negative}>{metrics.wasteItems}</span>
+              </div>
+            )}
             <div className={Styles.metric}>
               <span>Total Revenue:</span>
               <span>{metrics.totalRevenue}</span>
@@ -291,7 +299,7 @@ const Overview = ({ items, expenses }) => {
               <span>{metrics.totalRevenue}</span>
             </div>
             <div className={Styles.metric}>
-              <span>Cost of Goods Sold:</span>
+              <span>Cost of Goods Finalized:</span>
               <span>{metrics.costOfInventorySold}</span>
             </div>
             <div className={Styles.metric}>

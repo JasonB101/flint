@@ -367,7 +367,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     // Step 3.1: Process cancellations FIRST (before sales)
     if (cancellationData.success && cancellationData.cancellations.length > 0) {
       try {
-        progress.emit('processing cancellations', 50, 'Processing order cancellations...')
+        progress.emit('processing cancellations', 72, 'Processing order cancellations...')
         const cancellationResults = await processCancellations(
           cancellationData.cancellations,
           inventoryItemsMap
@@ -392,7 +392,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
           userId, completedSales, inventoryItemsMap, 
           shippingTransactions, ebayFeePercent
         )
-        progress.processingInventory(newSoldItems.length)
+        progress.emit('processing sales', 75, newSoldItems.length ? `Updated ${newSoldItems.length} sold items` : 'Processing sales data...')
         console.log(`[${userId}] ✅ Updated ${newSoldItems.length} sold items`)
         
         if (newSoldItems.length > 0) {
@@ -409,7 +409,7 @@ ebayRouter.get("/getebay", async (req, res, next) => {
     // Step 3.5: Sync Post-Order API data with new Return collection
     if (returnData.success && returnData.returns.length > 0) {
       try {
-        progress.emit('syncing returns', 60, 'Syncing return data...')
+        progress.emit('syncing returns', 78, 'Syncing return data...')
         
         let returnsSynced = 0
         let returnsCreated = 0

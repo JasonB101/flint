@@ -939,6 +939,18 @@ const Store = (props) => {
     }
   }
 
+  async function getWasteItems() {
+    try {
+      console.log("🗑️ Fetching waste items...")
+      const response = await userAxios.get("/api/inventoryItems?status=waste")
+      console.log(`🗑️ Fetched ${response.data?.length || 0} waste items`)
+      return response.data || []
+    } catch (e) {
+      console.error("❌ Error fetching waste items:", e.message)
+      return []
+    }
+  }
+
   return (
     <storeContext.Provider
       value={{
@@ -989,6 +1001,7 @@ const Store = (props) => {
         getReturnDetails,
         getReturnsForItem,
         fetchReturns,
+        getWasteItems,
         // eBay sync and returns state
         ebaySyncComplete,
         returns

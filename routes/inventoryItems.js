@@ -229,8 +229,21 @@ inventoryRouter.post("/massImport", (req, res, next) => {
 
 inventoryRouter.get("/", async (req, res, next) => {
   const userId = req.auth._id
+  const { status } = req.query // Get status filter from query params
+  
   try {
-    const items = await getInventoryItems(userId)
+    let items
+    if (status) {
+      // Filter by status if provided
+      const query = { userId, status }
+      items = await InventoryItem.find(query)
+      console.log(`📦 Fetching inventory items with status: ${status} for user ${userId}`)
+    } else {
+      // Get all items using existing function
+      items = await getInventoryItems(userId)
+    }
+    
+    console.log(`📦 Returning ${items.length} inventory items`)
     return res.send(items)
   } catch (e) {
     console.log(e)
@@ -332,8 +345,12 @@ inventoryRouter.put("/wasteItem/:id", async (req, res, next) => {
       
       if (!listingResult.success) {
         // Check if the listing is already closed - this is OK for waste operation
-        if (listingResult.message && listingResult.message.includes("already been closed")) {
-          console.log(`eBay listing ${ebayId} is already closed - proceeding with waste operation`)
+        if (listingResult.errorCode === "1047" || 
+            (listingResult.message && (
+              listingResult.message.toLowerCase().includes("already been closed") ||
+              listingResult.message.toLowerCase().includes("auction has already been closed")
+            ))) {
+          console.log(`eBay listing ${ebayId} is already closed (${listingResult.message}) - proceeding with waste operation`)
         } else {
           console.log(`Failed to end listing ${ebayId}: ${listingResult.message}`)
           return res.status(500).send({ 
@@ -342,7 +359,7 @@ inventoryRouter.put("/wasteItem/:id", async (req, res, next) => {
           })
         }
       } else {
-        console.log(`Successfully ended eBay listing ${ebayId} for waste item`)
+        console.log(`Successfully ended eBay listing ${ebayId} for waste item${listingResult.alreadyClosed ? ' (was already closed)' : ''}`)
       }
     } else {
       console.log(`No eBay listing found for waste item: ${title} (SKU: ${sku})`)
@@ -355,6 +372,8 @@ inventoryRouter.put("/wasteItem/:id", async (req, res, next) => {
       status: "waste",
       profit: -item.purchasePrice, // Negative because money was spent but no revenue
       dateWasted: new Date().toLocaleDateString(), // Mark when it was wasted
+      // Preserve buyer information if item was previously sold
+      ...(item.buyer && { buyer: item.buyer }), // Keep buyer info if it exists
     }
 
     const updatedItem = await InventoryItem.findByIdAndUpdate(

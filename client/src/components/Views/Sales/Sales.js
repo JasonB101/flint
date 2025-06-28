@@ -23,28 +23,31 @@ const Sales = (props) => {
   }, [dateType])
 
   const { items, expenses } = props
-  const soldItems = items.filter((x) => x.sold)
+  // Include both sold items AND waste items for accurate financial calculations
+  const finalizedItems = items.filter((x) => x.sold === true || x.status === "waste")
 
   const salesInfo = assembleSalesInfo(items, expenses)
 
-  // Get available years from sold items
-  const availableYears = [...new Set(soldItems.map(item => 
-    new Date(item.dateSold).getFullYear()
-  ))].sort((a, b) => b - a)
+  // Get available years from finalized items (sold or waste)
+  const availableYears = [...new Set(finalizedItems.map(item => {
+    // Use dateSold for sold items, dateWasted for waste items
+    const relevantDate = item.sold ? item.dateSold : item.dateWasted
+    return relevantDate ? new Date(relevantDate).getFullYear() : null
+  }).filter(year => year !== null))].sort((a, b) => b - a)
 
   // Chart options based on selected period
   const getChartOptions = () => {
     switch (dateType) {
       case "day":
-        return new YearSalesChart(year, soldItems, profitTrue)
+        return new YearSalesChart(year, finalizedItems, profitTrue)
       case "week":
-        return new YearSalesChartByWeek(year, soldItems, profitTrue)
+        return new YearSalesChartByWeek(year, finalizedItems, profitTrue)
       case "month":
-        return new YearSalesChartByMonth(year, soldItems, profitTrue)
+        return new YearSalesChartByMonth(year, finalizedItems, profitTrue)
       case "year":
-        return new MultiYearSalesChart(availableYears, soldItems, profitTrue)
+        return new MultiYearSalesChart(availableYears, finalizedItems, profitTrue)
       default:
-        return new YearSalesChartByWeek(year, soldItems, profitTrue)
+        return new YearSalesChartByWeek(year, finalizedItems, profitTrue)
     }
   }
 
@@ -55,20 +58,25 @@ const Sales = (props) => {
     }).format(value)
   }
 
-  // Calculate current year metrics
-  const currentYearSales = soldItems.reduce((sales, item) => {
-    let isThisYear = new Date(item.dateSold).getFullYear() === year
-    return sales + (isThisYear ? Number(item.priceSold) : 0)
+  // Calculate current year metrics (including waste items)
+  const currentYearSales = finalizedItems.reduce((sales, item) => {
+    const relevantDate = item.sold ? item.dateSold : item.dateWasted
+    let isThisYear = relevantDate && new Date(relevantDate).getFullYear() === year
+    // Only count revenue for actually sold items (waste items contribute $0 revenue)
+    return sales + (isThisYear && item.sold ? Number(item.priceSold) : 0)
   }, 0)
 
-  const currentYearProfit = soldItems.reduce((profit, item) => {
-    let isThisYear = new Date(item.dateSold).getFullYear() === year
+  const currentYearProfit = finalizedItems.reduce((profit, item) => {
+    const relevantDate = item.sold ? item.dateSold : item.dateWasted
+    let isThisYear = relevantDate && new Date(relevantDate).getFullYear() === year
+    // Include both profit from sales AND losses from waste
     return profit + (isThisYear ? Number(item.profit) : 0)
   }, 0)
 
-  const currentYearItemsSold = soldItems.filter(item => 
-    new Date(item.dateSold).getFullYear() === year
-  ).length
+  const currentYearItemsFinalized = finalizedItems.filter(item => {
+    const relevantDate = item.sold ? item.dateSold : item.dateWasted
+    return relevantDate && new Date(relevantDate).getFullYear() === year
+  }).length
 
   // Projection calculation
   function getProjected(value) {
@@ -151,8 +159,8 @@ const Sales = (props) => {
         <div className={Styles.metricCard}>
           <div className={Styles.metricIcon}>📊</div>
           <div className={Styles.metricContent}>
-            <span className={Styles.metricLabel}>Items Sold</span>
-            <span className={Styles.metricValue}>{currentYearItemsSold}</span>
+            <span className={Styles.metricLabel}>Items Finalized</span>
+            <span className={Styles.metricValue}>{currentYearItemsFinalized}</span>
           </div>
         </div>
         
@@ -227,18 +235,21 @@ const Sales = (props) => {
 
     const info = items.reduce((salesInfo, x) => {
       const { purchasePrice, ebayFees, shippingCost } = x
-      let isThisYear = new Date(x.dateSold).getFullYear() === year
-      if (x.sold && isThisYear) {
+      const relevantDate = x.sold ? x.dateSold : x.dateWasted
+      let isThisYear = relevantDate && new Date(relevantDate).getFullYear() === year
+      
+      // Include both sold items AND waste items in financial calculations
+      if ((x.sold || x.status === "waste") && isThisYear) {
         salesInfo.YTDProfit += isThisYear ? x.profit : 0
         salesInfo.allItemsProfit += x.profit
-        salesInfo.totalCost += purchasePrice + ebayFees + shippingCost
+        salesInfo.totalCost += purchasePrice + (ebayFees || 0) + (shippingCost || 0)
         salesInfo.totalSold += isThisYear ? 1 : 0
-        salesInfo.profitPerItem = (
+        salesInfo.profitPerItem = salesInfo.totalSold > 0 ? (
           salesInfo.allItemsProfit / salesInfo.totalSold
-        ).toFixed(2)
-        salesInfo.roi = Math.floor(
+        ).toFixed(2) : "0.00"
+        salesInfo.roi = salesInfo.totalCost > 0 ? Math.floor(
           (salesInfo.allItemsProfit / salesInfo.totalCost) * 100
-        )
+        ) : 0
       } else {
         if (x.listed && isThisYear) {
           salesInfo.inventoryCost += x.purchasePrice

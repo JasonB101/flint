@@ -220,20 +220,20 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
         return purchaseDate >= startDate && purchaseDate <= endDate
       })
 
-      const soldTripItems = tripItems
-        .filter((item) => item.sold && item.dateSold)
+      const finalizedTripItems = tripItems
+        .filter((item) => (item.sold && item.dateSold) || (item.status === "waste" && item.dateWasted))
         .map((item) => ({
           ...item,
-          dateSoldParsed: new Date(item.dateSold),
+          dateFinalizedParsed: new Date(item.sold ? item.dateSold : item.dateWasted),
           datePurchasedParsed: new Date(item.datePurchased),
           profit: parseFloat(item.profit || 0),
         }))
-        .sort((a, b) => a.dateSoldParsed - b.dateSoldParsed)
+        .sort((a, b) => a.dateFinalizedParsed - b.dateFinalizedParsed)
 
-      if (soldTripItems.length === 0) {
+      if (finalizedTripItems.length === 0) {
         return {
           daysToProfitable: null,
-          projectedPayoffDate: "No sales yet",
+          projectedPayoffDate: "No sales or waste yet",
           projectedPayoffDays: null,
         }
       }
@@ -255,16 +255,16 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
 
       const totalInvestment = tripItemsCost + tripExpenses
 
-      // Track cumulative profit over time
+      // Track cumulative profit over time (including waste losses)
       let cumulativeProfit = 0
       let profitableDate = null
       let daysToProfitable = null
 
-      for (const item of soldTripItems) {
+      for (const item of finalizedTripItems) {
         cumulativeProfit += item.profit
 
         if (cumulativeProfit >= totalInvestment && profitableDate === null) {
-          profitableDate = item.dateSoldParsed
+          profitableDate = item.dateFinalizedParsed
           // Calculate days from trip start to profitable date
           const tripStartTime = Math.min(...tripItems.map(item => new Date(item.datePurchased).getTime()))
           const tripStartDate = new Date(tripStartTime)
@@ -278,22 +278,22 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
         const totalProfitSoFar = cumulativeProfit
         const remainingNeeded = totalInvestment - totalProfitSoFar
 
-        if (soldTripItems.length >= 2) {
-          // Calculate average days between sales
-          const salesDates = soldTripItems.map(item => item.dateSoldParsed.getTime())
-          const avgDaysBetweenSales = salesDates.length > 1 
-            ? (Math.max(...salesDates) - Math.min(...salesDates)) / (salesDates.length - 1) / (1000 * 60 * 60 * 24)
-            : 30 // Default to 30 days if only one sale
+        if (finalizedTripItems.length >= 2) {
+          // Calculate average days between finalizations (sales/waste)
+          const finalizationDates = finalizedTripItems.map(item => item.dateFinalizedParsed.getTime())
+          const avgDaysBetweenFinalizations = finalizationDates.length > 1 
+            ? (Math.max(...finalizationDates) - Math.min(...finalizationDates)) / (finalizationDates.length - 1) / (1000 * 60 * 60 * 24)
+            : 30 // Default to 30 days if only one finalization
 
-          // Calculate average profit per sale
-          const avgProfitPerSale = totalProfitSoFar / soldTripItems.length
+          // Calculate average profit per finalization (including waste losses)
+          const avgProfitPerFinalization = totalProfitSoFar / finalizedTripItems.length
 
-          if (avgProfitPerSale > 0) {
-            const salesNeeded = Math.ceil(remainingNeeded / avgProfitPerSale)
-            const daysToProject = salesNeeded * avgDaysBetweenSales
+          if (avgProfitPerFinalization > 0) {
+            const finalizationsNeeded = Math.ceil(remainingNeeded / avgProfitPerFinalization)
+            const daysToProject = finalizationsNeeded * avgDaysBetweenFinalizations
 
-            const lastSaleDate = Math.max(...salesDates)
-            const projectedDate = new Date(lastSaleDate + (daysToProject * 24 * 60 * 60 * 1000))
+            const lastFinalizationDate = Math.max(...finalizationDates)
+            const projectedDate = new Date(lastFinalizationDate + (daysToProject * 24 * 60 * 60 * 1000))
 
             // Calculate days from now
             const daysFromNow = Math.ceil((projectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -354,24 +354,36 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
     )
     const tripTotalCost = tripPartsCost + tripExpensesTotal
 
-    // Revenue so far from items purchased during this trip and later sold
-    const soldItems = filteredItems.filter((item) => item.sold)
-    const tripRevenueReceived = soldItems.reduce(
-      (sum, item) =>
-        sum +
-        parseFloat(item.profit || 0) +
-        parseFloat(item.purchasePrice || 0),
+    // Revenue so far from items purchased during this trip and later finalized
+    const finalizedItems = filteredItems.filter((item) => item.sold || item.status === "waste")
+    const tripRevenueReceived = finalizedItems.reduce(
+      (sum, item) => {
+        // Only sold items generate actual revenue (purchase price + profit)
+        // Waste items contribute $0 revenue but their losses are reflected in negative profit
+        if (item.sold) {
+          return sum + parseFloat(item.profit || 0) + parseFloat(item.purchasePrice || 0)
+        } else {
+          // For waste items, only count the loss (negative profit), no revenue
+          return sum + Math.min(0, parseFloat(item.profit || 0)) // Only count negative profit/loss
+        }
+      },
       0
     )
 
-    // Calculate TOTAL potential revenue from ALL trip items (sold and unsold)
+    // Calculate TOTAL potential revenue from ALL trip items (sold, waste, and unsold)
     const tripPotentialRevenue = filteredItems.reduce(
-      (sum, item) =>
-        sum +
-        parseFloat(item.purchasePrice || 0) +
-        (item.sold
-          ? parseFloat(item.profit || 0)
-          : parseFloat(item.expectedProfit || 0)),
+      (sum, item) => {
+        if (item.sold) {
+          // Sold items: actual purchase price + actual profit
+          return sum + parseFloat(item.purchasePrice || 0) + parseFloat(item.profit || 0)
+        } else if (item.status === "waste") {
+          // Waste items: only the loss (negative profit), no revenue
+          return sum + Math.min(0, parseFloat(item.profit || 0))
+        } else {
+          // Unsold items: potential purchase price + expected profit
+          return sum + parseFloat(item.purchasePrice || 0) + parseFloat(item.expectedProfit || 0)
+        }
+      },
       0
     )
 
@@ -423,7 +435,7 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
         : "0.0"
     }
 
-    const activeItems = filteredItems.filter((item) => !item.sold)
+    const activeItems = filteredItems.filter((item) => !item.sold && item.status !== "waste")
     const tripRemainingInventory = activeItems.reduce(
       (sum, item) => sum + parseFloat(item.purchasePrice || 0),
       0
@@ -511,7 +523,8 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
       tripROI: tripROI,
       tripPotentialROI: potentialROI,
       tripTotalItems: filteredItems.length,
-      tripSoldItems: soldItems.length,
+      tripSoldItems: finalizedItems.filter(item => item.sold).length,
+      tripWasteItems: finalizedItems.filter(item => item.status === "waste").length,
       tripItemsRemaining: activeItems.length,
       tripRemainingInventory: formatCurrency(tripRemainingInventory),
       tripPotentialRevenue: formatCurrency(tripPotentialRevenue),
@@ -699,9 +712,15 @@ const TripReportModal = ({ isOpen, onClose, items, expenses }) => {
                   <div className={Styles.keyMetric}>
                     <div className={Styles.dualMetric}>
                       <div className={Styles.metricSection}>
-                        <span className={Styles.metricLabel}>Items Sold</span>
+                        <span className={Styles.metricLabel}>Items Finalized</span>
                         <div className={Styles.metricValue}>
                           <span className={Styles.highlight}>{metrics.tripSoldItems}</span>
+                          {metrics.tripWasteItems > 0 && (
+                            <>
+                              <span className={Styles.separator}>+</span>
+                              <span className={Styles.negative}>{metrics.tripWasteItems}W</span>
+                            </>
+                          )}
                           <span className={Styles.separator}>/</span>
                           <span>{metrics.tripTotalItems}</span>
                         </div>

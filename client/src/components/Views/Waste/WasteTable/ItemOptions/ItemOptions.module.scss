@@ -1,0 +1,35 @@
+.itemOptionsWrapper {
+  position: relative;
+  overflow: visible;
+  
+  .optionsModal {
+    overflow: visible;
+    position: absolute;
+    top: 75%;
+    left: 10px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e9ecef;
+    padding: 0 5px;
+    z-index: 10001;
+    border-radius: 6px;
+    
+    p {
+      font-size: 16px;
+      cursor: pointer;
+      line-height: 1;
+      margin: 12px 2px;
+      
+      &:hover {
+        color: #007bff;
+      }
+    }
+  }
+  
+  i {
+    text-align: center;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+  }
+} 

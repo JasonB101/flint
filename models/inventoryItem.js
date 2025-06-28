@@ -113,6 +113,10 @@ const inventoryItemSchema = new Schema({
     type: String,
     default: null, // Date when return was delivered back to seller
   },
+  dateWasted: {
+    type: String,
+    default: null, // Date when item was marked as waste (for waste tracking)
+  },
   // Keep only essential return fields for quick access
   hasActiveReturn: {
     type: Boolean,

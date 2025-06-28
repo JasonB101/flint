@@ -168,6 +168,7 @@ const ItemReturnModal = ({
       returnDate: new Date(inputs.returnDate).toLocaleDateString(), // Convert ISO date back to localized string
       returnShippingCost: inputs.returnShippingCost,
       orderId: orderId, // Include order ID for tracking returned orders
+      buyer: buyer, // Include buyer information for waste tracking
     }
     
     console.log('📦 Item return values:', itemReturnValues)
