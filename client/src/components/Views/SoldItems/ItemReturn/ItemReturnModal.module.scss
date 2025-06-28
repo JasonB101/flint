@@ -20,8 +20,10 @@
   position: relative;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease-out;
-  overflow: hidden;
   max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 @keyframes slideIn {
@@ -73,10 +75,49 @@
 }
 
 .contentWrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.scrollableContent {
+  flex: 1;
+  overflow-y: auto;
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+.fixedActionSection {
+  flex-shrink: 0;
+  padding: 12px;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Section Styling */
@@ -386,14 +427,7 @@
   }
 }
 
-/* Action Section */
-.actionSection {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 4px;
-  padding: 8px 0;
-}
+/* Action Section - REMOVED OLD STYLING, NOW USING fixedActionSection */
 
 .statusToggle {
   display: flex;
@@ -489,6 +523,7 @@
 @media (max-width: 768px) {
   .modalContent {
     width: 95%;
+    max-height: 95vh; // More height on mobile
   }
   
   .modalHeader {
@@ -499,7 +534,13 @@
     }
   }
   
-  .contentWrapper {
+  .scrollableContent {
+    padding: 12px;
+  }
+  
+  .fixedActionSection {
+    flex-direction: column;
+    gap: 10px;
     padding: 12px;
   }
   
@@ -509,8 +550,7 @@
     grid-template-columns: 1fr;
   }
   
-  .actionSection {
-    flex-direction: column;
-    gap: 10px;
+  .ebayReturnGrid {
+    grid-template-columns: 1fr;
   }
 }

@@ -311,152 +311,153 @@ const ItemReturnModal = ({
           </button>
         </div>
         <div className={Styles.contentWrapper}>
-          
-          {/* Item Information Section */}
-          <div className={Styles.section}>
-            <h3 className={Styles.sectionTitle}>Item Information</h3>
-            <div className={Styles.itemTitle}>
-              <strong>Title:</strong> {title}
-            </div>
-            <div className={Styles.infoGrid}>
-              <div className={Styles.infoItem}>
-                <span className={Styles.label}>SKU:</span>
-                <span className={Styles.value}>{sku}</span>
-              </div>
-              <div className={Styles.infoItem}>
-                <span className={Styles.label}>eBay ID:</span>
-                <span className={Styles.value}>{ebayId || "N/A"}</span>
-              </div>
-              <div className={Styles.infoItem}>
-                <span className={Styles.label}>Order ID:</span>
-                <span className={Styles.value}>{orderId || "N/A"}</span>
-              </div>
-              <div className={Styles.infoItem}>
-                <span className={Styles.label}>Buyer:</span>
-                <span className={Styles.value}>{buyer || "N/A"}</span>
-              </div>
-              <div className={Styles.infoItem}>
-                <span className={Styles.label}>Price Sold:</span>
-                <span className={Styles.value}>${priceSold || "0.00"}</span>
-              </div>
-              <div className={Styles.infoItem}>
-                <span className={Styles.label}>Date Sold:</span>
-                <span className={Styles.value}>{dateSold || "N/A"}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Return Information Section */}
-          <div className={Styles.section}>
-            <h3 className={Styles.sectionTitle}>Return Information</h3>
-            <div className={Styles.returnInputs}>
-              <div className={Styles.inputGroup}>
-                <label htmlFor="returnDate">Return Date</label>
-                <input
-                  id="returnDate"
-                  type="date"
-                  value={inputs.returnDate}
-                  onChange={(e) =>
-                    setInputs((prev) => ({
-                      ...prev,
-                      returnDate: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className={Styles.inputGroup}>
-                <label htmlFor="returnShippingCost">Return Shipping Cost</label>
-                <input
-                  id="returnShippingCost"
-                  type="number"
-                  step="0.01"
-                  value={inputs.returnShippingCost}
-                  onChange={(e) =>
-                    setInputs((prev) => ({
-                      ...prev,
-                      returnShippingCost: parseFloat(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
-
-            </div>
-          </div>
-
-          {/* eBay Return Details Section */}
-          {ebayReturnInfo && (
+          <div className={Styles.scrollableContent}>
+            {/* Item Information Section */}
             <div className={Styles.section}>
-              <h3 className={Styles.sectionTitle}>eBay Return Details</h3>
-              <div className={Styles.ebayReturnGrid}>
-                {ebayReturnInfo.returnReason && (
-                  <div className={Styles.compactDetailItem}>
-                    <span className={Styles.label}>Reason:</span>
-                    <span className={Styles.value}>{formatReturnReason(ebayReturnInfo.returnReason)}</span>
-                  </div>
-                )}
-                {ebayReturnInfo.returnStatus && (
-                  <div className={Styles.compactDetailItem}>
-                    <span className={Styles.label}>Status:</span>
-                    <span className={`${Styles.value} ${Styles.status}`}>{ebayReturnInfo.returnStatus}</span>
-                  </div>
-                )}
-                {ebayReturnInfo.trackingStatus && (
-                  <div className={Styles.compactDetailItem}>
-                    <span className={Styles.label}>Tracking:</span>
-                    <span className={Styles.value}>{ebayReturnInfo.trackingStatus}</span>
-                  </div>
-                )}
-                {ebayReturnInfo.buyerRefundAmount && (
-                  <div className={Styles.compactDetailItem}>
-                    <span className={Styles.label}>Buyer Refund:</span>
-                    <span className={Styles.value}>${ebayReturnInfo.buyerRefundAmount}</span>
-                  </div>
-                )}
-                {ebayReturnInfo.sellerRefundAmount && (
-                  <div className={Styles.compactDetailItem}>
-                    <span className={Styles.label}>Seller Charged:</span>
-                    <span className={Styles.value}>${ebayReturnInfo.sellerRefundAmount}</span>
-                  </div>
-                )}
-                {ebayReturnInfo.deliveredDate && (
-                  <div className={Styles.compactDetailItem}>
-                    <span className={Styles.label}>Delivered:</span>
-                    <span className={Styles.value}>{ebayReturnInfo.deliveredDate}</span>
-                  </div>
-                )}
+              <h3 className={Styles.sectionTitle}>Item Information</h3>
+              <div className={Styles.itemTitle}>
+                <strong>Title:</strong> {title}
               </div>
-              {ebayReturnInfo.buyerComments && (
-                <div className={Styles.buyerComments}>
-                  <span className={Styles.label}>Buyer Comments:</span>
-                  <span className={Styles.commentText}>"{ebayReturnInfo.buyerComments}"</span>
+              <div className={Styles.infoGrid}>
+                <div className={Styles.infoItem}>
+                  <span className={Styles.label}>SKU:</span>
+                  <span className={Styles.value}>{sku}</span>
                 </div>
-              )}
+                <div className={Styles.infoItem}>
+                  <span className={Styles.label}>eBay ID:</span>
+                  <span className={Styles.value}>{ebayId || "N/A"}</span>
+                </div>
+                <div className={Styles.infoItem}>
+                  <span className={Styles.label}>Order ID:</span>
+                  <span className={Styles.value}>{orderId || "N/A"}</span>
+                </div>
+                <div className={Styles.infoItem}>
+                  <span className={Styles.label}>Buyer:</span>
+                  <span className={Styles.value}>{buyer || "N/A"}</span>
+                </div>
+                <div className={Styles.infoItem}>
+                  <span className={Styles.label}>Price Sold:</span>
+                  <span className={Styles.value}>${priceSold || "0.00"}</span>
+                </div>
+                <div className={Styles.infoItem}>
+                  <span className={Styles.label}>Date Sold:</span>
+                  <span className={Styles.value}>{dateSold || "N/A"}</span>
+                </div>
+              </div>
             </div>
-          )}
 
-          {/* Financial Summary Section */}
-          <div className={Styles.section}>
-            <h3 className={Styles.sectionTitle}>Financial Summary</h3>
-            <div className={Styles.financialGrid}>
-              <div className={Styles.financialItem}>
-                <span className={Styles.label}>Listed Price:</span>
-                <span className={Styles.value}>${listedPrice || '0.00'}</span>
+            {/* Return Information Section */}
+            <div className={Styles.section}>
+              <h3 className={Styles.sectionTitle}>Return Information</h3>
+              <div className={Styles.returnInputs}>
+                <div className={Styles.inputGroup}>
+                  <label htmlFor="returnDate">Return Date</label>
+                  <input
+                    id="returnDate"
+                    type="date"
+                    value={inputs.returnDate}
+                    onChange={(e) =>
+                      setInputs((prev) => ({
+                        ...prev,
+                        returnDate: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className={Styles.inputGroup}>
+                  <label htmlFor="returnShippingCost">Return Shipping Cost</label>
+                  <input
+                    id="returnShippingCost"
+                    type="number"
+                    step="0.01"
+                    value={inputs.returnShippingCost}
+                    onChange={(e) =>
+                      setInputs((prev) => ({
+                        ...prev,
+                        returnShippingCost: parseFloat(e.target.value) || 0,
+                      }))
+                    }
+                  />
+                </div>
+
               </div>
-              <div className={Styles.financialItem}>
-                <span className={Styles.label}>Purchase Price:</span>
-                <span className={Styles.value}>${purchasePrice}</span>
+            </div>
+
+            {/* eBay Return Details Section */}
+            {ebayReturnInfo && (
+              <div className={Styles.section}>
+                <h3 className={Styles.sectionTitle}>eBay Return Details</h3>
+                <div className={Styles.ebayReturnGrid}>
+                  {ebayReturnInfo.returnReason && (
+                    <div className={Styles.compactDetailItem}>
+                      <span className={Styles.label}>Reason:</span>
+                      <span className={Styles.value}>{formatReturnReason(ebayReturnInfo.returnReason)}</span>
+                    </div>
+                  )}
+                  {ebayReturnInfo.returnStatus && (
+                    <div className={Styles.compactDetailItem}>
+                      <span className={Styles.label}>Status:</span>
+                      <span className={`${Styles.value} ${Styles.status}`}>{ebayReturnInfo.returnStatus}</span>
+                    </div>
+                  )}
+                  {ebayReturnInfo.trackingStatus && (
+                    <div className={Styles.compactDetailItem}>
+                      <span className={Styles.label}>Tracking:</span>
+                      <span className={Styles.value}>{ebayReturnInfo.trackingStatus}</span>
+                    </div>
+                  )}
+                  {ebayReturnInfo.buyerRefundAmount && (
+                    <div className={Styles.compactDetailItem}>
+                      <span className={Styles.label}>Buyer Refund:</span>
+                      <span className={Styles.value}>${ebayReturnInfo.buyerRefundAmount}</span>
+                    </div>
+                  )}
+                  {ebayReturnInfo.sellerRefundAmount && (
+                    <div className={Styles.compactDetailItem}>
+                      <span className={Styles.label}>Seller Charged:</span>
+                      <span className={Styles.value}>${ebayReturnInfo.sellerRefundAmount}</span>
+                    </div>
+                  )}
+                  {ebayReturnInfo.deliveredDate && (
+                    <div className={Styles.compactDetailItem}>
+                      <span className={Styles.label}>Delivered:</span>
+                      <span className={Styles.value}>{ebayReturnInfo.deliveredDate}</span>
+                    </div>
+                  )}
+                </div>
+                {ebayReturnInfo.buyerComments && (
+                  <div className={Styles.buyerComments}>
+                    <span className={Styles.label}>Buyer Comments:</span>
+                    <span className={Styles.commentText}>"{ebayReturnInfo.buyerComments}"</span>
+                  </div>
+                )}
               </div>
-              <div className={`${Styles.financialItem} ${Styles.profitItem}`}>
-                <span className={Styles.label}>Expected Profit:</span>
-                <span className={`${Styles.value} ${newExpectedProfit < 0 ? Styles.negative : Styles.positive}`}>
-                  ${newExpectedProfit}
-                </span>
+            )}
+
+            {/* Financial Summary Section */}
+            <div className={Styles.section}>
+              <h3 className={Styles.sectionTitle}>Financial Summary</h3>
+              <div className={Styles.financialGrid}>
+                <div className={Styles.financialItem}>
+                  <span className={Styles.label}>Listed Price:</span>
+                  <span className={Styles.value}>${listedPrice || '0.00'}</span>
+                </div>
+                <div className={Styles.financialItem}>
+                  <span className={Styles.label}>Purchase Price:</span>
+                  <span className={Styles.value}>${purchasePrice}</span>
+                </div>
+                <div className={`${Styles.financialItem} ${Styles.profitItem}`}>
+                  <span className={Styles.label}>Expected Profit:</span>
+                  <span className={`${Styles.value} ${newExpectedProfit < 0 ? Styles.negative : Styles.positive}`}>
+                    ${newExpectedProfit}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Action Section */}
-          <div className={Styles.actionSection}>
+          {/* Fixed Action Section */}
+          <div className={Styles.fixedActionSection}>
             <div className={Styles.statusToggle}>
               <label className={Styles.switch}>
                 <input
