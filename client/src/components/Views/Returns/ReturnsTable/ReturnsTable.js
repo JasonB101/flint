@@ -7,6 +7,49 @@ import ItemReturnModal from "../../SoldItems/ItemReturn/ItemReturnModal"
 const ReturnsTable = (props) => {
   const { returnedItems, ebayListings, unprocessedReturnIds, unprocessedReturnsDetails, returnInventoryItem, user } = props
   const [processItem, setProcessItem] = useState(null)
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
+  const [hoveredItem, setHoveredItem] = useState(null)
+
+  // Handle tooltip positioning
+  const handleTooltipMouseEnter = (e, itemId) => {
+    // Only show tooltip if item has buyer comments
+    const itemObject = returnedItems.find(item => item._id === itemId)
+    if (!itemObject || !itemObject.buyerComments) {
+      return
+    }
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+    
+    // Calculate preferred position (below the element)
+    let x = rect.left
+    let y = rect.bottom + 10 // Position below with some margin
+    
+    // Adjust horizontal position if too close to right edge
+    const tooltipWidth = 500 // max-width from CSS
+    if (x + tooltipWidth > viewportWidth - 20) {
+      x = viewportWidth - tooltipWidth - 20
+    }
+    
+    // Adjust horizontal position if too close to left edge
+    if (x < 20) {
+      x = 20
+    }
+    
+    // If tooltip would go below viewport, position above instead
+    const tooltipHeight = 100 // estimated height
+    if (y + tooltipHeight > viewportHeight - 20) {
+      y = rect.top - tooltipHeight - 10
+    }
+    
+    setTooltipPosition({ x, y })
+    setHoveredItem(itemId)
+  }
+
+  const handleTooltipMouseLeave = () => {
+    setHoveredItem(null)
+  }
 
   // Helper function to format tracking status text
   const formatTrackingStatus = (status) => {
@@ -355,13 +398,19 @@ const ReturnsTable = (props) => {
           {profitOrExpected < 0 ? '-' : ''}${valueToFixed(Math.abs(profitOrExpected))}
         </td>
         <td>
-          <span 
-            className={`${Styles.returnType} ${automaticReturn ? Styles.automatic : Styles.manual}`}
-            title={itemObject.buyerComments ? `Buyer Comments: ${itemObject.buyerComments}` : 'No buyer comments'}
-            style={{ cursor: itemObject.buyerComments ? 'help' : 'default' }}
-          >
-            {formatReturnType(returnType)}
-          </span>
+          <div className={Styles.returnTypeWrapper}>
+            <span 
+              className={`${Styles.returnType} ${automaticReturn 
+                ? (itemObject.buyerComments ? Styles.automaticWithComments : Styles.automatic)
+                : (itemObject.buyerComments ? Styles.manualWithComments : Styles.manual)
+              }`}
+              style={{ cursor: itemObject.buyerComments ? 'help' : 'default' }}
+              onMouseEnter={(e) => handleTooltipMouseEnter(e, _id)}
+              onMouseLeave={handleTooltipMouseLeave}
+            >
+              {formatReturnType(returnType)}
+            </span>
+          </div>
         </td>
         <td>
           <span className={`${Styles.trackingStatus} ${(() => {
@@ -441,6 +490,29 @@ const ReturnsTable = (props) => {
         </thead>
         <tbody className={Styles.itemsList}>{items}</tbody>
       </Table>
+      
+      {/* Fixed position tooltip */}
+      {hoveredItem && (
+        <div 
+          className={`${Styles.returnTypeTooltip} ${hoveredItem ? Styles.visible : ''}`}
+          style={{ 
+            left: `${tooltipPosition.x}px`, 
+            top: `${tooltipPosition.y}px` 
+          }}
+        >
+          {(() => {
+            const hoveredItemObject = returnedItems.find(item => item._id === hoveredItem)
+            if (!hoveredItemObject) return 'No data'
+            
+            return (
+              <>
+                <strong>Buyer Comments:</strong>
+                {hoveredItemObject.buyerComments}
+              </>
+            )
+          })()}
+        </div>
+      )}
       
       {processItem && (
         <ItemReturnModal

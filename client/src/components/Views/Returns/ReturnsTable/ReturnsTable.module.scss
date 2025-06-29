@@ -114,18 +114,90 @@
     letter-spacing: 0.5px;
     display: inline-block;
     text-align: center;
+    position: relative;
     
+    // Default styling - no background
     &.automatic {
+      color: #155724;
+    }
+    
+    &.manual {
+      color: #000;
+    }
+    
+    // Background styling only when comments exist
+    &.automaticWithComments {
       background: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
     }
     
-    &.manual {
+    &.manualWithComments {
       background: #fff3cd;
-      color: #856404;
+      color: #000;
       border: 1px solid #ffeaa7;
     }
+  }
+
+  // Custom tooltip styling
+  .returnTypeTooltip {
+    position: fixed;
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    color: #333;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+    min-width: 200px;
+    max-width: 500px;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.4;
+    box-shadow: 0 4px 16px rgba(116, 142, 255, 0.2);
+    border: 2px solid #748eff;
+    
+    // Arrow pointing up to the element
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 20px;
+      border: 8px solid transparent;
+      border-bottom-color: #748eff;
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 22px;
+      border: 6px solid transparent;
+      border-bottom-color: #f8f9fa;
+    }
+    
+    strong {
+      color: #748eff;
+      margin-bottom: 6px;
+      display: block;
+      font-weight: 600;
+    }
+    
+    &.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .returnTypeWrapper {
+    position: relative;
+    display: inline-block;
   }
 
   // Status styling
