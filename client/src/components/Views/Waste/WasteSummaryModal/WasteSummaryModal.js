@@ -56,7 +56,7 @@ const WasteSummaryModal = ({ wasteItems, setToggleSummaryModal }) => {
     <div className={Styles.modalOverlay} onClick={closeModal}>
       <div className={Styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={Styles.header}>
-          <h2>🗑️ Waste Items Summary</h2>
+          <h2>Waste Items Summary</h2>
           <button className={Styles.closeButton} onClick={closeModal}>
             ×
           </button>

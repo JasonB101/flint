@@ -27,6 +27,7 @@ const ReturnsTable = (props) => {
     if (!status) return "Unknown"
     
     // Handle special statuses
+    if (status === "ESCALATED") return "Escalated"
     if (status === "RESOLD") return "Resold"
     if (status === "WASTED") return "Wasted"
     if (status === "RELISTED") return "Relisted"
@@ -159,47 +160,71 @@ const ReturnsTable = (props) => {
     // Check if currently listed (use the listed field from the item)
     const isCurrentlyListed = listed
     
-    // Determine current status with better descriptions - prioritize local status for final outcomes
-    let currentStatus = status
-    let statusSource = "local"
+    // STATUS DETERMINATION LOGIC - Flow from most obvious to least obvious
+    let currentStatus = "UNKNOWN"
+    let statusSource = "logic"
     
-    // Check for final status outcomes first (these override eBay status)
-    if (status === "waste") {
-      currentStatus = "WASTED" // Item was returned and marked as waste/loss
-    } else if (status === "completed" && itemObject.sold === true && priceSold > 0 && !isCurrentlyListed) {
-      // Check if item has been resold (ultimate success status)
-      // Must be completed AND sold=true AND have a sale price AND not currently listed
-      currentStatus = "RESOLD" // Item was returned, relisted, and sold again
-    } else if (isCurrentlyListed && status === "active") {
-      currentStatus = "RELISTED" // Item is currently back for sale
-    } else if (itemObject.ebayReturnStatus) {
-      // Enhanced status logic for eBay returns (only if no final local status)
-      const ebayStatus = itemObject.ebayReturnStatus.toUpperCase()
+    // 1. HIGHEST PRIORITY: Escalated returns - most critical status
+    if (status === "escalated" || 
+        itemObject.ebayReturnStatus?.toUpperCase() === 'ESCALATED' ||
+        itemObject.returnStatus?.toUpperCase() === 'ESCALATED') {
+      currentStatus = "ESCALATED"
       
-      if (ebayStatus === 'CLOSED') {
-        // Enhanced logic for closed returns with hierarchy: CLOSED → REFUNDED/RETURNED → RELISTED → RESOLD/WASTED
-        // REFUNDED = Item was refunded (may or may not be returned)  
-        // RETURNED = Item delivered back but no refund shown
-        // CLOSED = Basic closed status (unclear outcome)
-        
-        if (itemObject.refundAmount && itemObject.refundAmount > 0) {
-          // Return was closed with a refund
-          if (itemObject.ebayTrackingStatus === 'DELIVERED') {
-            currentStatus = "REFUNDED" // Item delivered back, buyer got refund
-          } else {
-            currentStatus = "REFUNDED" // Buyer got refund (may have kept item)
-          }
-        } else if (itemObject.ebayTrackingStatus === 'DELIVERED') {
-          currentStatus = "RETURNED" // Item delivered back, no refund shown
-        } else {
-          currentStatus = "CLOSED" // Just closed, unclear outcome
-        }
+    // 2. WASTE STATUS: Items explicitly marked as waste
+    } else if (status === "waste") {
+      currentStatus = "WASTED"
+      
+    // 3. CURRENTLY ACTIVE: Items currently listed for sale  
+    } else if (isCurrentlyListed && status === "active") {
+      currentStatus = "RELISTED"
+      
+    // 4. STILL IN PROGRESS: Returns not shipped back yet
+    } else if (!itemObject.ebayTrackingStatus || 
+               itemObject.ebayTrackingStatus === 'UNKNOWN' || 
+               itemObject.ebayTrackingStatus.toLowerCase() === 'not shipped' ||
+               itemObject.ebayTrackingStatus.toLowerCase().includes('not shipped')) {
+      if (itemObject.refundAmount && itemObject.refundAmount > 0) {
+        currentStatus = "REFUNDED" // Buyer got refund, item not returned
       } else {
-        currentStatus = itemObject.ebayReturnStatus
+        currentStatus = "OPEN" // Return still pending
       }
+      
+    // 5. RETURNED BUT NOT PROCESSED: Item delivered back but not handled yet
+    } else if (itemObject.ebayTrackingStatus === 'DELIVERED' && 
+               status !== "completed" && 
+               status !== "waste" && 
+               !isCurrentlyListed) {
+      if (itemObject.refundAmount && itemObject.refundAmount > 0) {
+        currentStatus = "REFUNDED" // Delivered back + refunded
+      } else {
+        currentStatus = "RETURNED" // Delivered back, no refund
+      }
+      
+    // 6. SUCCESSFULLY RESOLD: Very strict criteria
+    } else if (status === "completed" && 
+               profitOrExpected > 15 && // Must be significantly profitable
+               dateSold && 
+               itemObject.returnDate &&
+               new Date(dateSold) > new Date(itemObject.returnDate) && // Sale after return
+               itemObject.ebayTrackingStatus === 'DELIVERED') { // Must have been returned first
+      currentStatus = "RESOLD"
+      
+    // 7. LOSSES: Items with refunds/negative outcomes
+    } else if (itemObject.refundAmount && itemObject.refundAmount > 0) {
+      currentStatus = "REFUNDED"
+      
+    } else if (profitOrExpected < 0) {
+      currentStatus = "REFUNDED" // Treated as a loss
+      
+    // 8. FALLBACK: Use eBay status if available
+    } else if (itemObject.ebayReturnStatus) {
+      const ebayStatus = itemObject.ebayReturnStatus.toUpperCase()
+      currentStatus = ebayStatus === 'CLOSED' ? "CLOSED" : ebayStatus
       statusSource = "ebay"
-    } else if (status === "completed") {
-      currentStatus = "Sold"
+      
+    // 9. DEFAULT: Unknown status
+    } else {
+      currentStatus = "UNKNOWN"
     }
 
     // Format dates
@@ -330,7 +355,11 @@ const ReturnsTable = (props) => {
           {profitOrExpected < 0 ? '-' : ''}${valueToFixed(Math.abs(profitOrExpected))}
         </td>
         <td>
-          <span className={`${Styles.returnType} ${automaticReturn ? Styles.automatic : Styles.manual}`}>
+          <span 
+            className={`${Styles.returnType} ${automaticReturn ? Styles.automatic : Styles.manual}`}
+            title={itemObject.buyerComments ? `Buyer Comments: ${itemObject.buyerComments}` : 'No buyer comments'}
+            style={{ cursor: itemObject.buyerComments ? 'help' : 'default' }}
+          >
             {formatReturnType(returnType)}
           </span>
         </td>
@@ -345,8 +374,12 @@ const ReturnsTable = (props) => {
         </td>
         <td>
           <span 
-            className={`${Styles.status} ${Styles[status]} ${statusSource === 'ebay' ? Styles.ebayStatus : ''} ${currentStatus === 'RESOLD' ? Styles.resold : ''} ${currentStatus === 'WASTED' ? Styles.wasted : ''} ${currentStatus === 'RELISTED' ? Styles.relisted : ''} ${currentStatus === 'REFUNDED' ? Styles.refunded : ''} ${currentStatus === 'RETURNED' ? Styles.returned : ''}`}
+            className={`${Styles.status} ${Styles[status]} ${statusSource === 'ebay' ? Styles.ebayStatus : ''} ${currentStatus === 'ESCALATED' ? Styles.escalated : ''} ${currentStatus === 'RESOLD' ? Styles.resold : ''} ${currentStatus === 'WASTED' ? Styles.wasted : ''} ${currentStatus === 'RELISTED' ? Styles.relisted : ''} ${currentStatus === 'REFUNDED' ? Styles.refunded : ''} ${currentStatus === 'RETURNED' ? Styles.returned : ''}`}
             title={(() => {
+              if (currentStatus === 'ESCALATED') {
+                const refundInfo = itemObject.refundAmount > 0 ? ` - Refunded $${valueToFixed(itemObject.refundAmount)}` : ''
+                return `Return has been escalated to eBay customer service for resolution${refundInfo}`
+              }
               if (currentStatus === 'RESOLD') {
                 const refundInfo = itemObject.refundAmount > 0 ? ` - Original refund: $${valueToFixed(itemObject.refundAmount)}` : ''
                 const deliveryInfo = itemObject.ebayTrackingStatus === 'DELIVERED' ? ' - Item was returned and successfully resold' : ' - Item was resold after return'

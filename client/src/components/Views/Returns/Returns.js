@@ -48,6 +48,8 @@ const Returns = (props) => {
     const returnsByInventoryId = new Map();
     
     returns.forEach(returnItem => {
+      if (!returnItem) return; // Skip null/undefined return items
+      
       const inventoryItem = inventoryItemsMap.get(returnItem.itemId);
       if (inventoryItem) {
         // Link return to inventory item
@@ -56,30 +58,30 @@ const Returns = (props) => {
       }
       
       const returnData = {
-        _id: inventoryItem._id || returnItem.inventoryItemId, // Use inventory item ID, not return ID
+        _id: inventoryItem?._id || returnItem.inventoryItemId || returnItem._id, // Use inventory item ID, not return ID
         // Basic item info
-        title: returnItem.itemTitle || inventoryItem.title || "Unknown Item",
-        partNo: inventoryItem.partNo || "N/A",
-        sku: returnItem.sku || inventoryItem.sku || "N/A",
+        title: returnItem.itemTitle || inventoryItem?.title || "Unknown Item",
+        partNo: inventoryItem?.partNo || "N/A",
+        sku: returnItem.sku || inventoryItem?.sku || "N/A",
         
         // Dates - use return-specific dates
-        datePurchased: inventoryItem.datePurchased || returnItem.originalSaleDate,
-        dateSold: returnItem.originalSaleDate || returnItem.transactionDate || inventoryItem.dateSold,
+        datePurchased: inventoryItem?.datePurchased || returnItem.originalSaleDate,
+        dateSold: returnItem.originalSaleDate || returnItem.transactionDate || inventoryItem?.dateSold,
         returnDate: returnItem.creationDate,
         updatedAt: returnItem.updatedAt || returnItem.lastModifiedDate,
         
         // Financial data - use available data from either source
-        purchasePrice: inventoryItem.purchasePrice || 0,
-        priceSold: inventoryItem.priceSold || returnItem.itemPrice || 0,
-        listedPrice: inventoryItem.listedPrice || returnItem.itemPrice || 0,
-        profit: inventoryItem.profit,
-        expectedProfit: inventoryItem.expectedProfit,
-        shippingCost: inventoryItem.shippingCost || returnItem.returnShippingCost || 0,
-        ebayFees: inventoryItem.ebayFees || 0,
+        purchasePrice: inventoryItem?.purchasePrice || 0,
+        priceSold: inventoryItem?.priceSold || returnItem.itemPrice || 0,
+        listedPrice: inventoryItem?.listedPrice || returnItem.itemPrice || 0,
+        profit: inventoryItem?.profit,
+        expectedProfit: inventoryItem?.expectedProfit,
+        shippingCost: inventoryItem?.shippingCost || returnItem.returnShippingCost || 0,
+        ebayFees: inventoryItem?.ebayFees || 0,
         
         // Calculate return shipping cost from additional costs if needed
         returnShippingCost: (() => {
-          const additionalCosts = inventoryItem.additionalCosts || []
+          const additionalCosts = inventoryItem?.additionalCosts || []
           const returnShippingCost = additionalCosts.find(
             cost => cost.title === "returnShippingCost"
           )?.amount || returnItem.returnShippingCost || 0
@@ -90,7 +92,7 @@ const Returns = (props) => {
         returnStatus: returnItem.returnStatus || "Unknown",
         returnReason: returnItem.returnReason,
         buyerComments: returnItem.buyerComments,
-        buyer: returnItem.buyerLoginName || inventoryItem.buyer || "Unknown",
+        buyer: returnItem.buyerLoginName || inventoryItem?.buyer || "Unknown",
         
         // Refund information
         refundAmount: returnItem.refundAmount || 0,
@@ -104,14 +106,14 @@ const Returns = (props) => {
         carrierUsed: returnItem.carrierUsed,
         
         // Status mapping - use actual inventory status if available, otherwise derive from return status
-        status: inventoryItem.status || mapReturnStatusToInventoryStatus(returnItem.returnStatus),
-        listed: inventoryItem.listed || false,
-        sold: inventoryItem.sold,
+        status: inventoryItem?.status || mapReturnStatusToInventoryStatus(returnItem.returnStatus),
+        listed: inventoryItem?.listed || false,
+        sold: inventoryItem?.sold,
         automaticReturn: returnItem.autoProcessed || false,
         
         // Additional costs - ensure return shipping cost is included
         additionalCosts: (() => {
-          const costs = inventoryItem.additionalCosts || []
+          const costs = inventoryItem?.additionalCosts || []
           const returnShippingCost = returnItem.returnShippingCost || 0
           
           // Check if return shipping cost already exists in additional costs

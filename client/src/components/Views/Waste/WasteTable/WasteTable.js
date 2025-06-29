@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import Styles from "./WasteTable.module.scss"
 import { Table } from "react-bootstrap"
 import $ from "jquery"
 import ItemOptions from "./ItemOptions/ItemOptions"
 
 const WasteTable = (props) => {
-  const { wasteItems, updateItem, user, deleteWasteItem } = props
-  
-  const [editItem, changeEdit] = useState({
-    entryItem: "",
-    value: "",
-    id: "",
-  })
+  const { wasteItems, deleteWasteItem } = props
 
   // Sort waste items by date wasted (newest first)
   const sortedWasteItems = [...wasteItems].sort((a, b) => {
@@ -20,53 +14,20 @@ const WasteTable = (props) => {
     return bDate - aDate
   })
 
+  // Helper function for formatting values
+  function valueToFixed(value) {
+    return Number(value || 0).toFixed(2)
+  }
+
   const items = sortedWasteItems.map((x) => populateRow(x))
 
   useEffect(() => {
     applySortingToDOM()
   }, [items])
 
-  function changeEntry(e) {
-    const { value } = e.target
-    changeEdit({ ...editItem, value: value })
-  }
 
-  function editEntry(id, type) {
-    changeEdit({
-      entryItem: type,
-      value: "",
-      id: id,
-    })
-  }
 
-  function saveEntry(itemDetails) {
-    let updates = {
-      ...itemDetails,
-      [editItem.entryItem]: parseFloat(editItem.value) || 0,
-    }
-    
-    // For additional costs, we need to handle it as an array
-    if (editItem.entryItem === 'additionalCosts') {
-      const newCostAmount = parseFloat(editItem.value) || 0
-      updates.additionalCosts = [
-        { title: 'manualAdjustment', amount: newCostAmount, date: new Date() }
-      ]
-    }
-    
-    // Recalculate profit for waste items (should be negative)
-    const { purchasePrice } = updates
-    const totalAdditionalCosts = Array.isArray(updates.additionalCosts) 
-      ? updates.additionalCosts.reduce((sum, cost) => sum + (cost.amount || 0), 0)
-      : (updates.additionalCosts || 0)
-    
-    updates.profit = -(purchasePrice + totalAdditionalCosts)
 
-    const itemToSave = {
-      id: editItem.id,
-      updates,
-    }
-    updateItem(itemToSave)
-  }
 
   function populateRow(itemObject) {
     const {
@@ -92,6 +53,22 @@ const WasteTable = (props) => {
       ? additionalCosts.reduce((sum, cost) => sum + (cost.amount || 0), 0)
       : (additionalCosts || 0)
 
+    // Create tooltip content for additional costs breakdown
+    const getAdditionalCostsTooltip = () => {
+      if (!Array.isArray(additionalCosts) || additionalCosts.length === 0) {
+        return totalAdditionalCosts > 0 ? `Total: $${valueToFixed(totalAdditionalCosts)}` : 'No additional costs'
+      }
+      
+      const breakdown = additionalCosts.map(cost => {
+        const date = cost.date ? new Date(cost.date).toLocaleDateString() : ''
+        const title = cost.title || 'Additional Cost'
+        const amount = `$${valueToFixed(cost.amount || 0)}`
+        return date ? `${title}: ${amount} (${date})` : `${title}: ${amount}`
+      }).join('\n')
+      
+      return `${breakdown}\n\nTotal: $${valueToFixed(totalAdditionalCosts)}`
+    }
+
     return (
       <tr key={_id} className={Styles.wasteRow}>
         <td className={Styles["titleId"]}>
@@ -99,7 +76,6 @@ const WasteTable = (props) => {
             <ItemOptions itemObject={itemObject} deleteWasteItem={deleteWasteItem} />
           </span>{" "}
           <span className={Styles["wasteIndicator"]} title="Waste Item">
-            🗑️
           </span>
           <span 
             className={Styles["titleText"]}
@@ -119,38 +95,14 @@ const WasteTable = (props) => {
         <td>{datePurchased}</td>
         <td>{dateWasted || "Not Set"}</td>
         <td>${valueToFixed(purchasePrice)}</td>
-        <td className={Styles["tdEdit"]}>
-          {editItem.id === _id && editItem.entryItem === "additionalCosts" ? (
-            <input
-              type="text"
-              value={editItem.value}
-              onChange={changeEntry}
-              autoFocus
-            />
-          ) : (
-            <span className={Styles["data"]}>
-              ${valueToFixed(totalAdditionalCosts)}
-            </span>
-          )}
-          <i
-            onClick={(e) => editEntry(_id, "additionalCosts")}
-            className={`${Styles["edit"]} material-icons`}
+        <td>
+          <span 
+            className={Styles["data"]}
+            title={getAdditionalCostsTooltip()}
+            style={{ cursor: 'help' }}
           >
-            edit_note
-          </i>
-          <i
-            onClick={(e) =>
-              saveEntry({ purchasePrice, additionalCosts: totalAdditionalCosts })
-            }
-            className={`${Styles["save"]} material-icons`}
-            style={
-              editItem.id === _id && editItem.entryItem === "additionalCosts"
-                ? { visibility: "visible" }
-                : { visibility: "hidden" }
-            }
-          >
-            save
-          </i>
+            ${valueToFixed(totalAdditionalCosts)}
+          </span>
         </td>
         <td className={Styles.lossAmount}>-${valueToFixed(totalLoss)}</td>
         <td className={Styles.wasteReason}>{wasteReason}</td>
@@ -158,10 +110,6 @@ const WasteTable = (props) => {
         <td>{lastReturnedOrder || "N/A"}</td>
       </tr>
     )
-
-    function valueToFixed(value) {
-      return Number(value || 0).toFixed(2)
-    }
   }
 
   function getWasteReason(itemObject) {

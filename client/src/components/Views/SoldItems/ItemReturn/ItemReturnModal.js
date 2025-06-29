@@ -79,113 +79,6 @@ const ItemReturnModal = ({
 
   const [ebayReturnInfo, setEbayReturnInfo] = useState(null)
 
-  useEffect(() => {
-    fetchReturnDetails()
-  }, [itemId, fetchReturnDetails])
-
-  // Calculate combined costs without modifying state repeatedly
-  const calculatedAdditionalCosts = React.useMemo(() => {
-    console.log('💰 Recalculating additional costs...')
-    console.log('Original additional costs:', additionalCosts)
-    console.log('Original shipping cost:', shippingCost)
-    console.log('New return shipping cost:', inputs.returnShippingCost)
-    
-    // Start with a fresh copy of original costs (excluding any previous return shipping costs from this session)
-    const baseCosts = additionalCosts.filter(cost => cost.title !== "returnShippingCost" && cost.title !== "shippingCost") || []
-    
-    // Add the current return shipping cost if it exists
-    const finalCosts = [...baseCosts]
-    
-    // Add original shipping cost (what it cost to ship to buyer)
-    if (shippingCost > 0) {
-      finalCosts.push({
-        title: "shippingCost",
-        amount: shippingCost,
-      })
-    }
-    
-    // Add return shipping cost (what it cost for buyer to ship back)
-    if (inputs.returnShippingCost > 0) {
-      finalCosts.push({
-        title: "returnShippingCost",
-        amount: inputs.returnShippingCost,
-      })
-    }
-    
-    console.log('Final calculated costs:', finalCosts)
-    return finalCosts
-  }, [additionalCosts, inputs.returnShippingCost, shippingCost])
-
-  let newExpectedProfit = inputs.isRelisted
-    ? figureExpectedProfit(
-        listedPrice,
-        purchasePrice,
-        calculatedAdditionalCosts,
-        averageShippingCost,
-        ebayFeePercent
-      )
-    : (() => {
-        // For waste items: Revenue = $0, Costs = Purchase Price + Return Shipping
-        const totalAdditionalCosts = calculatedAdditionalCosts.reduce((acc, cost) => acc + cost.amount, 0)
-        const wasteProfit = 0 - purchasePrice - totalAdditionalCosts
-        
-        console.log('🗑️ Waste profit calculation:')
-        console.log('  Purchase Price:', purchasePrice)
-        console.log('  Original Shipping Cost:', shippingCost)
-        console.log('  Return Shipping Cost:', inputs.returnShippingCost)
-        console.log('  All Additional Costs:', calculatedAdditionalCosts)
-        console.log('  Total Additional Costs:', totalAdditionalCosts)
-        console.log('  Formula: $0 - $' + purchasePrice + ' - $' + totalAdditionalCosts + ' = $' + wasteProfit)
-        console.log('  Final Waste Profit:', wasteProfit)
-        
-        return +wasteProfit.toFixed(2)
-      })()
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-
-    setInputs((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }))
-  }
-
-  const prepareAndSubmitChanges = () => {
-    console.log('🚀 Preparing return submission...')
-    console.log('📋 Current inputs:', inputs)
-    console.log('💰 New expected profit:', newExpectedProfit)
-    
-    // Create itemReturnValues with current state values
-    const itemReturnValues = {
-      itemId: itemId,
-      ebayId: ebayId,
-      dateListed,
-      expectedProfit: newExpectedProfit,
-      additionalCosts: calculatedAdditionalCosts,
-      roi: Math.floor((purchasePrice / newExpectedProfit) * 100),
-      returnDate: new Date(inputs.returnDate).toLocaleDateString(), // Convert ISO date back to localized string
-      returnShippingCost: inputs.returnShippingCost,
-      orderId: orderId, // Include order ID for tracking returned orders
-      buyer: buyer, // Include buyer information for waste tracking
-    }
-    
-    console.log('📦 Item return values:', itemReturnValues)
-
-    let updates = inputs.isRelisted
-      ? itemReListed(itemReturnValues)
-      : itemIsWaste(itemReturnValues)
-      
-    console.log(`📝 Processing as ${inputs.isRelisted ? 'RELIST' : 'WASTE'}`)
-    console.log('🔄 Final updates to submit:', updates)
-    
-    if (ebayListing && !inputs.isRelisted) {
-      console.log('⚠️ eBay listing exists but item being marked as waste - should end listing')
-      //end listing
-    }
-    
-    onSubmit(updates)
-  }
-
   const fetchReturnDetails = useCallback(async () => {
     if (!itemId) return
 
@@ -298,6 +191,113 @@ const ItemReturnModal = ({
       setSubmitEnabled(true)
     }
   }, [itemId, getReturnsForItem, user?.token, sku, orderId])
+
+  useEffect(() => {
+    fetchReturnDetails()
+  }, [itemId, fetchReturnDetails])
+
+  // Calculate combined costs without modifying state repeatedly
+  const calculatedAdditionalCosts = React.useMemo(() => {
+    console.log('💰 Recalculating additional costs...')
+    console.log('Original additional costs:', additionalCosts)
+    console.log('Original shipping cost:', shippingCost)
+    console.log('New return shipping cost:', inputs.returnShippingCost)
+    
+    // Start with a fresh copy of original costs (excluding any previous return shipping costs from this session)
+    const baseCosts = additionalCosts.filter(cost => cost.title !== "returnShippingCost" && cost.title !== "shippingCost") || []
+    
+    // Add the current return shipping cost if it exists
+    const finalCosts = [...baseCosts]
+    
+    // Add original shipping cost (what it cost to ship to buyer)
+    if (shippingCost > 0) {
+      finalCosts.push({
+        title: "shippingCost",
+        amount: shippingCost,
+      })
+    }
+    
+    // Add return shipping cost (what it cost for buyer to ship back)
+    if (inputs.returnShippingCost > 0) {
+      finalCosts.push({
+        title: "returnShippingCost",
+        amount: inputs.returnShippingCost,
+      })
+    }
+    
+    console.log('Final calculated costs:', finalCosts)
+    return finalCosts
+  }, [additionalCosts, inputs.returnShippingCost, shippingCost])
+
+  let newExpectedProfit = inputs.isRelisted
+    ? figureExpectedProfit(
+        listedPrice,
+        purchasePrice,
+        calculatedAdditionalCosts,
+        averageShippingCost,
+        ebayFeePercent
+      )
+    : (() => {
+        // For waste items: Revenue = $0, Costs = Purchase Price + Return Shipping
+        const totalAdditionalCosts = calculatedAdditionalCosts.reduce((acc, cost) => acc + cost.amount, 0)
+        const wasteProfit = 0 - purchasePrice - totalAdditionalCosts
+        
+        console.log('🗑️ Waste profit calculation:')
+        console.log('  Purchase Price:', purchasePrice)
+        console.log('  Original Shipping Cost:', shippingCost)
+        console.log('  Return Shipping Cost:', inputs.returnShippingCost)
+        console.log('  All Additional Costs:', calculatedAdditionalCosts)
+        console.log('  Total Additional Costs:', totalAdditionalCosts)
+        console.log('  Formula: $0 - $' + purchasePrice + ' - $' + totalAdditionalCosts + ' = $' + wasteProfit)
+        console.log('  Final Waste Profit:', wasteProfit)
+        
+        return +wasteProfit.toFixed(2)
+      })()
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target
+
+    setInputs((prevState) => ({
+      ...prevState,
+      [name]: type === "checkbox" ? checked : value,
+    }))
+  }
+
+  const prepareAndSubmitChanges = () => {
+    console.log('🚀 Preparing return submission...')
+    console.log('📋 Current inputs:', inputs)
+    console.log('💰 New expected profit:', newExpectedProfit)
+    
+    // Create itemReturnValues with current state values
+    const itemReturnValues = {
+      itemId: itemId,
+      ebayId: ebayId,
+      dateListed,
+      expectedProfit: newExpectedProfit,
+      additionalCosts: calculatedAdditionalCosts,
+      roi: Math.floor((purchasePrice / newExpectedProfit) * 100),
+      returnDate: new Date(inputs.returnDate).toLocaleDateString(), // Convert ISO date back to localized string
+      returnShippingCost: inputs.returnShippingCost,
+      orderId: orderId, // Include order ID for tracking returned orders
+      buyer: buyer, // Include buyer information for waste tracking
+    }
+    
+    console.log('📦 Item return values:', itemReturnValues)
+
+    let updates = inputs.isRelisted
+      ? itemReListed(itemReturnValues)
+      : itemIsWaste(itemReturnValues)
+      
+    console.log(`📝 Processing as ${inputs.isRelisted ? 'RELIST' : 'WASTE'}`)
+    console.log('🔄 Final updates to submit:', updates)
+    
+    if (ebayListing && !inputs.isRelisted) {
+      console.log('⚠️ eBay listing exists but item being marked as waste - should end listing')
+      //end listing
+    }
+    
+    onSubmit(updates)
+  }
 
   return (
     <div className={Styles.modal}>
