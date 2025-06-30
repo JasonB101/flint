@@ -951,6 +951,33 @@ const Store = (props) => {
     }
   }
 
+  async function getStoreInfo() {
+    try {
+      console.log("🏪 Fetching eBay store information...")
+      const response = await userAxios.get("/api/store")
+      
+      if (response.data.success) {
+        console.log(`✅ Successfully retrieved store data:`, response.data.data)
+        return {
+          success: true,
+          data: response.data.data
+        }
+      } else {
+        console.error("❌ Failed to fetch store info:", response.data.message)
+        return {
+          success: false,
+          message: response.data.message
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error fetching store information:", error)
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || "Failed to fetch store information"
+      }
+    }
+  }
+
   return (
     <storeContext.Provider
       value={{
@@ -1002,6 +1029,7 @@ const Store = (props) => {
         getReturnsForItem,
         fetchReturns,
         getWasteItems,
+        getStoreInfo,
         // eBay sync and returns state
         ebaySyncComplete,
         returns

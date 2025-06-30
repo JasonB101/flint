@@ -23,32 +23,39 @@ class ChartOptions {
 }
 
 export class MultiYearSalesChart extends ChartOptions {
-    constructor(years, soldItems, profitSetToTrue) {
-        super(`${profitSetToTrue ? "Profits" : "Sales"} by Year`);
+    constructor(years, soldItems, profitSetToTrue, salesSetToTrue) {
+        const metricName = salesSetToTrue ? "Sales Count" : profitSetToTrue ? "Profits" : "Revenue";
+        super(`${metricName} by Year`);
         this.axisY = {
-            title: profitSetToTrue ? "Profit" : "Sales",
+            title: metricName,
             includeZero: true,
-            prefix: "$"
+            prefix: salesSetToTrue ? "" : "$"
         }
         this.data = [{
             type: "column",
-            toolTipContent: "{label}: ${y}",
-            dataPoints: getYearlyDataPoints(years, soldItems, profitSetToTrue),
+            toolTipContent: salesSetToTrue ? "{label}: {y} items" : "{label}: ${y}",
+            dataPoints: getYearlyDataPoints(years, soldItems, profitSetToTrue, salesSetToTrue),
         }]
         this.axisX = {
             title: "Year",
             interval: 1
         }
 
-        function getYearlyDataPoints(years, soldItems, profitSetToTrue) {
+        function getYearlyDataPoints(years, soldItems, profitSetToTrue, salesSetToTrue) {
             return years.map(year => {
-                const yearItems = soldItems.filter(item => 
-                    new Date(item.dateSold).getFullYear() === year
-                );
+                const yearItems = soldItems.filter(item => {
+                    const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                    return relevantDate && new Date(relevantDate).getFullYear() === year;
+                });
                 
-                const totalValue = yearItems.reduce((sum, item) => {
-                    return sum + (profitSetToTrue ? Number(item.profit) : Number(item.priceSold));
-                }, 0);
+                let totalValue;
+                if (salesSetToTrue) {
+                    totalValue = yearItems.filter(item => item.sold).length;
+                } else if (profitSetToTrue) {
+                    totalValue = yearItems.reduce((sum, item) => sum + Number(item.profit), 0);
+                } else { // Revenue
+                    totalValue = yearItems.reduce((sum, item) => sum + (item.sold ? Number(item.priceSold) : 0), 0);
+                }
 
                 return {
                     label: year.toString(),
@@ -60,24 +67,25 @@ export class MultiYearSalesChart extends ChartOptions {
 }
 
 export class YearSalesChart extends ChartOptions {
-    constructor(year, soldItems, profitSetToTrue) {
+    constructor(year, soldItems, profitSetToTrue, salesSetToTrue) {
+        const metricName = salesSetToTrue ? "Sales Count" : profitSetToTrue ? "Profit" : "Revenue";
         super("");
         this.axisY = {
-            title: "Sales",
+            title: metricName,
             includeZero: false,
-            prefix: "$"
+            prefix: salesSetToTrue ? "" : "$"
         }
         
         const dataPoints = fillInMissingDays(getYearDataPoints(soldItems), year);
         
         this.data = [{
             type: "column",
-            toolTipContent: " {x}: ${y}",
+            toolTipContent: salesSetToTrue ? " {x}: {y} items" : " {x}: ${y}",
             dataPoints: dataPoints,
             backgroundColor: customColors
         }]
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per day: ${getAverage(dataPoints)}`,
+            title: `Average ${metricName.toLowerCase()} per day: ${getAverage(dataPoints, salesSetToTrue)}`,
             interval: 7,
             xValueType: "date",
             xValueFormatString: "MM/dd"
@@ -87,7 +95,8 @@ export class YearSalesChart extends ChartOptions {
             // Better date filtering - check actual year instead of string includes
             const filteredItems = soldItems.filter(item => {
                 try {
-                    const itemYear = new Date(item.dateSold).getFullYear();
+                    const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                    const itemYear = relevantDate ? new Date(relevantDate).getFullYear() : null;
                     return itemYear === year;
                 } catch (e) {
                     console.log("Item with invalid Date Sold", item);
@@ -96,18 +105,28 @@ export class YearSalesChart extends ChartOptions {
             });
 
             const dataPoints = filteredItems.reduce((dataPoints, item) => {
-                const dateSold = standardDate(item.dateSold);
-                const price = profitSetToTrue ? +item.profit : +item.priceSold;
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                const dateSold = standardDate(relevantDate);
+                
+                let value;
+                if (salesSetToTrue) {
+                    value = item.sold ? 1 : 0;
+                } else if (profitSetToTrue) {
+                    value = +item.profit;
+                } else { // Revenue
+                    value = item.sold ? +item.priceSold : 0;
+                }
+                
                 const itemFoundIndex = dataPoints.findIndex(x => x.x.getTime() === new Date(dateSold).getTime());
                 
                 if (itemFoundIndex !== -1) {
                     dataPoints[itemFoundIndex] = { 
                         x: new Date(dateSold), 
-                        y: dataPoints[itemFoundIndex].y + price 
+                        y: dataPoints[itemFoundIndex].y + value 
                     };
                     return dataPoints;
                 } else {
-                    dataPoints.push({ x: new Date(dateSold), y: price });
+                    dataPoints.push({ x: new Date(dateSold), y: value });
                     return dataPoints;
                 }
             }, []);
@@ -120,8 +139,9 @@ export class YearSalesChart extends ChartOptions {
 }
 
 export class YearSalesChartByWeek extends YearSalesChart {
-    constructor(year, soldItems, profitSetToTrue) {
-        super(year, soldItems, true);
+    constructor(year, soldItems, profitSetToTrue, salesSetToTrue) {
+        super(year, soldItems, true, false);
+        const metricName = salesSetToTrue ? "Sales Count" : profitSetToTrue ? "Profit" : "Revenue";
 
         // Define week calculation for Sunday-Saturday weeks
         Date.prototype.getWeek = function () {
@@ -141,22 +161,24 @@ export class YearSalesChartByWeek extends YearSalesChart {
 
         this.data = [{
             type: "column",
-            toolTipContent: " {label}: ${y}",
+            toolTipContent: salesSetToTrue ? " {label}: {y} items" : " {label}: ${y}",
             dataPoints: fillInMissingWeeks(getYearDataPointsByWeek(soldItems), year),
         }]
 
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per week: ${getAverage(this.data[0].dataPoints)}`,
+            title: `Average ${metricName.toLowerCase()} per week: ${getAverage(this.data[0].dataPoints, salesSetToTrue)}`,
             interval: 1
         }
         this.axisY = {
             includeZero: true,
+            prefix: salesSetToTrue ? "" : "$"
         }
 
         function getYearDataPointsByWeek(soldItems) {
             const filteredItems = soldItems.filter(item => {
                 try {
-                    const itemYear = new Date(item.dateSold).getFullYear();
+                    const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                    const itemYear = relevantDate ? new Date(relevantDate).getFullYear() : null;
                     return itemYear === year;
                 } catch (e) {
                     console.log("Item with invalid Date Sold", item);
@@ -165,8 +187,8 @@ export class YearSalesChartByWeek extends YearSalesChart {
             });
             
             filteredItems.sort((a, b) => {
-                let valA = a.dateSold
-                let valB = b.dateSold
+                let valA = a.dateSold || a.dateWasted
+                let valB = b.dateSold || b.dateWasted
                 function dateToTime(value) {
                     return Number(new Date(String(value)).getTime())
                 }
@@ -174,8 +196,18 @@ export class YearSalesChartByWeek extends YearSalesChart {
             })
 
             const dataPoints = filteredItems.reduce((dataPoints, item) => {
-                const dateSold = standardDate(item.dateSold);
-                const price = profitSetToTrue ? +item.profit : +item.priceSold;
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                const dateSold = standardDate(relevantDate);
+                
+                let value;
+                if (salesSetToTrue) {
+                    value = item.sold ? 1 : 0;
+                } else if (profitSetToTrue) {
+                    value = +item.profit;
+                } else { // Revenue
+                    value = item.sold ? +item.priceSold : 0;
+                }
+                
                 const week = new Date(dateSold).getWeek()
                 const month = new Date(dateSold).toLocaleString('default', { month: 'short' });
 
@@ -184,11 +216,11 @@ export class YearSalesChartByWeek extends YearSalesChart {
                     const dP = dataPoints[itemFoundIndex];
                     dataPoints[itemFoundIndex] = { 
                         label: `W${week}`, 
-                        y: dataPoints[itemFoundIndex].y + price 
+                        y: dataPoints[itemFoundIndex].y + value 
                     };
                     return dataPoints;
                 } else {
-                    dataPoints.push({ label: `W${week}`, y: price });
+                    dataPoints.push({ label: `W${week}`, y: value });
                     return dataPoints;
                 }
             }, []);
@@ -197,13 +229,15 @@ export class YearSalesChartByWeek extends YearSalesChart {
         }
     }
 }
+
 export class YearSalesChartByMonth extends YearSalesChart {
-    constructor(year, soldItems, profitSetToTrue) {
-        super(year, soldItems, true);
+    constructor(year, soldItems, profitSetToTrue, salesSetToTrue) {
+        super(year, soldItems, true, false);
+        const metricName = salesSetToTrue ? "Sales Count" : profitSetToTrue ? "Profit" : "Revenue";
 
         this.data = [{
             type: "column",
-            toolTipContent: " {label}: ${y}",
+            toolTipContent: salesSetToTrue ? " {label}: {y} items" : " {label}: ${y}",
             dataPoints: fillInMissingMonths(getYearDataPointsByMonth(soldItems), year)
                 .sort((a, b) => {
                     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -212,11 +246,12 @@ export class YearSalesChartByMonth extends YearSalesChart {
         }]
 
         this.axisX = {
-            title: `Average ${profitSetToTrue ? "profit" : "sales"} per month: ${getAverage(this.data[0].dataPoints)}`,
+            title: `Average ${metricName.toLowerCase()} per month: ${getAverage(this.data[0].dataPoints, salesSetToTrue)}`,
             interval: 1
         }
         this.axisY = {
             includeZero: true,
+            prefix: salesSetToTrue ? "" : "$"
         }
         
         function fillInMissingMonths(dataPoints, year) {
@@ -250,7 +285,8 @@ export class YearSalesChartByMonth extends YearSalesChart {
             // Better date filtering - check actual year instead of string includes
             const filteredItems = soldItems.filter(item => {
                 try {
-                    const itemYear = new Date(item.dateSold).getFullYear();
+                    const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                    const itemYear = relevantDate ? new Date(relevantDate).getFullYear() : null;
                     return itemYear === year;
                 } catch (e) {
                     console.log("Item with invalid Date Sold", item);
@@ -259,16 +295,26 @@ export class YearSalesChartByMonth extends YearSalesChart {
             });
 
             const dataPoints = filteredItems.reduce((dataPoints, item) => {
-                const dateSold = standardDate(item.dateSold);
-                const price = profitSetToTrue ? +item.profit : +item.priceSold;
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                const dateSold = standardDate(relevantDate);
+                
+                let value;
+                if (salesSetToTrue) {
+                    value = item.sold ? 1 : 0;
+                } else if (profitSetToTrue) {
+                    value = +item.profit;
+                } else { // Revenue
+                    value = item.sold ? +item.priceSold : 0;
+                }
+                
                 const month = new Date(dateSold).toLocaleString('default', { month: 'long' });
 
                 const itemFoundIndex = dataPoints.findIndex(x => x.label === month);
                 if (itemFoundIndex !== -1) {
-                    dataPoints[itemFoundIndex] = { label: month, y: dataPoints[itemFoundIndex].y + price };
+                    dataPoints[itemFoundIndex] = { label: month, y: dataPoints[itemFoundIndex].y + value };
                     return dataPoints;
                 } else {
-                    dataPoints.push({ label: month, y: price });
+                    dataPoints.push({ label: month, y: value });
                     return dataPoints;
                 }
             }, [])
@@ -279,8 +325,150 @@ export class YearSalesChartByMonth extends YearSalesChart {
     }
 }
 
-///Methods//////////////////////////
+// New chart class for days range (7, 30, 90 days)
+export class DaysRangeChart extends ChartOptions {
+    constructor(days, soldItems, profitSetToTrue, salesSetToTrue) {
+        const metricName = salesSetToTrue ? "Sales Count" : profitSetToTrue ? "Profit" : "Revenue";
+        super(`${metricName} - Last ${days} Days`);
+        
+        this.axisY = {
+            title: metricName,
+            includeZero: true,
+            prefix: salesSetToTrue ? "" : "$"
+        }
+        
+        const dataPoints = getDaysRangeDataPoints(days, soldItems, profitSetToTrue, salesSetToTrue);
+        
+        this.data = [{
+            type: "column",
+            toolTipContent: salesSetToTrue ? " {x}: {y} items" : " {x}: ${y}",
+            dataPoints: dataPoints,
+        }]
+        
+        this.axisX = {
+            title: `Daily ${metricName}`,
+            interval: days > 30 ? Math.ceil(days / 10) : 1,
+            xValueType: "date",
+            xValueFormatString: days <= 30 ? "MM/dd" : "MM/dd/yy"
+        }
 
+        function getDaysRangeDataPoints(days, soldItems, profitSetToTrue, salesSetToTrue) {
+            const now = new Date();
+            const startDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+            
+            const filteredItems = soldItems.filter(item => {
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                if (!relevantDate) return false;
+                const itemDate = new Date(relevantDate);
+                return itemDate >= startDate && itemDate <= now;
+            });
+
+            const dataPointsMap = {};
+            
+            // Initialize all days with 0
+            for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + 1)) {
+                const dateKey = new Date(d).toDateString();
+                dataPointsMap[dateKey] = { x: new Date(d), y: 0 };
+            }
+            
+            // Add actual data
+            filteredItems.forEach(item => {
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                const itemDate = new Date(relevantDate);
+                const dateKey = itemDate.toDateString();
+                
+                if (dataPointsMap[dateKey]) {
+                    let value;
+                    if (salesSetToTrue) {
+                        value = item.sold ? 1 : 0;
+                    } else if (profitSetToTrue) {
+                        value = +item.profit;
+                    } else { // Revenue
+                        value = item.sold ? +item.priceSold : 0;
+                    }
+                    dataPointsMap[dateKey].y += value;
+                }
+            });
+            
+            return Object.values(dataPointsMap)
+                .sort((a, b) => a.x.getTime() - b.x.getTime())
+                .map(point => ({ x: point.x, y: +point.y.toFixed(2) }));
+        }
+    }
+}
+
+// New chart class for months range (6, 12 months)
+export class MonthsRangeChart extends ChartOptions {
+    constructor(months, soldItems, profitSetToTrue, salesSetToTrue) {
+        const metricName = salesSetToTrue ? "Sales Count" : profitSetToTrue ? "Profit" : "Revenue";
+        super(`${metricName} - Last ${months} Months`);
+        
+        this.axisY = {
+            title: metricName,
+            includeZero: true,
+            prefix: salesSetToTrue ? "" : "$"
+        }
+        
+        const dataPoints = getMonthsRangeDataPoints(months, soldItems, profitSetToTrue, salesSetToTrue);
+        
+        this.data = [{
+            type: "column",
+            toolTipContent: salesSetToTrue ? " {label}: {y} items" : " {label}: ${y}",
+            dataPoints: dataPoints,
+        }]
+        
+        this.axisX = {
+            title: `Monthly ${metricName}`,
+            interval: 1
+        }
+
+        function getMonthsRangeDataPoints(months, soldItems, profitSetToTrue, salesSetToTrue) {
+            const now = new Date();
+            const startDate = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
+            
+            const filteredItems = soldItems.filter(item => {
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                if (!relevantDate) return false;
+                const itemDate = new Date(relevantDate);
+                return itemDate >= startDate && itemDate <= now;
+            });
+
+            const monthsMap = {};
+            
+            // Initialize all months with 0
+            for (let d = new Date(startDate); d <= now; d.setMonth(d.getMonth() + 1)) {
+                const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+                const monthLabel = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+                monthsMap[monthKey] = { label: monthLabel, y: 0, sortDate: new Date(d) };
+            }
+            
+            // Add actual data
+            filteredItems.forEach(item => {
+                const relevantDate = item.sold ? item.dateSold : item.dateWasted;
+                const itemDate = new Date(relevantDate);
+                const monthKey = `${itemDate.getFullYear()}-${itemDate.getMonth()}`;
+                
+                if (monthsMap[monthKey]) {
+                    let value;
+                    if (salesSetToTrue) {
+                        value = item.sold ? 1 : 0;
+                    } else if (profitSetToTrue) {
+                        value = +item.profit;
+                    } else { // Revenue
+                        value = item.sold ? +item.priceSold : 0;
+                    }
+                    monthsMap[monthKey].y += value;
+                }
+            });
+            
+            return Object.values(monthsMap)
+                .sort((a, b) => a.sortDate.getTime() - b.sortDate.getTime())
+                .map(point => ({ label: point.label, y: +point.y.toFixed(2) }));
+        }
+    }
+}
+
+///Methods//////////////////////////
 
 function checkAndMergeMonths(originalMonth, newMonth) {
     if (originalMonth === newMonth || originalMonth.includes("/")) return originalMonth;
@@ -328,8 +516,6 @@ function fillInMissingDays(dataArray, year) {
             completeYear.push({ x: date, y: 0 });
         }
     }
-
-
 
     // Sort by date to ensure proper order
     return completeYear.sort((a, b) => a.x.getTime() - b.x.getTime());
@@ -439,12 +625,18 @@ function standardDate(value) {
     return value;
 }
 
-function getAverage(dataPoints) {
+function getAverage(dataPoints, salesSetToTrue = false) {
     let result = "";
     if (dataPoints) {
         const quantity = dataPoints.length;
         const sum = dataPoints.reduce((sum, dp) => sum + +dp.y, 0);
-        result = currencyFormatter.format(sum / quantity)
+        const average = sum / quantity;
+        
+        if (salesSetToTrue) {
+            result = average.toFixed(1) + " items";
+        } else {
+            result = currencyFormatter.format(average);
+        }
     }
 
     return result;

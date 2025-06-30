@@ -252,34 +252,7 @@ const SalesChart = ({ options }) => {
           </div>
         )}
       </div>
-      
-      {options.axisX?.title && (
-        <div className={Styles.axisTitle}>
-          {options.axisX.title}
-        </div>
-      )}
-      
-      {/* Show data insights for multi-year view */}
-      {options.data[0].dataPoints.length > 1 && options.title?.text?.includes('by Year') && (
-        <div className={Styles.insights}>
-          <div className={Styles.insightItem}>
-            Total Years
-            <strong>{options.data[0].dataPoints.length}</strong>
-          </div>
-          <div className={Styles.insightItem}>
-            Best Year
-            <strong>
-              {options.data[0].dataPoints.reduce((best, current) => 
-                current.y > best.y ? current : best
-              ).label}
-              <br />
-              {formatCurrency(options.data[0].dataPoints.reduce((best, current) => 
-                current.y > best.y ? current : best
-              ).y)}
-            </strong>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };
